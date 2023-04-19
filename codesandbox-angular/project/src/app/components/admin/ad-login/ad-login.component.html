@@ -1,0 +1,66 @@
+<div id="layoutAuthentication" class="d-flex" style="height: 100vh;">
+    <div id="layoutAuthentication_content">
+        <div *ngIf="error" class="alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center w-100"
+            role="alert" style="position: absolute;">
+            <p class="mb-0"><strong>Holy guacamole!</strong> You should check in on some of those fields below.</p>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"
+                style="border:none; background: none;">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <main class="d-flex align-items-center" style="height: 100vh;">
+            <div class="container col-lg-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5">
+                        <div class="card shadow-lg border-0 rounded-lg mt-5">
+                            <div class="card-header">
+                                <h3 class="text-center font-weight-light my-4">CODESANDBOX</h3>
+                                <h4 class="text-center text-secondary font-weight-light my-4">Admin Login</h4>
+                            </div>
+                            <div class="card-body">
+                                <form [formGroup]="ad_login" (ngSubmit)="onSubmit()">
+
+                                    <div *ngIf="ad_login.get('email')?.invalid && ad_login.get('email')?.touched"
+                                        class="alert-msg"><small
+                                            *ngIf="ad_login.get('email')?.hasError('pattern')">invalid
+                                            email</small><small
+                                            *ngIf="ad_login.get('email')?.hasError('required')">Email is
+                                            required</small>
+                                    </div>
+                                    <div class="form-floating mb-3 mt-3">
+                                        <input class="form-control" id="inputEmail" type="email" formControlName="email"
+                                            placeholder="name@example.com"
+                                            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" required />
+                                        <label for="inputEmail">Email address</label>
+                                    </div>
+                                    <div *ngIf="ad_login.get('password')?.invalid && ad_login.get('password')?.touched"
+                                        class="alert-msg">
+                                        <small *ngIf="ad_login.get('password')?.hasError('required')">Password is
+                                            required!</small>
+                                        <small *ngIf="ad_login.get('password')?.hasError('minlength')">Minimum 8
+                                            letters!</small>
+                                    </div>
+
+                                    <div class="form-floating my-3">
+                                        <input class="form-control" id="inputPassword" type="password"
+                                            formControlName="password" placeholder="Password" minlength="8" required />
+                                        <label for="inputPassword">Password</label>
+                                    </div>
+                                    <div class="card-footer text-center py-3">
+                                        <div class="d-flex align-items-center justify-content-center mt-4 mb-0"
+                                            [ngStyle]="{'cursor': !ad_login.valid ? 'not-allowed' : 'pointer'}">
+
+                                            <button [disabled]="!ad_login.valid" class="btn btn-secondary"
+                                                type="submit">Login</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</div>

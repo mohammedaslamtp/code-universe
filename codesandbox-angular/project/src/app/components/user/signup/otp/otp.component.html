@@ -1,0 +1,28 @@
+<section>
+    <div *ngIf="alert_msg" id="alert">
+        <strong>Somthing wrong!</strong>Invalid OTP!
+        <button class="close" (click)="close_alert()">x</button>
+    </div>
+    <div class="login-box">
+        <h2>CODESANDBOX</h2>
+        <form [formGroup]="otp" (ngSubmit)="onSubmit()">
+            <div *ngIf="otp.get('otp')?.invalid && otp.get('otp')?.touched" class="alert-msg"><small
+                    *ngIf="otp.get('otp')?.hasError('pattern')">Please Enter Valid Entry</small><small *ngIf="otp.get('otp')?.hasError('required')">Enter OTP</small>
+            </div>
+            <div class="user-box">
+                <input type="tel" formControlName="otp" maxlength="6" minlength="6"
+                    required>
+                <label>OTP</label>
+            </div>
+            <div class="submit">
+                <button [disabled]="!otp.valid" [ngStyle]="{'cursor': !otp.valid ? 'not-allowed' : 'pointer'}">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    Verify
+                </button>
+            </div>
+        </form>
+    </div>
+</section>

@@ -1,10 +1,35 @@
+
+
+
 section {
-  height: 100vh;
   margin: 0;
   padding: 0;
   font-family: sans-serif;
   width: 100%;
   background: linear-gradient(#141e30, #243b55);
+  height: 100vh;
+}
+
+.alert-msg {
+  color: rgb(140, 3, 3);
+  margin-bottom: 1em;
+}
+
+#alert {
+  color: #58151c;
+  border: #f1aeb5;
+  display: flex;
+  justify-content: space-between;
+  background: #f8d7da;
+  border-radius: 7px;
+  width: 25%;
+  padding: 1em;
+  text-align: center;
+}
+
+.close {
+  border: none;
+  background: none;
 }
 
 .login-box {
@@ -42,6 +67,7 @@ section {
   outline: none;
   background: transparent;
 }
+
 .login-box .user-box label {
   position: absolute;
   top: 0;
@@ -61,7 +87,9 @@ section {
   font-size: 12px;
 }
 
-.login-box form a {
+.login-box form button {
+  border: none;
+  background: none;
   position: relative;
   display: inline-block;
   padding: 10px 20px;
@@ -71,7 +99,7 @@ section {
   text-transform: uppercase;
   overflow: hidden;
   transition: 0.5s;
-  margin-top: 40px;
+  margin-top: 10px;
   letter-spacing: 4px;
 }
 
@@ -80,20 +108,20 @@ section {
   justify-content: center;
 }
 
-.login-box a:hover {
-  background: #03e9f4;
+.login-box button:hover {
+  background-color: #03e9f4;
   color: white !important;
   border-radius: 5px;
   box-shadow: 0 0 5px #03e9f4, 0 0 25px #03e9f4, 0 0 50px #03e9f4,
     0 0 100px #03e9f4;
 }
 
-.login-box a span {
+.login-box button span {
   position: absolute;
   display: block;
 }
 
-.login-box a span:nth-child(1) {
+.login-box button span:nth-child(1) {
   top: 0;
   left: -100%;
   width: 100%;
@@ -112,7 +140,7 @@ section {
   }
 }
 
-.login-box a span:nth-child(2) {
+.login-box button span:nth-child(2) {
   top: -100%;
   right: 0;
   width: 2px;
@@ -132,7 +160,7 @@ section {
   }
 }
 
-.login-box a span:nth-child(3) {
+.login-box button span:nth-child(3) {
   bottom: 0;
   right: -100%;
   width: 100%;
@@ -152,7 +180,7 @@ section {
   }
 }
 
-.login-box a span:nth-child(4) {
+.login-box button span:nth-child(4) {
   bottom: -100%;
   left: 0;
   width: 2px;
