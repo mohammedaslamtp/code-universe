@@ -1,5 +1,4 @@
 <section>
-
     <div *ngIf="alert_msg" id="alert">
         <strong>Somthing wrong!</strong>{{alert_msg}}
         <button class="close" (click)="close_alert()">x</button>
@@ -23,6 +22,9 @@
             <div class="user-box">
                 <input type="password" formControlName="password" minlength="8" required>
                 <label>Password</label>
+            </div>
+            <div style="text-align: end;">
+                <a routerLink="/signup" style="color: white; cursor: pointer; text-decoration: none;font-size: small;">Signup</a>
             </div>
             <div class="submit">
                 <button [disabled]="!login.valid" [ngStyle]="{'cursor': !login.valid ? 'not-allowed' : 'pointer'}">

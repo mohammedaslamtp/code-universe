@@ -1,17 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  MatSnackBarModule,
-  MatSnackBarVerticalPosition,
-  MatSnackBarHorizontalPosition,
+  MatSnackBarModule
 } from '@angular/material/snack-bar';
 
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule],
   providers: [],
 })
 export class SharedModule {
-  exp = [MatSnackBarModule];
+
 }

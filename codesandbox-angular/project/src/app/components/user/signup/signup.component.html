@@ -8,8 +8,7 @@
         <form [formGroup]="signup" (ngSubmit)="onSubmit()">
 
             <div *ngIf="signup.get('fullName')?.invalid && (signup.get('fullName')?.touched || signup.get('fullName')?.dirty)"
-                class="alert-msg"><small *ngIf="signup.get('fullName')?.hasError('required')">Full Name is
-                    required</small>
+                class="alert-msg"><small *ngIf="signup.get('fullName')?.hasError('required')">Full Name is required</small>
                 <small *ngIf="signup.get('fullName')?.hasError('minlength')">Minimum 5 charecters</small>
             </div>
             <div class="user-box">
@@ -50,9 +49,7 @@
                     *ngIf="signup.get('c_password')?.hasError('required')">Re-Enter
                     password!</small><small *ngIf="signup.get('c_password')?.hasError('minlength')">Minimum 8
                     letters!</small>
-                <!-- <small [ngStyle]="{'display': signup.get('c_password')?.hasError('required') ? 'none': '' }"
-                    *ngIf="signup.get('new_password')?.value !== signup.get('c_password')?.value">Password do not
-                    match!</small> -->
+               
 
             </div>
            
@@ -62,8 +59,8 @@
             </div>
             <a routerLink="/login"><small style="color:white;float: right;">Login</small></a>
             <div class="submit">
-                <button [disabled]="!signup.valid"
-                    [ngStyle]="{'cursor': !signup.valid ? 'not-allowed' : 'pointer'}" type="submit">
+                <button type="submit" [disabled]="!signup.valid"
+                    [ngStyle]="{'cursor': !signup.valid ? 'not-allowed' : 'pointer'}">
                     <span></span>
                     <span></span>
                     <span></span>

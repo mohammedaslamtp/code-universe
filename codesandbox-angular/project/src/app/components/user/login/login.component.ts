@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { Observable, map } from 'rxjs';
 
@@ -41,9 +40,6 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     this.store.dispatch(LoginData({ login: this.login.value }));
-    setTimeout(() => {
-      if (this.data$) console.log('data$: ', this.data$);
-    }, 3000);
   }
 
   close_alert() {

@@ -1,66 +1,70 @@
-<div id="layoutAuthentication" class="d-flex" style="height: 100vh;">
-    <div id="layoutAuthentication_content">
-        <div *ngIf="error" class="alert alert-danger alert-dismissible fade show d-flex justify-content-between align-items-center w-100"
-            role="alert" style="position: absolute;">
-            <p class="mb-0"><strong>Holy guacamole!</strong> You should check in on some of those fields below.</p>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"
-                style="border:none; background: none;">
-                <span aria-hidden="true">&times;</span>
+<section class="h-screen px-2">
+    <!-- tailwind link -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- alert msg -->
+    <div [ngStyle]="{'visibility':error$ ? 'visible' : 'hidden'}" id="alert-msg" clss="sm md lg xl absolute mt-3"
+        style="position: absolute; width: 99%;">
+        <div x-data="{ show: true }" x-show="show"
+            class="bg-red-100 border-l-4 border-red-900 text-red-900 px-4 py-2 rounded flex justify-between"
+            role="alert">
+            <div>
+                <p class="font-bold">Failed!</p>
+                <p>{{error$}}</p>
+            </div>
+            <button (click)="error_clear()"
+                class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600" aria-label="Close">
+                <i class="fa-solid fa-xmark text-red-900"></i>
             </button>
         </div>
-        <main class="d-flex align-items-center" style="height: 100vh;">
-            <div class="container col-lg-5">
-                <div class="row justify-content-center">
-                    <div class="col-lg-5">
-                        <div class="card shadow-lg border-0 rounded-lg mt-5">
-                            <div class="card-header">
-                                <h3 class="text-center font-weight-light my-4">CODESANDBOX</h3>
-                                <h4 class="text-center text-secondary font-weight-light my-4">Admin Login</h4>
-                            </div>
-                            <div class="card-body">
-                                <form [formGroup]="ad_login" (ngSubmit)="onSubmit()">
+    </div>
+    <!-- alert msg end -->
+    <div class="flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style="min-height: 91vh;">
+        <div class="max-w-lg w-full space-y-8 card p-5 rounded-lg bg-white"
+            style="filter:drop-shadow(0 25px 25px rgb(0 0 0 / 0.15));">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-700">
+                    CODEBOX ADMIN
+                </h2>
 
-                                    <div *ngIf="ad_login.get('email')?.invalid && ad_login.get('email')?.touched"
-                                        class="alert-msg"><small
-                                            *ngIf="ad_login.get('email')?.hasError('pattern')">invalid
-                                            email</small><small
-                                            *ngIf="ad_login.get('email')?.hasError('required')">Email is
-                                            required</small>
-                                    </div>
-                                    <div class="form-floating mb-3 mt-3">
-                                        <input class="form-control" id="inputEmail" type="email" formControlName="email"
-                                            placeholder="name@example.com"
-                                            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" required />
-                                        <label for="inputEmail">Email address</label>
-                                    </div>
-                                    <div *ngIf="ad_login.get('password')?.invalid && ad_login.get('password')?.touched"
-                                        class="alert-msg">
-                                        <small *ngIf="ad_login.get('password')?.hasError('required')">Password is
-                                            required!</small>
-                                        <small *ngIf="ad_login.get('password')?.hasError('minlength')">Minimum 8
-                                            letters!</small>
-                                    </div>
-
-                                    <div class="form-floating my-3">
-                                        <input class="form-control" id="inputPassword" type="password"
-                                            formControlName="password" placeholder="Password" minlength="8" required />
-                                        <label for="inputPassword">Password</label>
-                                    </div>
-                                    <div class="card-footer text-center py-3">
-                                        <div class="d-flex align-items-center justify-content-center mt-4 mb-0"
-                                            [ngStyle]="{'cursor': !ad_login.valid ? 'not-allowed' : 'pointer'}">
-
-                                            <button [disabled]="!ad_login.valid" class="btn btn-secondary"
-                                                type="submit">Login</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+            </div>
+            <form class="mt-8 space-y-6" [formGroup]="ad_login" (ngSubmit)="onSubmit()">
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div *ngIf="ad_login.get('email')?.invalid && ad_login.get('email')?.touched" class="alert-msg">
+                        <small *ngIf="ad_login.get('email')?.hasError('pattern')">invalid
+                            email</small><small *ngIf="ad_login.get('email')?.hasError('required')">Email is
+                            required</small>
+                    </div>
+                    <div style="margin-top: 1em;">
+                        <label for="email-address" class="sr-only">Email address</label>
+                        <input id="email-address" type="email" formControlName="email"
+                            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" required
+                            class="appearance-none rounded relative block w-full px-5 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                            placeholder="Email address" />
+                    </div>
+                    <div style="margin-top: 1em;"
+                        *ngIf="ad_login.get('password')?.invalid && ad_login.get('password')?.touched"
+                        class="alert-msg">
+                        <small *ngIf="ad_login.get('password')?.hasError('required')">Password is
+                            required!</small>
+                        <small *ngIf="ad_login.get('password')?.hasError('minlength')">Minimum 8
+                            letters!</small>
+                    </div>
+                    <div class="" style="margin-top: 1em;">
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" type="password" formControlName="password" placeholder="Password"
+                            minlength="8" required
+                            class="appearance-none rounded relative block w-full px-5 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                            placeholder="Password" />
                     </div>
                 </div>
-            </div>
-        </main>
+                <div class="flex items-center justify-center">
+                    <button [ngStyle]="{'cursor': !ad_login.valid ? 'not-allowed' : 'pointer'}" type="submit"
+                        [disabled]="!ad_login.valid"
+                        class="transition group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-700 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
-</div>
+</section>

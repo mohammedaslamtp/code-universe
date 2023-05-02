@@ -1,0 +1,67 @@
+<!-- Import Tailwind CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.17/dist/tailwind.min.css" rel="stylesheet">
+
+<!-- Navbar -->
+<nav class="bg-gray-800">
+    <div class="mx-auto px-4">
+        <div class="flex justify-between h-16 items-center">
+            <div class="flex space-x-4 ">
+                <a class="py-2 text-gray-400 text-sm ">Main Menu</a>
+            </div>
+            <div>
+                <a routerLink="/login" class="py-2 text-gray-400 text-lg hover:text-white">Login</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="flex h-screen bg-gray-200">
+    <div class="flex-shrink-0 w-64 bg-gray-800">
+        <div class="flex flex-col h-full">
+            <div class="flex items-center justify-center h-16 bg-gray-900">
+                <span class="text-white font-semibold text-xl">CODEBOX</span>
+            </div>
+            <div class="overflow-y-auto">
+                <ul class="mt-4">
+                    <li>
+                        <a class="flex items-center py-2 px-6 bg-gray-900 text-gray-200">
+                            <svg class="h-5 w-5 fill-current text-gray-500" viewBox="0 0 24 24">
+                                <path d="M19 13H5v-2h14v2z"></path>
+                            </svg>
+                            <span class="mx-3">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="coding" class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200">
+                            <svg class="h-5 w-5 fill-current text-gray-500" viewBox="0 0 24 24">
+                                <path d="M19 13H5v-2h14v2z"></path>
+                            </svg>
+                            <span class="mx-3">Start Coding</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200">
+                            <svg class="h-5 w-5 fill-current text-gray-500" viewBox="0 0 24 24">
+                                <path d="M19 13H5v-2h14v2z"></path>
+                            </svg>
+                            <span class="mx-3">Search</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a routerLink="/login" class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200">
+                            <svg class="h-5 w-5 fill-current text-gray-500" viewBox="0 0 24 24">
+                                <path d="M19 13H5v-2h14v2z"></path>
+                            </svg>
+                            <span class="mx-3">Login</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 overflow-auto">
+        <!-- Content -->
+    </div>
+</div>

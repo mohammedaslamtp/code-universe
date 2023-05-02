@@ -10,6 +10,13 @@ import { AdminService } from './services/admin.service';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { AuthUserGuard } from './guard/auth-user.guard';
 import { SharedModule } from 'shared/shared.module';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
+import { effects } from './stores/effects';
+import { GuestUserGuard } from './guard/guest-user.guard';
+import { UserHomeGuard } from './guard/user-home.guard';
+import { loginReducer, registerReducer } from './stores/reducer';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,12 +29,12 @@ import { DashboardComponent } from './components/admin/dashboard/dashboard.compo
 import { UsersComponent } from './components/admin/users/users.component';
 import { HeaderComponent } from './components/admin/header/header.component';
 import { AdLoginComponent } from './components/admin/ad-login/ad-login.component';
-import { OtpComponent } from './components/user/signup/otp/otp.component';
-import { StoreModule } from '@ngrx/store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { EffectsModule } from '@ngrx/effects';
-import { effects } from './stores/effects';
-import { loginReducer, registerReducer } from './stores/reducer';
+import { OtpComponent } from './components/user/otp/otp.component';
+import { UserHeaderComponent } from './components/user/user-header/user-header.component';
+import { GuestHeaderComponent } from './components/user/guest-header/guest-header.component';
+import { NotFoundComponent } from './components/user/not-found/not-found.component';
+import { GuestCodingComponent } from './components/user/guest-coding/guest-coding.component';
+import { CodingGuard } from './guard/coding.guard';
 
 @NgModule({
   declarations: [
@@ -41,6 +48,10 @@ import { loginReducer, registerReducer } from './stores/reducer';
     HeaderComponent,
     AdLoginComponent,
     OtpComponent,
+    UserHeaderComponent,
+    GuestHeaderComponent,
+    NotFoundComponent,
+    GuestCodingComponent,
   ],
   imports: [
     BrowserModule,
@@ -66,6 +77,9 @@ import { loginReducer, registerReducer } from './stores/reducer';
       multi: true,
     },
     AuthUserGuard,
+    GuestUserGuard,
+    UserHomeGuard,
+    CodingGuard
   ],
   bootstrap: [AppComponent],
 })

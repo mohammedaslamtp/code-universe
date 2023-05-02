@@ -3,4 +3,5 @@ export interface LOGIN {
   password?: string | null;
   access?: boolean | null;
   accessToken?: string | null;
+  refreshToken?: string | null;
 }

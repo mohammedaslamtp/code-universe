@@ -13,7 +13,7 @@
                 <li class="d-flex align-items-center">
                     <a>Dashboard /</a><a class="breadcrumb-item active">&nbsp;Users</a>
                 </li>
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <form class="form-inline my-2 my-lg-0 mr-lg-2">
                         <div class="input-group">
                             <input class="form-control" type="text" placeholder="Search here...">
@@ -24,32 +24,47 @@
                             </span>
                         </div>
                     </form>
-                </li>
+                </li> -->
 
             </ol>
-
             <!-- users table -->
-            <table class="table table-hover">
+            <table class="table table-hover text-start">
                 <thead>
                     <tr>
                         <th scope="col">NO</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Phone</th>
+                        <th scope="col">followers</th>
+                        <th scope="col">following</th>
                         <th scope="col">is spam</th>
                         <th scope="col">is disabled</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>9090909090</td>
-                        <td>block</td>
-                        <td>active</td>
-                        <td>view</td>
+                    <tr *ngFor="let user of users$;let i = index">
+
+                        <th scope="row">{{i+1}}</th>
+                        <td>{{user.full_name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.phone}}</td>
+                        <td>{{user.followers.length}}</td>
+                        <td>{{user.following.length}}</td>
+                        <td>
+                            <p class="text-danger" *ngIf="user.is_spam">Spam</p>
+                            <p class="text-success" *ngIf="!user.is_spam">User</p>
+                        </td>
+                        <td>
+                            <p class="text-danger" *ngIf="user.is_disabled">Deactivated</p>
+                            <p class="text-success" *ngIf="!user.is_disabled">Active</p>
+                        </td>
+                        <td>
+                            <button *ngIf="!user.is_spam" (click)="blockUser(user._id,user.full_name)"
+                                class="btn btn-danger">Block</button>
+                            <button *ngIf="user.is_spam" (click)="unblockUser(user._id,user.full_name)"
+                                class="btn btn-success">Unblock</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormGroup, FormControl } from '@angular/forms';
+import { Store, select } from '@ngrx/store';
+import { ad_LoginData } from 'admin_store/actions/admin_login';
+import { adminAppState } from 'admin_store/admin_types/adminApp';
+import { adminLoginError } from 'admin_store/selectors';
 import { Observable } from 'rxjs';
-import { AdminService } from 'src/app/services/admin.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-ad-login',
@@ -10,8 +13,13 @@ import { AdminService } from 'src/app/services/admin.service';
   styleUrls: ['./ad-login.component.css'],
 })
 export class AdLoginComponent implements OnInit {
-  error: any;
-  constructor(private admin_api: AdminService) {}
+  error$?: Observable<string> | string;
+  constructor(private store: Store<adminAppState>) {
+    this.store.pipe(select(adminLoginError)).subscribe((err: any) => {
+      this.error$ = err;
+      console.log(err);
+    });
+  }
   ngOnInit(): void {}
 
   ad_login = new FormGroup({
@@ -21,8 +29,12 @@ export class AdLoginComponent implements OnInit {
 
   onSubmit() {
     console.log(this.ad_login.value);
-    this.admin_api.login(this.ad_login.value).subscribe((result) => {
-      console.log(result);
-    })
+    this.store.dispatch(ad_LoginData({ admin_login: this.ad_login.value }));
+  }
+
+  error_clear() {
+    this.error$ = '';
+    const msg: any = document.getElementById('alert-msg');
+    msg.style.visibility = 'hidden';
   }
 }
