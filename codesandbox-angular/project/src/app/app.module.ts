@@ -16,25 +16,30 @@ import { EffectsModule } from '@ngrx/effects';
 import { effects } from './stores/effects';
 import { GuestUserGuard } from './guard/guest-user.guard';
 import { UserHomeGuard } from './guard/user-home.guard';
+import { CodingGuard } from './guard/coding.guard';
+import { BlockUserGuard } from './guard/block-user.guard';
+
 import { loginReducer, registerReducer } from './stores/reducer';
 
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
 
+import { AppComponent } from './app.component';
 import { LoginComponent } from './components/user/login/login.component';
 import { SignupComponent } from './components/user/signup/signup.component';
 import { HomeComponent } from './components/user/home/home.component';
 import { GuestHomeComponent } from './components/user/guest-home/guest-home.component';
 import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
 import { UsersComponent } from './components/admin/users/users.component';
-import { HeaderComponent } from './components/admin/header/header.component';
 import { AdLoginComponent } from './components/admin/ad-login/ad-login.component';
 import { OtpComponent } from './components/user/otp/otp.component';
+import { HeaderComponent } from './components/admin/header/header.component';
 import { UserHeaderComponent } from './components/user/user-header/user-header.component';
-import { GuestHeaderComponent } from './components/user/guest-header/guest-header.component';
 import { NotFoundComponent } from './components/user/not-found/not-found.component';
 import { GuestCodingComponent } from './components/user/guest-coding/guest-coding.component';
-import { CodingGuard } from './guard/coding.guard';
+import { PopupLoginComponent } from './components/popup-login/popup-login.component';
+import { PopupSignupComponent } from './components/popup-signup/popup-signup.component';
+import { GenerateOtpComponent } from './components/user/generate-otp/generate-otp.component';
+import { OtpVeriyAlertComponent } from './components/user/otp-veriy-alert/otp-veriy-alert.component';
 
 @NgModule({
   declarations: [
@@ -44,14 +49,17 @@ import { CodingGuard } from './guard/coding.guard';
     HomeComponent,
     GuestHomeComponent,
     DashboardComponent,
-    UsersComponent,
     HeaderComponent,
+    UsersComponent,
     AdLoginComponent,
     OtpComponent,
     UserHeaderComponent,
-    GuestHeaderComponent,
     NotFoundComponent,
     GuestCodingComponent,
+    PopupLoginComponent,
+    PopupSignupComponent,
+    GenerateOtpComponent,
+    OtpVeriyAlertComponent,
   ],
   imports: [
     BrowserModule,
@@ -79,7 +87,8 @@ import { CodingGuard } from './guard/coding.guard';
     AuthUserGuard,
     GuestUserGuard,
     UserHomeGuard,
-    CodingGuard
+    CodingGuard,
+    BlockUserGuard
   ],
   bootstrap: [AppComponent],
 })

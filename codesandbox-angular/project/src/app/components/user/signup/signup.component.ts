@@ -6,7 +6,6 @@ import { Store, select } from '@ngrx/store';
 import { Registration } from '../../../stores/actions/signupAction';
 import { reg_errorSelector } from 'src/app/stores/selector';
 import { appStateInterface } from 'src/app/types/appState';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-signup',

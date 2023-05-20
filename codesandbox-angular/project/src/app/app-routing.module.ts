@@ -11,19 +11,28 @@ import { UserHomeGuard } from './guard/user-home.guard';
 import { NotFoundComponent } from './components/user/not-found/not-found.component';
 import { GuestCodingComponent } from './components/user/guest-coding/guest-coding.component';
 import { CodingGuard } from './guard/coding.guard';
+import { BlockUserGuard } from './guard/block-user.guard';
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent, canActivate: [UserHomeGuard] },
+  {
+    path: 'home',
+    component: HomeComponent,
+    canActivate: [UserHomeGuard, BlockUserGuard],
+  },
   { path: '', component: GuestHomeComponent, canActivate: [GuestUserGuard] },
   { path: 'login', component: LoginComponent, canActivate: [AuthUserGuard] },
   { path: 'signup', component: SignupComponent, canActivate: [AuthUserGuard] },
-  { path: 'user/otp', component: OtpComponent },
-  { path: 'coding', component: GuestCodingComponent, canDeactivate:[CodingGuard] },
+  { path: 'user/otp', component: OtpComponent, canActivate: [UserHomeGuard] },
+  {
+    path: 'coding',
+    component: GuestCodingComponent,
+    canDeactivate: [CodingGuard],
+  },
   { path: '404', component: NotFoundComponent },
   {
     path: 'admin',
     loadChildren: () =>
-    import('../../modules/admin/admin.module').then((m) => m.AdminModule),
+      import('../../modules/admin/admin.module').then((m) => m.AdminModule),
   },
   { path: '**', redirectTo: '/404' },
 ];

@@ -1,196 +1,176 @@
-<link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" />
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css"
+/>
 <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.62.3/lib/codemirror.css"> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/theme/ayu-mirage.css">
-
-
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/theme/ayu-mirage.css"
+/>
 
 <main class="h-screen">
-
-    <!-- Navbar -->
-    <nav class="bg-gray-800 w-full fixed z-10">
-        <div class="mx-auto px-4">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex space-x-4 items-center">
-                    <span style="background: none;" (click)="toggleEdit()"><i
-                            class="fa-solid fa-pen cursor-pointer"></i></span>
-                    <h5 class="m-0" id="editable" contenteditable="false">Untitled</h5>
-                </div>
-                <div>
-                    <button type="submit" (click)="codeRun();"
-                        class="text-gray-400 text-lg hover:text-white mr-8 py-2 px-4 rounded cursor-pointer"
-                        style="border: 1px dashed; background: none;">Run</button>
-                    <button *ngIf="!isLoggedIn" class="py-2 text-gray-400 text-lg hover:text-white mr-4"
-                        data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" type="button"
-                        style="background: none;"><i class="fa-regular fa-floppy-disk text-2xl"></i></button>
-                    <button *ngIf="isLoggedIn" class="py-2 text-gray-400 text-lg hover:text-white mr-4"
-                        type="submit" (click)="saveCode()" style="background: none;"><i
-                            class="fa-regular fa-floppy-disk text-2xl" (click)="saveCode()"></i></button>
-                    {{isLoggedIn}}
-                    <a routerLink="/" class="py-2 text-gray-400 text-lg hover:text-white ml-3"><i
-                            class="fa-solid fa-house"></i></a>
-                </div>
-            </div>
+  <!-- Navbar -->
+  <nav class="bg-gray-800 w-full fixed z-10">
+    <div class="mx-auto px-4">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex space-x-4 items-center text-white">
+          <span style="background: none" (click)="toggleEdit()"
+            ><i class="fa-solid fa-pen cursor-pointer"></i
+          ></span>
+          <h1 class="m-0" id="editable" contenteditable="false">Untitled</h1>
         </div>
-    </nav>
-
-
-    <!-- Main modal -->
-    <div id="authentication-modal" tabindex="-1" aria-hidden="true"
-        class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-        <div class="relative w-full max-w-md max-h-full">
-            <!-- Modal content -->
-            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                <button type="button"
-                    class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-                    data-modal-hide="authentication-modal">
-                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <span class="sr-only">Close modal</span>
-                </button>
-
-                <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
-                    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab"
-                        data-tabs-toggle="#myTabContent" role="tablist">
-                        <li class="mr-2" role="presentation">
-                            <button class="inline-block p-4 border-b-2 rounded-t-lg" id="login-tab"
-                                data-tabs-target="#login" type="button" role="tab" aria-controls="login"
-                                aria-selected="false" style="background: none;">login</button>
-                        </li>
-                        <li class="mr-2" role="presentation">
-                            <button style="background: none;"
-                                class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                                id="signup-tab" data-tabs-target="#signup" type="button" role="tab"
-                                aria-controls="signup" aria-selected="false">signup</button>
-                        </li>
-                    </ul>
-                </div>
-                <div id="myTabContent">
-                    <div class="hidden p-4 pt-0 rounded-lg bg-gray-50 dark:bg-gray-800" id="login" role="tabpanel"
-                        aria-labelledby="login-tab">
-                        <!-- login start -->
-                        <div class="px-6 py-6 pt-0 lg:px-8">
-                            <div *ngIf="alert_msg" class="p-2 flex justify-between rounded bg-red-200" id="alert">
-                                <strong>Somthing wrong!</strong>{{alert_msg}}
-                                <button class="close" (click)="close_alert()"><i class="fa-solid fa-xmark"></i></button>
-                            </div>
-                            <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white text-center">Sign in to
-                                codebox</h3>
-                            <form class="space-y-4" [formGroup]="login" (ngSubmit)="loginSubmit()">
-                                <div *ngIf="login.get('email')?.invalid && login.get('email')?.touched"
-                                    class="alert-msg"><small *ngIf="login.get('email')?.hasError('pattern')">invalid
-                                        email</small><small *ngIf="login.get('email')?.hasError('required')">Email is
-                                        required</small>
-                                </div>
-                                <div>
-                                    <label for="email"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        Email</label>
-                                    <input type="email" formControlName="email"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        placeholder="name@company.com" required
-                                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
-                                </div>
-
-                                <div *ngIf="login.get('password')?.invalid && login.get('password')?.touched"
-                                    class="alert-msg">
-                                    <small *ngIf="login.get('password')?.hasError('required')">Password is
-                                        required!</small>
-                                    <small *ngIf="login.get('password')?.hasError('minlength')">Minimum 8
-                                        letters!</small>
-                                </div>
-                                <div>
-                                    <label for="password"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        Password</label>
-                                    <input type="password" name="password" formControlName="password"
-                                        placeholder="••••••••"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        required minlength="8">
-                                </div>
-                                <button [disabled]="!login.valid"
-                                    [ngStyle]="{'cursor': !login.valid ? 'not-allowed' : 'pointer'}" type="submit"
-                                    class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                    style="background-color: #1f2937;">Login
-                                    to your account</button>
-                            </form>
-                        </div>
-                        <!-- login end -->
-                    </div>
-                    <div class="hidden p-4 pt-0 rounded-lg bg-gray-50 dark:bg-gray-800" id="signup" role="tabpanel"
-                        aria-labelledby="signup-tab">
-                        <!-- login start -->
-                        <div class="px-6 py-6 pt-0 lg:px-8">
-                            <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white text-center">Codebox
-                                signup</h3>
-                            <form class="space-y-4" action="#">
-                                <div>
-                                    <label for="email"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        Full Name</label>
-                                    <input type="text" name="FullName" id="full_name"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        placeholder="name@company.com" required>
-                                </div>
-                                <div>
-                                    <label for="email"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        Email</label>
-                                    <input type="email" name="email" id="email"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        placeholder="name@company.com" required>
-                                </div>
-                                <div>
-                                    <label for="password"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                        Password</label>
-                                    <input type="password" name="password" id="password" placeholder="••••••••"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        required>
-                                </div>
-                                <button type="submit"
-                                    class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                    style="background-color: #1f2937;">Create account</button>
-                            </form>
-                        </div>
-                        <!-- login end -->
-                    </div>
-                </div>
-            </div>
+        <div>
+          <button
+            type="submit"
+            (click)="codeRun()"
+            class="text-gray-400 text-lg hover:text-white mr-8 py-2 px-4 rounded cursor-pointer"
+            style="border: 1px dashed; background: none"
+          >
+            Run
+          </button>
+          <button
+            *ngIf="!isLoggedIn"
+            class="py-2 text-gray-400 text-lg hover:text-white mr-4"
+            type="button"
+            style="background: none"
+            (click)="popup(); setLogModTrue(false)"
+          >
+            <i class="fa-regular fa-floppy-disk text-2xl"></i>
+          </button>
+          <button
+            *ngIf="isLoggedIn"
+            class="py-2 text-gray-400 text-lg hover:text-white mr-4"
+            type="submit"
+            (click)="saveCode()"
+            style="background: none"
+          >
+            <i class="fa-regular fa-floppy-disk text-2xl"></i>
+          </button>
+          <a
+            *ngIf="isLoggedIn == true"
+            routerLink="/home"
+            class="py-2 text-gray-400 text-lg hover:text-white ml-3"
+            ><i class="fa-solid fa-house"></i
+          ></a>
+          <a
+            *ngIf="isLoggedIn == false"
+            routerLink="/"
+            class="py-2 text-gray-400 text-lg hover:text-white ml-3"
+            ><i class="fa-solid fa-house"></i
+          ></a>
         </div>
+      </div>
     </div>
+  </nav>
 
-    <div class="flex h-screen">
-        <section class="flex flex-col" id="data">
-            <div class="w-full" style="height:4.3em;"></div>
-            <div style="width: 23em;height: 2em;background-color: rgb(203, 203, 203);" id="html-header">
-                <p class="text-right mr-2">HTML</p>
-            </div>
-            <div class="code-sizing overflow-hidden" id="html">
-            </div>
-            <div style="width:23em;height: 2em;background-color: rgb(203, 203, 203);" id="css-header">
-                <p class="text-right mr-2">CSS</p>
-            </div>
-            <div class="code-sizing overflow-hidden" id="css">
-            </div>
-            <div style="width:23em;height: 2em;background-color: rgb(203, 203, 203);" id="js-header">
-                <p class="text-right mr-2">JS</p>
-            </div>
-            <div class="code-sizing overflow-hidden" id="js">
-            </div>
-        </section>
-        <div class="w-3 bg-gray-900" style="cursor: col-resize;" id="resizer"></div>
-        <div class="relative h-100" id="result-wrapper" style="margin-top:4.3rem;flex-grow: 1;">
-            <iframe #result class="absolute h-100" style="width: 100%; height: 100%;" src="{{resultUrl}}"></iframe>
-        </div>
-        <!-- <div *ngIf="isLoading" class="p-4">
+  <div class="flex h-screen">
+    <section class="flex flex-col" id="data">
+      <div class="w-full" style="height: 4em"></div>
+      <div
+        style="width: 23em; height: 2em; background-color: rgb(203, 203, 203)"
+        id="html-header"
+      >
+        <p class="text-right mr-2">HTML</p>
+      </div>
+      <div class="code-sizing overflow-hidden" id="html"></div>
+      <div
+        style="width: 23em; height: 2em; background-color: rgb(203, 203, 203)"
+        id="css-header"
+      >
+        <p class="text-right mr-2">CSS</p>
+      </div>
+      <div class="code-sizing overflow-hidden" id="css"></div>
+      <div
+        style="width: 23em; height: 2em; background-color: rgb(203, 203, 203)"
+        id="js-header"
+      >
+        <p class="text-right mr-2">JS</p>
+      </div>
+      <div class="code-sizing overflow-hidden" id="js"></div>
+    </section>
+    <div class="w-3 bg-gray-900" style="cursor: col-resize" id="resizer"></div>
+    <div
+      class="relative h-100"
+      id="result-wrapper"
+      style="margin-top: 4.3rem; flex-grow: 1"
+    >
+      <iframe
+        #result
+        class="h-full"
+        style="width: 100%; height: 100%; margin: 0; padding: 0"
+        src="{{ resultUrl }}"
+      ></iframe>
+    </div>
+    <!-- <div *ngIf="isLoading" class="p-4">
             <div class="h-7 w-7 border-t-4 border-b-4 rounded-full animate-spin" style="border-color: #243b55;"></div>
-
         </div> -->
-    </div>
-
+  </div>
 </main>
+
+<!-- popup login -->
+<section [ngStyle]="{ display: toggle ? 'block' : 'none' }">
+  <div
+    class="fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full flex justify-center"
+  >
+    <div class="relative w-80 max-w-md max-h-full">
+      <!-- Modal content -->
+      <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <button
+          type="button"
+          (click)="closeModal()"
+          class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
+          style="font-size: 2em; font-weight: 300"
+          title="close window"
+        >
+          &times;
+        </button>
+
+        <div
+          class="bg-red-100 border-t-4 border-red-700 rounded-b rounded text-teal-900 px-4 py-3 shadow-md"
+          role="alert"
+        >
+          <div class="flex">
+            <div class="py-1">
+              <svg
+                class="fill-current h-6 w-6 text-teal-500 mr-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="font-bold">You haven't logged in !</p>
+              <p class="text-sm">
+                You can't save without login, choose your option.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="h-28 flex justify-center items-center">
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4"
+            type="button"
+            (click)="loginPage(); setLogModTrue(true); closeModal()"
+          >
+            Login
+          </button>
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            type="button"
+            (click)="signupPage()"
+          >
+            Signup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div *ngIf="login">
+  <app-popup-login></app-popup-login>
+</div>

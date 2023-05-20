@@ -26,3 +26,7 @@ UPDATE src/styles.css (125 bytes) */
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+dialog [data-model]::backdrop {
+  background-color: rgba(0, 0, 0, 0.9); /* Increase opacity to 0.5 */
+}

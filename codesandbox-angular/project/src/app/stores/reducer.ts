@@ -2,6 +2,7 @@ import { createAction, createReducer, on } from '@ngrx/store';
 import { authState } from '../types/authState';
 import * as loginAction from './actions/loginAction';
 import * as regAction from './actions/signupAction';
+import * as otpAction from './actions/generateOtp';
 import { User } from '../components/user/signup/newUser';
 
 // initial state:
@@ -51,6 +52,28 @@ export const registerReducer = createReducer(
     ...state,
     isLoading: false,
     data: null,
-    error: action.error
+    error: action.error,
+  }))
+);
+
+// otp request reducer:
+export const otpRequestReducer = createReducer(
+  initialState,
+  on(otpAction.otpRequest, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  on(otpAction.otpSendingSuccess, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: state.data,
+    error: null,
+  })),
+  on(otpAction.otpSendingFailure, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: null,
+    error: action.error,
   }))
 );

@@ -13,7 +13,7 @@ import { UserService } from '../services/user.service';
   providedIn: 'root',
 })
 export class GuestUserGuard implements CanActivate {
-  constructor(private user_api: UserService,private route:Router) {}
+  constructor(private user_api: UserService, private route: Router) {}
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
@@ -22,8 +22,9 @@ export class GuestUserGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    if (this.user_api.loggedIn()) {
-      this.route.navigate(['/home'])
+    if (this.user_api.loggedIn() == true) {
+      console.log('guest guard : logged in');
+      this.route.navigate(['/home']);
       return false;
     } else {
       return true;
