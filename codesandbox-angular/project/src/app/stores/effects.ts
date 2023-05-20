@@ -1,13 +1,14 @@
-import { Actions } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
+import { Actions } from '@ngrx/effects';
+import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { createEffect, ofType } from '@ngrx/effects';
 import { mergeMap, map, catchError, of } from 'rxjs';
 import * as loginAction from './actions/loginAction';
-import { Router } from '@angular/router';
 import * as registerAction from './actions/signupAction';
-
-import * as codeRun from './actions/codeRun';
+import * as otpRequestAction from './actions/generateOtp';
+import Swal from 'sweetalert2';
+import { otpSentLoad } from '../components/user/otp/otp.component';
 
 @Injectable()
 export class effects {
@@ -29,11 +30,12 @@ export class effects {
                 _loginRes?.accessToken,
                 _loginRes?.refreshToken
               );
-            this.route.navigate(['/home']);
+            if (this.userService.isPopupLog() == false) {
+              this.route.navigate(['/home']);
+            }
             return loginAction.LoginSuccess({ login: _loginRes });
           }),
           catchError((err) => {
-            console.log('***', err);
             return of(loginAction.LoginFailure({ error: err.error }));
           })
         );
@@ -48,7 +50,6 @@ export class effects {
       mergeMap((res) => {
         return this.userService.signup(res.register).pipe(
           map((_registerRes) => {
-            console.log('register result:-- ', _registerRes);
             if (_registerRes.accessToken && _registerRes.refreshToken)
               this.userService.storeToken(
                 _registerRes?.accessToken,
@@ -58,7 +59,6 @@ export class effects {
             return registerAction.RegisterSuccess({ register: _registerRes });
           }),
           catchError((err) => {
-            console.log('register error***: ', err);
             return of(registerAction.RegisterFailure({ error: err.error }));
           })
         );
@@ -66,24 +66,58 @@ export class effects {
     )
   );
 
-  // code running:
-  runCode$ = createEffect(() =>
+  // otp effects:
+  getOtpResponse$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(codeRun.codeRunning),
+      ofType(otpRequestAction.otpRequest),
       mergeMap((res) => {
-        return this.userService
-          .runCode(res.html, res.css, res.js, res.title,res.random)
-          .pipe(
-            map((_codeRunRes) => {
-              console.log('code running result:-- ', _codeRunRes);
-              if (_codeRunRes) console.log(_codeRunRes);
-              return codeRun.codeRunningSuccess({ codeRun: _codeRunRes });
-            }),
-            catchError((err) => {
-              console.log('code running error***: ', err);
-              return of(codeRun.codeRunningFailure({ error: err.error }));
-            })
-          );
+        console.log('otp effect res: ', res);
+        otpSentLoad.next(true);
+        return this.userService.genreateOtp().pipe(
+          map((_otpRes) => {
+           
+            console.log('result otp generation: ', _otpRes);
+            setTimeout(() => {
+              if (_otpRes.isGenerated) {
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                  },
+                });
+                Toast.fire({
+                  icon: 'success',
+                  title: 'OTP send successfully',
+                });
+              }
+            }, 2500);
+            otpSentLoad.next(false);
+            return otpRequestAction.otpSendingSuccess({ otpData: _otpRes });
+          }),
+          catchError((err) => {
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 5000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+              },
+            });
+            Toast.fire({
+              icon: 'error',
+              title: `Please check your connection? and retry`,
+            });
+            return of(otpRequestAction.otpSendingFailure({ error: err.error }));
+          })
+        );
       })
     )
   );

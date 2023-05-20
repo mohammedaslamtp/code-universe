@@ -1,0 +1,59 @@
+import { Component, OnInit } from '@angular/core';
+import { coding } from 'src/app/services/shared-values.service';
+import { UserService } from 'src/app/services/user.service';
+import { generateOtpToggle } from '../generate-otp/generate-otp.component';
+
+@Component({
+  selector: 'app-otp-veriy-alert',
+  templateUrl: './otp-veriy-alert.component.html',
+  styleUrls: ['./otp-veriy-alert.component.css'],
+})
+
+export class OtpVeriyAlertComponent implements OnInit {
+  constructor(private userService: UserService) {}
+
+  otpInterval: any;
+  ngOnInit(): void {
+    if (this.userService.loggedIn()) {
+      // this.userService.check();
+      // alert will come here..
+      this.userService.getUserData().subscribe((res) => {
+        if (this.userService.loggedIn()) {
+          if (res.otp_verified == false) {
+            this.otpInterval = setInterval(() => {
+              coding.subscribe((value) => {
+                if (value) {
+                  console.log('coding session verified')
+                  let alert: any = document.getElementById('otp_alert');
+                  if(alert)alert.style.display = 'none';
+                } else {
+                  let alert: any = document.getElementById('otp_alert');
+                  if(alert)alert.style.display = 'block';
+                }
+              });
+            }, 5000);
+          } else {
+            this.userService.otpAlertClose();
+            console.log('otp verified');
+            clearInterval(this.otpInterval);
+          }
+        } else {
+          this.userService.otpAlertClose();
+          clearInterval(this.otpInterval);
+        }
+      });
+    } else {
+      clearInterval(this.otpInterval);
+      this.userService.otpAlertClose();
+    }
+  }
+
+  toggleGenrateOtp(){
+    generateOtpToggle.next(true)
+  }
+
+  closeAlert() {
+    let alert: any = document.getElementById('otp_alert');
+    if(alert)alert.style.display = 'none';
+  }
+}

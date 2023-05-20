@@ -60,11 +60,7 @@
             <a routerLink="/login"><small style="color:white;float: right;">Login</small></a>
             <div class="submit">
                 <button type="submit" [disabled]="!signup.valid"
-                    [ngStyle]="{'cursor': !signup.valid ? 'not-allowed' : 'pointer'}">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                [ngStyle]="{'cursor': !signup.valid ? 'not-allowed' : 'pointer'}">
                     Submit
                 </button>
             </div>

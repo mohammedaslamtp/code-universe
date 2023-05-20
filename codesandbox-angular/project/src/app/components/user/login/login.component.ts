@@ -7,6 +7,7 @@ import { appStateInterface } from 'src/app/types/appState';
 import { LoginData } from '../../../stores/actions/loginAction';
 import { log_dataSelector, log_errorSelector } from 'src/app/stores/selector';
 import { LOGIN } from './userLogin';
+import { popupLog } from 'src/app/services/shared-values.service';
 
 @Component({
   selector: 'app-login',
@@ -39,6 +40,7 @@ export class LoginComponent implements OnInit {
   });
 
   onSubmit() {
+    popupLog.next(false);
     this.store.dispatch(LoginData({ login: this.login.value }));
   }
 

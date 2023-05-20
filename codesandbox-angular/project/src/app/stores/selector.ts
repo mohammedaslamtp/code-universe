@@ -26,3 +26,16 @@ export const reg_dataSelector = createSelector(selectFeature, (state) => {
 export const reg_errorSelector = createSelector(selectFeature, (state) => {
   return state?.error;
 });
+
+// otp generating selector:
+selectFeature = (state: appStateInterface) => state.otp;
+export const otp_loadingSelector = createSelector(
+  selectFeature,
+  (state) => state?.isLoading
+);
+export const otp_dataSelector = createSelector(selectFeature, (state) => {
+  return state?.data;
+});
+export const otp_errorSelector = createSelector(selectFeature, (state) => {
+  return state?.error;
+});

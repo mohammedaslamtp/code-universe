@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { User } from '../components/user/signup/newUser';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LOGIN } from '../components/user/login/userLogin';
 import { Router } from '@angular/router';
+import { coding, popupLog } from './shared-values.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -20,8 +21,8 @@ export class UserService {
 
   constructor(private http: HttpClient, private route: Router) {}
 
+  // create a new account
   signup(newUser: User): Observable<User> {
-    console.log('new user: ', newUser);
     const url = `${this.api_url}/signup`;
     setTimeout(() => {
       this.tokenRefresh();
@@ -29,27 +30,65 @@ export class UserService {
     return this.http.post(url, newUser, httpOptions);
   }
 
+  // login to account
   login(login: LOGIN): Observable<LOGIN> {
-    console.log('login data: ', login);
     const url = `${this.api_url}/login`;
     setTimeout(() => {
-      console.log('timeout working...');
       this.tokenRefresh();
     }, 3000);
     return this.http.post(url, login, httpOptions);
   }
 
+  // fetch user data
+  getUserData(): Observable<any> {
+    const url = `${this.api_url}/getUserData`;
+    return this.http.get(url, httpOptions);
+  }
+
+  // generate OTP for verification
+  genreateOtp(): Observable<any> {
+    const url = `${this.api_url}/generateOtp`;
+    return this.http.get(url, httpOptions);
+  }
+
+  // verify your OTP
+  verifyOtp(otp: number | string): Observable<any> {
+    const url = `${this.api_url}/verifyOtp`;
+    return this.http.post(url, { otp: otp }, httpOptions);
+  }
+
+  // otp verification alert close
+  otpAlertClose() {
+    let alert: any = document.getElementById('otp_alert');
+    alert.style.display = 'none';
+  }
+
+  // refreshing token
   tokenRefresh() {
     this.intervalId = setInterval(() => {
       this.generateToken(localStorage.getItem('refresh_token')).subscribe(
         (token) => {
-          console.log('new token', token);
           if (token) {
+            console.log('refresh token: ', token);
             localStorage.setItem('token', token);
+            console.log('refresh after set: ', localStorage.getItem('token'));
           }
         }
       );
-    }, 900000);
+    }, 600000);
+  }
+
+  initialUse() {
+    console.log('initial token changing ');
+    this.generateToken(localStorage.getItem('refresh_token')).subscribe(
+      (token) => {
+        if (token) {
+          console.log('token: ', token);
+          localStorage.setItem('token', token);
+          console.log('after set: ', localStorage.getItem('token'));
+        }
+      }
+    );
   }
 
   check() {
@@ -64,29 +103,34 @@ export class UserService {
     clearInterval(this.intervalId);
   }
 
+  // generate new access token
   generateToken(token: string | null): Observable<any> {
-    console.log('generate token is working...');
     const url = `${this.api_url}/generateToken?token=${token}`;
     return this.http.get(url, httpOptions);
   }
 
+  // token storing in local storage
   storeToken(token: string, refreshToken: string) {
     localStorage.setItem('token', token);
     localStorage.setItem('refresh_token', refreshToken);
   }
 
+  // to cheking logged in or not
   loggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
 
+  // logout user
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('refresh_token');
-    console.log('clearing interval...');
+    coding.next(false);
+    this.otpAlertClose();
     clearInterval(this.intervalId);
     this.route.navigate(['/']);
   }
 
+  // running code
   runCode(
     html: any,
     css: any,
@@ -110,10 +154,6 @@ export class UserService {
     if (js == undefined || js == null || typeof js != 'string') {
       js = '';
     }
-
-    console.log('html: ', html);
-    console.log('css: ', css);
-    console.log('js: ', js);
     const url = `${this.api_url}/saveCode`;
     return this.http.put(
       url,
@@ -129,12 +169,42 @@ export class UserService {
     );
   }
 
+  isPopupLog(): boolean {
+    let res = false;
+    popupLog.subscribe((value) => {
+      res = value;
+    });
+    return res;
+  }
+
   // reload iframe
   reloadIframe(id: string): Observable<any> {
-    console.log('id ', id);
     const url = `${this.api_url}/codeRun?id=${id}`;
     return this.http.get(url, {
       responseType: 'text',
     });
+  }
+
+  // save code
+  saveCode(
+    title: any,
+    html: any,
+    css: any,
+    js: any,
+    random: string
+  ): Observable<any> {
+    const url = `${this.api_url}/storeCode`;
+    this.runCode;
+    return this.http.put(
+      url,
+      { title: title, html: html, css: css, js: js, random: random },
+      httpOptions
+    );
+  }
+
+  // remove unwanted codes from database
+  removeCode(random: string): Observable<any> {
+    const url = `${this.api_url}/removeCode?random=${random}`;
+    return this.http.delete(url, httpOptions);
   }
 }

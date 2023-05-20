@@ -1,6 +1,3 @@
-
-
-
 section {
   margin: 0;
   padding: 0;
@@ -19,12 +16,11 @@ section {
   color: #58151c;
   border: #f1aeb5;
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   background: #f8d7da;
   border-radius: 7px;
   width: 25%;
   padding: 1em;
-  text-align: center;
 }
 
 .close {
@@ -45,8 +41,9 @@ section {
   border-radius: 10px;
 }
 
-.login-box h2 {
+.login-box h1 {
   margin: 0 0 30px;
+  font-size: 2em;
   padding: 0;
   color: #fff;
   text-align: center;
@@ -116,21 +113,42 @@ section {
     0 0 100px #03e9f4;
 }
 
+.submit {
+  display: flex;
+  justify-content: space-between;
+}
+
+.timeout {
+  color: rgb(155, 1, 1);
+  text-align: center;
+}
+
+.loading {
+  width: 1em;
+  height: 1em;
+  color: darkred;
+  border: 2px solid;
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 50%;
+  margin-top: 3px;
+}
+/* 
 .login-box button span {
   position: absolute;
   display: block;
-}
+} */
 
-.login-box button span:nth-child(1) {
+/* .login-box button span:nth-child(1) {
   top: 0;
   left: -100%;
   width: 100%;
   height: 2px;
   background: linear-gradient(90deg, transparent, #03e9f4);
   animation: btn-anim1 1s linear infinite;
-}
+} */
 
-@keyframes btn-anim1 {
+/* /* @keyframes btn-anim1 {
   0% {
     left: -100%;
   }
@@ -138,9 +156,9 @@ section {
   100% {
     left: 100%;
   }
-}
-
-.login-box button span:nth-child(2) {
+} 
+*/
+/*.login-box button span:nth-child(2) {
   top: -100%;
   right: 0;
   width: 2px;
@@ -198,4 +216,4 @@ section {
   100% {
     bottom: 100%;
   }
-}
+} */

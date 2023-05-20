@@ -5,7 +5,7 @@ import {
   ViewChild,
   isDevMode,
   HostListener,
-  OnChanges,
+  OnDestroy,
 } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import {
@@ -13,21 +13,16 @@ import {
   css_editor,
   js_editor,
 } from 'src/assets/code_line_number';
-import { FormGroup, FormControl } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Observable, map } from 'rxjs';
-import { log_dataSelector, log_errorSelector } from 'src/app/stores/selector';
-import { Store, select } from '@ngrx/store';
-import { appStateInterface } from 'src/app/types/appState';
-import { LoginData } from 'src/app/stores/actions/loginAction';
-import { LOGIN } from '../login/userLogin';
+import Swal from 'sweetalert2';
+
+import { coding, logModToggle } from 'src/app/services/shared-values.service';
 
 @Component({
   selector: 'app-guest-coding',
   templateUrl: './guest-coding.component.html',
   styleUrls: ['./guest-coding.component.css'],
 })
-export class GuestCodingComponent implements OnInit, OnChanges {
+export class GuestCodingComponent implements OnInit, OnDestroy {
   // confirmation for reaload
   @HostListener('window:beforeunload', ['$event'])
   confirmExit(event: BeforeUnloadEvent): void {
@@ -40,42 +35,21 @@ export class GuestCodingComponent implements OnInit, OnChanges {
   html?: string | null;
   css?: string | null;
   js?: string | null;
+  intervalId: any;
   isLoading: boolean = true;
-  isLoggedIn: boolean = false;
-  data$?: Observable<LOGIN>;
-  safeUrl;
+  isLoggedIn!: boolean;
+  toggle: boolean = false;
   resultUrl =
     'http://' + (isDevMode() ? 'localhost:3000' : 'domain') + '/codeRun';
-  constructor(
-    private userService: UserService,
-    private sanitizer: DomSanitizer,
-    private store: Store<appStateInterface>
-  ) {
-    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-      this.resultUrl
-    );
-    this.alert_msg = this.store.pipe(
-      select(log_errorSelector),
-      map((doc: any) => (this.alert_msg = doc))
-    );
-    this.alert_msg?.subscribe((doc) => doc);
-
-    this.data$ = this.store.pipe(
-      select(log_dataSelector),
-      map((doc: any) => (this.data$ = doc))
-    );
-    this.data$?.subscribe((doc: LOGIN) => doc);
-    
-
-    if (this.data$) {
-      console.log('constructor: : ', this.isLoggedIn);
-      this.isLoggedIn = true;
-    } else {
-      this.isLoggedIn = false;
-    }
+  setLogModTrue(bool: boolean) {
+    logModToggle.next(bool);
   }
 
+  constructor(private userService: UserService) {}
+
   ngOnInit(): void {
+    coding.next(true);
+    window.addEventListener('message', this.receiveMessage.bind(this));
     html_editor('html', (data: string | null) => {
       this.html = data;
     });
@@ -86,6 +60,12 @@ export class GuestCodingComponent implements OnInit, OnChanges {
       this.js = data;
     });
 
+    if (localStorage.getItem('token')) {
+      this.isLoggedIn = true;
+    } else {
+      this.isLoggedIn = false;
+    }
+
     // resizing style
     const dataDiv: any = document.getElementById('data');
     const inner1Div: any = document.getElementById('html-header');
@@ -95,8 +75,7 @@ export class GuestCodingComponent implements OnInit, OnChanges {
     const inner5Div: any = document.getElementById('js-header');
     const inner6Div: any = document.getElementById('js');
     const resizerDiv: any = document.getElementById('resizer');
-    const resultWrapperDiv: any = document.getElementById('result-wrapper');
-    const resultIFrame: any = document.getElementById('result');
+
     let isResizing: boolean = false;
     let lastDownX = 0;
     const minWidth = 150;
@@ -108,7 +87,6 @@ export class GuestCodingComponent implements OnInit, OnChanges {
     });
     document.addEventListener('mousemove', (e: any) => {
       if (!isResizing) return;
-      const offsetRight = dataDiv.getBoundingClientRect().right - e.clientX;
       const width = dataDiv.offsetWidth;
       const newWidth = width - (lastDownX - e.clientX);
       if (newWidth > minWidth && newWidth < maxWidth) {
@@ -119,26 +97,39 @@ export class GuestCodingComponent implements OnInit, OnChanges {
         inner4Div.style.width = newWidth + 'px';
         inner5Div.style.width = newWidth + 'px';
         inner6Div.style.width = newWidth + 'px';
-
-        resultWrapperDiv.style.width = `calc(100% - ${newWidth}px)`;
-        resultIFrame.style.width = `100%`;
       }
       lastDownX = e.clientX;
     });
     document.addEventListener('mouseup', (e: any) => {
       isResizing = false;
     });
+
+    // checking user logged in or not regularly and updating
+    this.intervalId = setInterval(() => {
+      if (localStorage.getItem('token')) {
+        this.isLoggedIn = true;
+      } else {
+        this.isLoggedIn = false;
+      }
+    }, 1000);
+    this.codeRun();
+  }
+
+  // javascirpt errors for console
+  receiveMessage(event: MessageEvent) {
+    if (event.data.type == 'framError') {
+      console.log('Received data from iframe:', event.data.message);
+    }
   }
 
   // code run
-  random!: string | null;
+  random!: string;
   codeRun() {
     const title = document.getElementById('editable');
     this.userService
       .runCode(this.html, this.css, this.js, title?.innerText, this.random)
       .subscribe(
         (data) => {
-          // console.log('after code saved ', data);
           this.random = data.template_id;
           this.userService.reloadIframe(data.template_id).subscribe(
             (response: any) => {
@@ -180,33 +171,87 @@ export class GuestCodingComponent implements OnInit, OnChanges {
   }
 
   // save code
+  saved: boolean = false;
   saveCode() {
-    // code here..
-    console.log('save code...');
+    // running code before saving
+    const title = document.getElementById('editable');
+    this.userService
+      .runCode(this.html, this.css, this.js, title?.innerText, this.random)
+      .subscribe(
+        (data) => {
+          this.random = data.template_id;
+          // saving code after end running code
+          this.userService
+            .saveCode(
+              title?.innerText,
+              this.html,
+              this.css,
+              this.js,
+              this.random
+            )
+            .subscribe(
+              (res) => {
+                this.saved = true;
+                if (res.saved) {
+                  const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.addEventListener('mouseenter', Swal.stopTimer);
+                      toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    },
+                  });
+                  Toast.fire({
+                    icon: 'success',
+                    title: 'Saved in successfully',
+                  });
+                }
+              },
+              (err) => {
+                console.log('backend error: ', err);
+                if (!err.saved) {
+                  this.saved = false;
+                }
+              }
+            );
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
   }
 
-  alert_msg?: Observable<string> | string;
-  // login data
-  login = new FormGroup({
-    email: new FormControl(null),
-    password: new FormControl(null),
-  });
-
-  // login user
-  loginSubmit() {
-    console.log('login form: ', this.login.value);
-    this.store.dispatch(LoginData({ login: this.login.value }));
+  // for guestUser only
+  popup() {
+    if (this.userService.loggedIn()) {
+      this.isLoggedIn = true;
+    } else {
+      this.isLoggedIn = false;
+      this.toggle = true;
+    }
   }
 
-  // closing alert msg
-  close_alert() {
-    let alert: any = document.getElementById('alert');
-    this.alert_msg = '';
-    alert.style.visibility = 'hidden';
+  closeModal = () => (this.toggle = false);
+
+  login: boolean = false;
+  signup: boolean = false;
+
+  loginPage = () => (this.login = true);
+
+  signupPage() {
+    this.signup = true;
   }
 
-  ngOnChanges() {
-    console.log('onchanges working...');
-    console.log('user data: ',this.data$)
+  ngOnDestroy(): void {
+    clearInterval(this.intervalId);
+    coding.next(false);
+    if ((!this.isLoggedIn && this.random) || !this.saved) {
+      this.userService.removeCode(this.random).subscribe((data) => {
+        console.log('response for remove code: ', data);
+      });
+    }
   }
 }
