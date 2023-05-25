@@ -1,0 +1,51 @@
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { SocketService } from 'src/app/services/socket.service';
+
+@Component({
+  selector: 'app-live-coding',
+  templateUrl: './live-coding.component.html',
+  styleUrls: ['./live-coding.component.css'],
+})
+export class LiveCodingComponent implements OnInit, OnDestroy {
+  constructor(private _socketService: SocketService) {
+    this._socketService.connect();
+  }
+
+  ngOnInit() {
+    this._socketService.emit('event', 'Hello, world!');
+    this._socketService.on('response', (data: any) => {
+      console.log(data);
+    });
+  }
+
+  // resizing iframe
+  // resizeIframe(resizeHandle: any) {
+  //   let startX = 0;
+  //   let startWidth = resizeHandle.parentNode.clientWidth;
+
+  //   const resize = function (e: any) {
+  //     console.log('Resizing working');
+  //     var width = startWidth + e.clientX - startX;
+  //     resizeHandle.parentNode.style.width = width + 'px';
+  //   };
+  //   const stopResize = function () {
+  //     console.log('stopResize working');
+  //     window.removeEventListener('mousemove', resize);
+  //     window.removeEventListener('mouseup', stopResize);
+  //     window.removeEventListener('mouseout', stopResize);
+  //   };
+  //   resizeHandle.addEventListener(
+  //     'mousedown',
+  //     function (e: any) {
+  //       startX = e.clientX;
+  //       window.addEventListener('mousemove', resize);
+  //       window.addEventListener('mouseup', stopResize);
+  //     }.bind(this)
+  //   );
+  // }
+  //
+
+  ngOnDestroy(): void {
+    this._socketService.disconnect();
+  }
+}

@@ -12,6 +12,7 @@ import { NotFoundComponent } from './components/user/not-found/not-found.compone
 import { GuestCodingComponent } from './components/user/guest-coding/guest-coding.component';
 import { CodingGuard } from './guard/coding.guard';
 import { BlockUserGuard } from './guard/block-user.guard';
+import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,11 @@ const routes: Routes = [
     path: 'coding',
     component: GuestCodingComponent,
     canDeactivate: [CodingGuard],
+  },
+  {
+    path: 'liveCoding',
+    component: LiveCodingComponent,
+    canActivate: [UserHomeGuard],
   },
   { path: '404', component: NotFoundComponent },
   {
