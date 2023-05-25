@@ -21,9 +21,8 @@ export class AppComponent implements OnInit {
   ) {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        if(this.userService.loggedIn()){
+        if (this.userService.loggedIn()) {
           this.userService.initialUse();
-          console.log('Route changed:', event.url);
         }
       }
     });

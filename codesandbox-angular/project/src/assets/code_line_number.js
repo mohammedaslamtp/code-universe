@@ -4,7 +4,7 @@ export const html_editor = (id, cb) => {
     lineNumbers: true,
     value: `<!-- write your HTML code here.. -->`,
     theme: "ayu-mirage",
-    mode: "none",
+    mode: "text/html",
     autocorrect: true,
     autocapitalize: true,
   });

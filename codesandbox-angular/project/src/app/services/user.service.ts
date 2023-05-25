@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { User } from '../components/user/signup/newUser';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LOGIN } from '../components/user/login/userLogin';
 import { Router } from '@angular/router';
 import { coding, popupLog } from './shared-values.service';
+// import { apiUrl } from '../../environments/environment.development';
+// import { domain } from '../../environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({

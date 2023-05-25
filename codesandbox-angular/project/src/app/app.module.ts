@@ -7,8 +7,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { UserService } from './services/user.service';
 import { AdminService } from './services/admin.service';
+import { SocketService } from './services/socket.service';
+
 import { AuthInterceptor } from './services/auth.interceptor';
 import { AuthUserGuard } from './guard/auth-user.guard';
+
 import { SharedModule } from 'shared/shared.module';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -40,6 +43,8 @@ import { PopupLoginComponent } from './components/popup-login/popup-login.compon
 import { PopupSignupComponent } from './components/popup-signup/popup-signup.component';
 import { GenerateOtpComponent } from './components/user/generate-otp/generate-otp.component';
 import { OtpVeriyAlertComponent } from './components/user/otp-veriy-alert/otp-veriy-alert.component';
+import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
+
 
 @NgModule({
   declarations: [
@@ -60,6 +65,7 @@ import { OtpVeriyAlertComponent } from './components/user/otp-veriy-alert/otp-ve
     PopupSignupComponent,
     GenerateOtpComponent,
     OtpVeriyAlertComponent,
+    LiveCodingComponent,
   ],
   imports: [
     BrowserModule,
@@ -79,6 +85,7 @@ import { OtpVeriyAlertComponent } from './components/user/otp-veriy-alert/otp-ve
   providers: [
     UserService,
     AdminService,
+    SocketService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -88,7 +95,7 @@ import { OtpVeriyAlertComponent } from './components/user/otp-veriy-alert/otp-ve
     GuestUserGuard,
     UserHomeGuard,
     CodingGuard,
-    BlockUserGuard
+    BlockUserGuard,
   ],
   bootstrap: [AppComponent],
 })
