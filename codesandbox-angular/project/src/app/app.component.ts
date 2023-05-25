@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { appStateInterface } from './types/appState';
 import { NavigationEnd, Router } from '@angular/router';
 
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -26,6 +28,8 @@ export class AppComponent implements OnInit {
         }
       }
     });
+
+    
 
     // this.userService.tokenRefresh()
     // this.userService.check();
