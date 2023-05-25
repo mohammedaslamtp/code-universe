@@ -1,0 +1,39 @@
+.html {
+  width: 23em;
+  height: 5em;
+  background: gray;
+  flex: 1;
+}
+.css {
+  width: 23em;
+  height: 5em;
+  background: darkblue;
+  flex: 1;
+}
+.js {
+  width: 23em;
+  height: 5em;
+  background: darkgreen;
+  flex: 1;
+}
+
+.CodeMirror-scroll {
+  background: gray;
+}
+
+.CodeMirror {
+  height: 16em !important;
+}
+
+.CodeMirror-linenumber {
+  background-color: black;
+}
+
+/* code box's style */
+.code-sizing {
+  background-position: center;
+  background-size: 75vh;
+  /* border-radius: 3vw;
+  display: inline-block;
+  cursor: pointer; */
+}
