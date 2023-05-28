@@ -13,7 +13,9 @@ import { GuestCodingComponent } from './components/user/guest-coding/guest-codin
 import { CodingGuard } from './guard/coding.guard';
 import { BlockUserGuard } from './guard/block-user.guard';
 import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
+
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
+
 
 const routes: Routes = [
   {
@@ -35,11 +37,13 @@ const routes: Routes = [
     component: LiveCodingComponent,
     canActivate: [UserHomeGuard],
   },
+
   {
     path: 'userProfile',
     component: UserProfileComponent,
     canActivate: [UserHomeGuard],
   },
+
   { path: '404', component: NotFoundComponent },
   {
     path: 'admin',

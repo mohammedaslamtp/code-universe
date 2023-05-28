@@ -52,6 +52,7 @@ import { MainService } from './services/main.service';
 // quill api
 // import { QuillModule } from 'ngx-quill';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -74,6 +75,8 @@ import { MainService } from './services/main.service';
     LiveCodingComponent,
     UserProfileComponent,
     SearchResultComponent,
+=======
+
   ],
   imports: [
     BrowserModule,
@@ -95,6 +98,7 @@ import { MainService } from './services/main.service';
     UserService,
     AdminService,
     SocketService,
+
     MainService,
     {
       provide: HTTP_INTERCEPTORS,

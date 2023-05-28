@@ -4,6 +4,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import QuillType from 'quill';
 import * as Delta from 'quill-delta';
 
+
 @Component({
   selector: 'app-live-coding',
   templateUrl: './live-coding.component.html',
@@ -60,6 +61,7 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
       ['link', 'image'], // Customize the link and image options
     ],
   };
+
 
   ngOnDestroy(): void {
     this._socketService.disconnect();
