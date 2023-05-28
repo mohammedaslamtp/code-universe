@@ -14,6 +14,9 @@ import { CodingGuard } from './guard/coding.guard';
 import { BlockUserGuard } from './guard/block-user.guard';
 import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
 
+import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
+
+
 const routes: Routes = [
   {
     path: 'home',
@@ -34,6 +37,13 @@ const routes: Routes = [
     component: LiveCodingComponent,
     canActivate: [UserHomeGuard],
   },
+
+  {
+    path: 'userProfile',
+    component: UserProfileComponent,
+    canActivate: [UserHomeGuard],
+  },
+
   { path: '404', component: NotFoundComponent },
   {
     path: 'admin',
@@ -44,7 +54,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes)],  
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

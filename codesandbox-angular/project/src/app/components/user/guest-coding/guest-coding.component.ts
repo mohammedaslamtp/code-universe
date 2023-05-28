@@ -3,7 +3,6 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
-  isDevMode,
   HostListener,
   OnDestroy,
 } from '@angular/core';
@@ -39,8 +38,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   isLoggedIn!: boolean;
   toggle: boolean = false;
-  resultUrl =
-    'http://' + (isDevMode() ? 'localhost:3000' : 'domain') + '/codeRun';
   setLogModTrue(bool: boolean) {
     logModToggle.next(bool);
   }
@@ -137,6 +134,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
               const blob = new Blob([response], { type: 'text/html' });
               const url = URL.createObjectURL(blob);
               this.iFrame.nativeElement.src = url;
+              console.log('iframe: ',this.iFrame)
             },
             (err) => {
               console.log(err);
