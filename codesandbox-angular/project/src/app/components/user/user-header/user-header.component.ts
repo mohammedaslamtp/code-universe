@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import Swal from 'sweetalert2';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-user-header',
@@ -9,7 +10,7 @@ import Swal from 'sweetalert2';
 })
 export class UserHeaderComponent implements OnInit {
   authenticated: boolean = false;
-  constructor(private userService: UserService) {
+  constructor(private _userService: UserService) {
     this.is_guest();
   }
 
@@ -18,7 +19,22 @@ export class UserHeaderComponent implements OnInit {
   }
 
   is_guest() {
-    this.authenticated = this.userService.loggedIn();
+    this.authenticated = this._userService.loggedIn();
+  }
+
+  search = new FormGroup({
+    q: new FormControl(null),
+  });
+
+  searching() {
+    if (this.search.value.q) {
+      let searchData: string = this.search.value.q;
+      searchData = searchData.replace(/\s+/g, ' ');
+      if (searchData != ' ') {
+        if (searchData[0] == ' ') searchData = searchData.slice(1);
+        console.log(searchData);
+      }
+    }
   }
 
   logout() {
@@ -33,7 +49,7 @@ export class UserHeaderComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.authenticated = false;
-        this.userService.logout();
+        this._userService.logout();
       }
     });
   }

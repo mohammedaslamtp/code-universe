@@ -5,6 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LOGIN } from '../components/user/login/userLogin';
 import { Router } from '@angular/router';
 import { coding, popupLog } from './shared-values.service';
+import { Templates } from '../types/template_types';
+import { USerData } from '../types/UserData';
 // import { apiUrl } from '../../environments/environment.development';
 // import { domain } from '../../environments/environment';
 
@@ -42,9 +44,9 @@ export class UserService {
   }
 
   // fetch user data
-  getUserData(): Observable<any> {
+  getUserData(): Observable<USerData> {
     const url = `${this.api_url}/getUserData`;
-    return this.http.get(url, httpOptions);
+    return this.http.get<USerData>(url, httpOptions);
   }
 
   // generate OTP for verification
@@ -81,7 +83,6 @@ export class UserService {
   }
 
   initialUse() {
-    console.log('initial token changing ');
     this.generateToken(localStorage.getItem('refresh_token')).subscribe(
       (token) => {
         if (token) {
@@ -120,6 +121,12 @@ export class UserService {
   // to cheking logged in or not
   loggedIn(): boolean {
     return !!localStorage.getItem('token');
+  }
+
+  // get template for home page:
+  getTemplates(): Observable<Templates> {
+    const url = `${this.api_url}/getTemplates`;
+    return this.http.get<Templates>(url, httpOptions);
   }
 
   // logout user

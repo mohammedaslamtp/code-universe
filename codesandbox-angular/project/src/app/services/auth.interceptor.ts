@@ -17,7 +17,6 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    console.log('intercept working...');
     if (req.url.includes('/admin')) {
       req = req.clone({
         setHeaders: {

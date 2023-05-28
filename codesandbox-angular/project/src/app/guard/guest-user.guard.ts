@@ -23,6 +23,7 @@ export class GuestUserGuard implements CanActivate {
     | boolean
     | UrlTree {
     if (this.user_api.loggedIn() == true) {
+      console.log('guest guard : logged in');
       this.route.navigate(['/home']);
       return false;
     } else {

@@ -15,15 +15,12 @@ export class OtpVeriyAlertComponent implements OnInit {
   otpInterval: any;
   ngOnInit(): void {
     if (this.userService.loggedIn()) {
-      // this.userService.check();
-      // alert will come here..
       this.userService.getUserData().subscribe((res) => {
         if (this.userService.loggedIn()) {
           if (res.otp_verified == false) {
             this.otpInterval = setInterval(() => {
               coding.subscribe((value) => {
                 if (value) {
-                  console.log('coding session verified')
                   let alert: any = document.getElementById('otp_alert');
                   if(alert)alert.style.display = 'none';
                 } else {
@@ -34,7 +31,6 @@ export class OtpVeriyAlertComponent implements OnInit {
             }, 5000);
           } else {
             this.userService.otpAlertClose();
-            console.log('otp verified');
             clearInterval(this.otpInterval);
           }
         } else {

@@ -1,5 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SocketService } from 'src/app/services/socket.service';
+// import { QuillEditorComponent } from 'ngx-quill';
+import QuillType from 'quill';
+import * as Delta from 'quill-delta';
 
 @Component({
   selector: 'app-live-coding',
@@ -44,6 +47,19 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
   //   );
   // }
   //
+
+  content?: string;
+  quillConfig = {
+    // Add your custom options here
+    placeholder: 'Enter text...',
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'], // Customize the toolbar buttons
+      [{ header: 1 }, { header: 2 }], // Customize the header options
+      [{ list: 'ordered' }, { list: 'bullet' }], // Customize the list options
+      [{ indent: '-1' }, { indent: '+1' }], // Customize the indentation options
+      ['link', 'image'], // Customize the link and image options
+    ],
+  };
 
   ngOnDestroy(): void {
     this._socketService.disconnect();

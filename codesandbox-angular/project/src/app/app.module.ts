@@ -44,10 +44,13 @@ import { PopupSignupComponent } from './components/popup-signup/popup-signup.com
 import { GenerateOtpComponent } from './components/user/generate-otp/generate-otp.component';
 import { OtpVeriyAlertComponent } from './components/user/otp-veriy-alert/otp-veriy-alert.component';
 import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
+import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
+import { SearchResultComponent } from './components/search-result/search-result.component';
+import { MainService } from './services/main.service';
 
 
-
-
+// quill api
+// import { QuillModule } from 'ngx-quill';
 
 @NgModule({
   declarations: [
@@ -69,6 +72,8 @@ import { LiveCodingComponent } from './components/user/live-coding/live-coding.c
     GenerateOtpComponent,
     OtpVeriyAlertComponent,
     LiveCodingComponent,
+    UserProfileComponent,
+    SearchResultComponent,
   ],
   imports: [
     BrowserModule,
@@ -78,6 +83,7 @@ import { LiveCodingComponent } from './components/user/live-coding/live-coding.c
     HttpClientModule,
     BrowserAnimationsModule,
     SharedModule,
+    // QuillModule.forRoot(),
     StoreModule.forRoot({}, {}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     EffectsModule.forRoot([]),
@@ -89,6 +95,7 @@ import { LiveCodingComponent } from './components/user/live-coding/live-coding.c
     UserService,
     AdminService,
     SocketService,
+    MainService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
