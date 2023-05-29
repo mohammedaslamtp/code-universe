@@ -2,6 +2,7 @@ const express = require("express");
 const route = express.Router();
 const authUser = require("../controller/auth_controller");
 const code = require("../controller/code_controller");
+const mainController = require("../controller/main_controller");
 const auth_token = require("../middlewares/token");
 
 route
@@ -14,6 +15,7 @@ route
   .get("/codeRun", auth_token.authenticate, code.runCode)
   .put("/saveCode", auth_token.authenticate, code.saveCodeData)
   .put("/storeCode", auth_token.authenticate, code.storeTemplate)
-  .delete("/removeCode", code.removeCode);
-
+  .delete("/removeCode", code.removeCode)
+  .get("/getTemplates", auth_token.authenticate, mainController.getTemplates)
+  .get("/searchCode",mainController.searching)
 module.exports = route;
