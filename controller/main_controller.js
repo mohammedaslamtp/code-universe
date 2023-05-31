@@ -45,12 +45,12 @@ module.exports = {
                 ],
               },
             ],
-          },  
+          },
         },
       ])
         .then((data) => {
           console.log(data);
-          res.status(200).json(data)
+          res.status(200).json(data);
         })
         .catch((err) => {
           console.log(err);
@@ -60,4 +60,3 @@ module.exports = {
     }
   },
 };
-
