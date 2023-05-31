@@ -14,6 +14,7 @@ import { CodingGuard } from './guard/coding.guard';
 import { BlockUserGuard } from './guard/block-user.guard';
 import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
+import { SearchResultComponent } from './components/search-result/search-result.component';
 
 const routes: Routes = [
   {
@@ -39,6 +40,10 @@ const routes: Routes = [
     path: 'userProfile',
     component: UserProfileComponent,
     canActivate: [UserHomeGuard],
+  },
+  {
+    path: 'search/:q',
+    component: SearchResultComponent,
   },
   { path: '404', component: NotFoundComponent },
   {

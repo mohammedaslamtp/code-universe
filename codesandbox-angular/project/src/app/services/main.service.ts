@@ -1,5 +1,7 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Template } from '../types/template_types';
+import { Observable } from 'rxjs';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -11,10 +13,11 @@ const httpOptions = {
 })
 export class MainService {
   private _apiUrl = 'http://localhost:3000';
-  constructor() {}
+  constructor(private _http: HttpClient) {}
 
-  // signup(newUser: User): Observable<User> {
-  //   const url = `${this.api_url}/signup`;
-  //   return this.http.post(url, newUser, httpOptions);
-  // }
+  // searching codes
+  search(q: string): Observable<Template> {
+    const url = `${this._apiUrl}/searchCode?q=${q}`;
+    return this._http.get<Template>(url, httpOptions);
+  }
 }

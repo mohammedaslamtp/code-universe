@@ -22,7 +22,7 @@ import { UserHomeGuard } from './guard/user-home.guard';
 import { CodingGuard } from './guard/coding.guard';
 import { BlockUserGuard } from './guard/block-user.guard';
 
-import { loginReducer, registerReducer } from './stores/reducer';
+import { loginReducer, registerReducer, searchReducer } from './stores/reducer';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -45,7 +45,7 @@ import { GenerateOtpComponent } from './components/user/generate-otp/generate-ot
 import { OtpVeriyAlertComponent } from './components/user/otp-veriy-alert/otp-veriy-alert.component';
 import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
-import { SearchResultComponent } from './components/search-result/search-result.component';
+import { SearchResultComponent, searchQuery } from './components/search-result/search-result.component';
 import { MainService } from './services/main.service';
 
 
@@ -90,6 +90,7 @@ import { MainService } from './services/main.service';
     EffectsModule.forFeature(effects),
     StoreModule.forFeature('loginData', loginReducer),
     StoreModule.forFeature('registerData', registerReducer),
+    StoreModule.forFeature('search', searchReducer),
   ],
   providers: [
     UserService,

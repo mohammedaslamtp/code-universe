@@ -1,5 +1,6 @@
 import { createSelector } from '@ngrx/store';
 import { appStateInterface } from '../types/appState';
+import { Templates } from '../types/template_types';
 
 // login selector:
 export let selectFeature = (state: appStateInterface) => state.loginData;
@@ -37,5 +38,18 @@ export const otp_dataSelector = createSelector(selectFeature, (state) => {
   return state?.data;
 });
 export const otp_errorSelector = createSelector(selectFeature, (state) => {
+  return state?.error;
+});
+
+// search result selector:
+selectFeature = (state: appStateInterface) => state.search;
+export const search_loadingSelector = createSelector(
+  selectFeature,
+  (state) => state?.isLoading
+);
+export const search_resultSelector = createSelector(selectFeature, (state) => {
+  return state?.data;
+});
+export const search_errorSelector = createSelector(selectFeature, (state) => {
   return state?.error;
 });

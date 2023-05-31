@@ -1,17 +1,51 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import Swal from 'sweetalert2';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { searchQuery } from '../../search-result/search-result.component';
+import { Subscription } from 'rxjs';
+import { SearchQuery } from 'src/app/stores/actions/search';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-user-header',
   templateUrl: './user-header.component.html',
   styleUrls: ['./user-header.component.css'],
 })
-export class UserHeaderComponent implements OnInit {
+export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   authenticated: boolean = false;
-  constructor(private _userService: UserService) {
+  searchQuery: string = '';
+  searchQ: Subscription;
+
+  search = new FormGroup({
+    q: new FormControl(null),
+  });
+
+  @ViewChild('searchQ', { static: false }) query!: ElementRef<HTMLInputElement>;
+  constructor(
+    private _userService: UserService,
+    private _router: Router,
+    private _store: Store
+  ) {
     this.is_guest();
+    this.searchQ = searchQuery.subscribe((q: any) => {
+      this.searchQuery = q;
+    });
+  }
+
+  ngAfterViewInit() {
+    if (this.query && this.query.nativeElement) {
+      this.query.nativeElement.value = this.searchQuery;
+    }
   }
 
   ngOnInit(): void {
@@ -22,17 +56,21 @@ export class UserHeaderComponent implements OnInit {
     this.authenticated = this._userService.loggedIn();
   }
 
-  search = new FormGroup({
-    q: new FormControl(null),
-  });
+  @HostListener('document:keyup', ['$event'])
+  onDocumentKeyUp(event: KeyboardEvent) {
+    if (event.key == '/') {
+      this.query.nativeElement.focus();
+    }
+  }
 
   searching() {
     if (this.search.value.q) {
       let searchData: string = this.search.value.q;
-      searchData = searchData.replace(/\s+/g, ' ');
-      if (searchData != ' ') {
-        if (searchData[0] == ' ') searchData = searchData.slice(1);
-        console.log(searchData);
+      searchData = searchData.trim();
+      if (searchData != '') {
+        searchQuery.next(searchData);
+        // this._store.dispatch(SearchQuery({ q: searchData }));
+        this._router.navigate(['/search', searchData]);
       }
     }
   }
@@ -52,5 +90,9 @@ export class UserHeaderComponent implements OnInit {
         this._userService.logout();
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.searchQ.unsubscribe();
   }
 }

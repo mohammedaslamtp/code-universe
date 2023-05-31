@@ -3,6 +3,7 @@ import { authState } from '../types/authState';
 import * as loginAction from './actions/loginAction';
 import * as regAction from './actions/signupAction';
 import * as otpAction from './actions/generateOtp';
+import * as searchAction from './actions/search';
 import { User } from '../components/user/signup/newUser';
 
 // initial state:
@@ -67,10 +68,33 @@ export const otpRequestReducer = createReducer(
   on(otpAction.otpSendingSuccess, (state, action) => ({
     ...state,
     isLoading: false,
-    data: state.data,
+    data: action.otpData,
     error: null,
   })),
   on(otpAction.otpSendingFailure, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: null,
+    error: action.error,
+  }))
+);
+
+
+// search templates
+export const searchReducer = createReducer(
+  initialState,
+  on(searchAction.SearchQuery, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  on(searchAction.SearchSuccess, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: action.search,
+    error: null,
+  })),
+  on(searchAction.SearchFailure, (state, action) => ({
     ...state,
     isLoading: false,
     data: null,

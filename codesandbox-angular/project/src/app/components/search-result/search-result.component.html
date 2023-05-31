@@ -1,7 +1,203 @@
-<link
-  href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.17/dist/tailwind.min.css"
-  rel="stylesheet"
-/>
-<main class="absolute w-full h-screen" style="">
+<main class="absolute w-full h-screen">
   <app-user-header></app-user-header>
+  <div
+    class="ml-64 tab-container sm:w-7/12 md:w-10/12 lg:w-10/12 xs:w-6/12 absolute p-9"
+    style="margin-top: 5em"
+  >
+    <h1 class="text-4xl font-bold">
+      Search result '<span class="text-green-700">{{ searchQ }}</span
+      >'
+    </h1>
+    <div class="active p-4 mt-8">
+      <section class="cards" [ngClass]="searchLoading$ ? 'loading_align' : ''">
+        <!-- for loading -->
+        <div
+          class="w-64 h-16 rounded-lg flex items-center justify-center"
+          *ngIf="searchLoading$"
+        >
+          <div class="loader loader--style6" title="loading">
+            <svg
+              version="1.1"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              x="0px"
+              y="0px"
+              width="24px"
+              height="30px"
+              viewBox="0 0 24 30"
+              style="enable-background: new 0 0 50 50"
+              xml:space="preserve"
+            >
+              <rect x="0" y="13" width="4" height="5" fill="#333">
+                <animate
+                  attributeName="height"
+                  attributeType="XML"
+                  values="5;21;5"
+                  begin="0s"
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  attributeType="XML"
+                  values="13; 5; 13"
+                  begin="0s"
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+              <rect x="10" y="13" width="4" height="5" fill="#333">
+                <animate
+                  attributeName="height"
+                  attributeType="XML"
+                  values="5;21;5"
+                  begin="0.15s"
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  attributeType="XML"
+                  values="13; 5; 13"
+                  begin="0.15s"
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+              <rect x="20" y="13" width="4" height="5" fill="#333">
+                <animate
+                  attributeName="height"
+                  attributeType="XML"
+                  values="5;21;5"
+                  begin="0.3s"
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="y"
+                  attributeType="XML"
+                  values="13; 5; 13"
+                  begin="0.3s"
+                  dur="0.6s"
+                  repeatCount="indefinite"
+                />
+              </rect>
+            </svg>
+          </div>
+        </div>
+        <!-- /for loading -->
+
+        <!-- data not found -->
+        <div
+          class="w-full h-16 rounded-lg flex items-center justify-center"
+          style="background-color: #1f2937"
+          *ngIf="empty"
+        >
+          <h2 class="text-2xl text-white">No Data found for "{{ searchQ }}"</h2>
+        </div>
+        <!-- /data not found -->
+
+        <!-- <article
+          class="card animate-pulse border border-zinc-300"
+          style="height: 21em; width: 20em; margin-bottom: 2.6em"
+        >
+          <iframe
+            src="http://null//null"
+            width="320"
+            height="200"
+            frameborder="0"
+          ></iframe>
+          <div class="card__info-hover"></div>
+
+         
+          <div class="card__info mt-5">
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+              style="background-color: rgb(212, 211, 211); margin-bottom: 1em"
+            ></h3>
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full mt-4"
+              style="background-color: rgb(212, 211, 211); margin-bottom: 1.5em"
+            ></h3>
+
+            <div class="flex justify-around mt-3 items-center">
+              <div class="action">
+                <small class="flex"
+                  ><i class="fa-solid fa-heart" style="color: rgb(0, 0, 0)"></i
+                  >&nbsp;...</small
+                >
+              </div>
+              <div class="action">
+                <small class="flex"
+                  ><i
+                    class="fa-solid fa-comment"
+                    style="color: rgb(0, 0, 0)"
+                  ></i
+                  >&nbsp;...</small
+                >
+              </div>
+              <div class="action">
+                <small class="flex"
+                  ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i
+                  >&nbsp;...</small
+                >
+              </div>
+            </div>
+          </div>
+        </article> -->
+
+        <!-- real card here -->
+        <article
+          class="card border border-zinc-300"
+          style="height: 22em; width: 20em; margin-bottom: 2.6em"
+          *ngFor="let el of searchResult$"
+        >
+          <iframe
+            width="320"
+            height="200"
+            frameborder="0"
+            class="www"
+            id="{{el.template_id}}"
+          ></iframe>
+          <div class="card__info-hover"></div>
+          <div class="card__info mt-5">
+            <h3 class="card__title flex-1 space-y-6 py-1 p-3">
+              {{ el.title }}
+            </h3>
+            <span class="card__by">
+              <a class="card__author" title="{{ el.userData[0].full_name }}">{{
+                el.userData[0].full_name
+              }}</a></span
+            >
+            <div class="flex justify-around my-3 items-center">
+              <div class="action">
+                <small class="flex"
+                  ><i class="fa-solid fa-heart" style="color: rgb(0, 0, 0)"></i
+                  >&nbsp;...</small
+                >
+              </div>
+              <div class="action">
+                <small class="flex"
+                  ><i
+                    class="fa-solid fa-comment"
+                    style="color: rgb(0, 0, 0)"
+                  ></i
+                  >&nbsp;...</small
+                >
+              </div>
+              <div class="action">
+                <small class="flex"
+                  ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i
+                  >&nbsp;...</small
+                >
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- /real card here -->
+      </section>
+    </div>
+  </div>
 </main>

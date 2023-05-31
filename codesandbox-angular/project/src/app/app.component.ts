@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UserService } from './services/user.service';
 import { Store } from '@ngrx/store';
 import { OTP } from './types/OTP';
@@ -26,29 +26,21 @@ export class AppComponent implements OnInit {
         }
       }
     });
-
-    // this.userService.tokenRefresh()
-    // this.userService.check();
-    // if (this.userService.loggedIn()) {
-    //   // error
-    //   this.error$ = this.store.pipe(
-    //     select(otp_errorSelector),
-    //     map((err: any) => (this.error$ = err))
-    //   );
-    //   this.error$?.subscribe((err: any) => {
-    //     console.log('otp generate error', err);
-    //     return err;
-    //   });
-
-    //   this.data$ = this.store.pipe(
-    //     select(otp_dataSelector),
-    //     map((doc: any) => (this.data$ = doc))
-    //   );
-    //   this.data$?.subscribe((doc: OTP) => doc);
-    // }
   }
 
   ngOnInit(): void {
     this.userService.check();
+  }
+
+  @ViewChild('searchQ') searchField!: ElementRef;
+  focusSearch(event: KeyboardEvent) {
+    console.log('app event working...');
+    let key = event.key;
+    // const searchFeild = document.querySelector('.searching_field');
+    if (key == '/') {
+      console.log('/ clicked');
+      // searchFeild?.focus();
+      this.searchField.nativeElement.focus();
+    }
   }
 }

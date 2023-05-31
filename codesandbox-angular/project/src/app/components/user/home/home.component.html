@@ -16,16 +16,13 @@
     <div class="active p-2">
       <section class="cards" *ngIf="templates">
         <!-- Trending card -->
-
         <!-- real data -->
-
         <article
           *ngFor="let el of templates"
-          class="card"
+          class="card border border-zinc-200"
           style="
             height: 17.3em;
             width: 20em;
-            border: 1px solid rgb(210, 222, 233);
             margin-bottom: 1.5em;
           "
         >
@@ -90,7 +87,7 @@
         <!-- /Trending card -->
       </section>
       <section class="cards" *ngIf="!templates">
-        <!-- for shadow -->
+        <!-- for loading -->
         <article class="card animate-pulse" style="height: 21em; width: 20em">
           <iframe
             src="http://127.0.0.1:5500/zzzzzz/"

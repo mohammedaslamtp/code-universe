@@ -7,4 +7,5 @@ export interface appStateInterface {
   registerData: authState;
   code: Code;
   otp:authState;
+  search:authState;
 }

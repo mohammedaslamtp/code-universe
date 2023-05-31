@@ -1,4 +1,3 @@
-
 // types of templates collection:
 export type Templates = Template[];
 export interface Template {
@@ -35,3 +34,19 @@ export interface UserOtp {}
 export interface PinnedItem {}
 export interface Follower {}
 export interface Following {}
+
+
+export type Codes = Code[];
+export interface Code {
+  _id: string;
+  title: string;
+  template_id: string;
+  html: string;
+  css: string;
+  js: string;
+  isGuest: boolean;
+  isPrivate: boolean;
+  __v: number;
+  user: string;
+  userData: User[];
+}

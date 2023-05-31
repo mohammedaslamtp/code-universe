@@ -10,7 +10,7 @@ import { DashboardComponent } from 'src/app/components/admin/dashboard/dashboard
 import { RouterModule, Routes } from '@angular/router';
 import { AuthAdminGuard } from 'src/app/admin_guard/auth-admin.guard';
 import { VerifyAdminGuard } from 'src/app/admin_guard/verify-admin.guard';
-import { NotFoundComponent } from 'src/app/components/user/not-found/not-found.component';
+// import { NotFoundComponent } from 'src/app/components/user/not-found/not-found.component';
 
 const admin_routes: Routes = [
   { path: 'login', component: AdLoginComponent, canActivate: [AuthAdminGuard] },

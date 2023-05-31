@@ -7,31 +7,36 @@ import { mergeMap, map, catchError, of } from 'rxjs';
 import * as loginAction from './actions/loginAction';
 import * as registerAction from './actions/signupAction';
 import * as otpRequestAction from './actions/generateOtp';
+import * as searchAction from './actions/search';
 import Swal from 'sweetalert2';
 import { otpSentLoad } from '../components/user/otp/otp.component';
+import { MainService } from '../services/main.service';
+import { Codes, Template, Templates } from '../types/template_types';
 
 @Injectable()
 export class effects {
   constructor(
-    private actions$: Actions,
-    private userService: UserService,
-    private route: Router
+    private _actions$: Actions,
+    private _userService: UserService,
+    private _mainService: MainService,
+    private _route: Router
   ) {}
 
   // login effect:
+
   getLoginData$ = createEffect(() =>
-    this.actions$.pipe(
+    this._actions$.pipe(
       ofType(loginAction.LoginData),
       mergeMap((res) => {
-        return this.userService.login(res.login).pipe(
+        return this._userService.login(res.login).pipe(
           map((_loginRes) => {
             if (_loginRes.accessToken && _loginRes?.refreshToken)
-              this.userService.storeToken(
+              this._userService.storeToken(
                 _loginRes?.accessToken,
                 _loginRes?.refreshToken
               );
-            if (this.userService.isPopupLog() == false) {
-              this.route.navigate(['/home']);
+            if (this._userService.isPopupLog() == false) {
+              this._route.navigate(['/home']);
             }
             return loginAction.LoginSuccess({ login: _loginRes });
           }),
@@ -45,17 +50,17 @@ export class effects {
 
   // signup effects:
   getRegisterData$ = createEffect(() =>
-    this.actions$.pipe(
+    this._actions$.pipe(
       ofType(registerAction.Registration),
       mergeMap((res) => {
-        return this.userService.signup(res.register).pipe(
+        return this._userService.signup(res.register).pipe(
           map((_registerRes) => {
             if (_registerRes.accessToken && _registerRes.refreshToken)
-              this.userService.storeToken(
+              this._userService.storeToken(
                 _registerRes?.accessToken,
                 _registerRes?.refreshToken
               );
-            this.route.navigate(['/home']);
+            this._route.navigate(['/home']);
             return registerAction.RegisterSuccess({ register: _registerRes });
           }),
           catchError((err) => {
@@ -68,14 +73,13 @@ export class effects {
 
   // otp effects:
   getOtpResponse$ = createEffect(() =>
-    this.actions$.pipe(
+    this._actions$.pipe(
       ofType(otpRequestAction.otpRequest),
       mergeMap((res) => {
         console.log('otp effect res: ', res);
         otpSentLoad.next(true);
-        return this.userService.genreateOtp().pipe(
+        return this._userService.genreateOtp().pipe(
           map((_otpRes) => {
-           
             console.log('result otp generation: ', _otpRes);
             setTimeout(() => {
               if (_otpRes.isGenerated) {
@@ -116,6 +120,24 @@ export class effects {
               title: `Please check your connection? and retry`,
             });
             return of(otpRequestAction.otpSendingFailure({ error: err.error }));
+          })
+        );
+      })
+    )
+  );
+
+  // search effects:
+  getSearchResult$ = createEffect(() =>
+    this._actions$.pipe(
+      ofType(searchAction.SearchQuery),
+      mergeMap((res) => {
+        return this._mainService.search(res.q).pipe(
+          map((searchResult:any) => {
+            console.log(searchResult);
+            return searchAction.SearchSuccess({ search: searchResult });
+          }),
+          catchError((err) => {
+            return of(searchAction.SearchFailure({ error: err.error }));
           })
         );
       })

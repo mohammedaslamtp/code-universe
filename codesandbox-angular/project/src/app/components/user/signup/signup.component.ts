@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 
 import { Observable } from 'rxjs';
@@ -12,17 +12,13 @@ import { appStateInterface } from 'src/app/types/appState';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
 })
-  
-export class SignupComponent implements OnInit {
+export class SignupComponent {
   error_reason$?: Observable<string> | string;
   constructor(private store: Store<appStateInterface>) {
     this.store.pipe(select(reg_errorSelector)).subscribe((err: any) => {
       this.error_reason$ = err;
-      console.log(err);
     });
   }
-
-  ngOnInit(): void {}
 
   signup = new FormGroup({
     fullName: new FormControl(null),
@@ -33,7 +29,6 @@ export class SignupComponent implements OnInit {
   });
 
   onSubmit() {
-    console.log('signup data: ', this.signup.value);
     this.store.dispatch(Registration({ register: this.signup.value }));
   }
 
