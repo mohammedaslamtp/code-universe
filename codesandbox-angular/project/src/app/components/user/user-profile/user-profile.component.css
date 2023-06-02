@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.banner {
+    background-image: url('https://rare-gallery.com/uploads/posts/981617-hexagon-minimalism-geometry-simple-background-gray.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: start;
+    position: relative;
+}
+
+
+.img-radius {
+    border-radius: 4px;
+}
+
+.flex-01 {
+    flex: 1;
+}

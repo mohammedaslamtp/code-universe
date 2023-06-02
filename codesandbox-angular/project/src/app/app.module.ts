@@ -47,6 +47,9 @@ import { LiveCodingComponent } from './components/user/live-coding/live-coding.c
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { SearchResultComponent, searchQuery } from './components/search-result/search-result.component';
 import { MainService } from './services/main.service';
+import { FollowersComponent } from './components/user/followers/followers.component';
+import { FollowingComponent } from './components/user/following/following.component';
+import { AllCodesComponent } from './components/user/all-codes/all-codes.component';
 
 
 // quill api
@@ -74,6 +77,9 @@ import { MainService } from './services/main.service';
     LiveCodingComponent,
     UserProfileComponent,
     SearchResultComponent,
+    FollowersComponent,
+    FollowingComponent,
+    AllCodesComponent,
   ],
   imports: [
     BrowserModule,

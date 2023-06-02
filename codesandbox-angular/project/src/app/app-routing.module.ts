@@ -15,6 +15,9 @@ import { BlockUserGuard } from './guard/block-user.guard';
 import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { SearchResultComponent } from './components/search-result/search-result.component';
+import { FollowersComponent } from './components/user/followers/followers.component';
+import { FollowingComponent } from './components/user/following/following.component';
+import { AllCodesComponent } from './components/user/all-codes/all-codes.component';
 
 const routes: Routes = [
   {
@@ -40,6 +43,12 @@ const routes: Routes = [
     path: 'userProfile',
     component: UserProfileComponent,
     canActivate: [UserHomeGuard],
+    children: [
+      { path: '',component:AllCodesComponent },
+      { path: 'allCodes',component:AllCodesComponent },
+      { path: 'followers', component: FollowersComponent },
+      { path: 'following', component: FollowingComponent },
+    ],
   },
   {
     path: 'search/:q',
@@ -55,7 +64,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],  
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
