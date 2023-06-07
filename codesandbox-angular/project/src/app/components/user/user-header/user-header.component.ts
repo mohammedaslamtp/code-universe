@@ -13,8 +13,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { searchQuery } from '../../search-result/search-result.component';
 import { Subscription } from 'rxjs';
-import { SearchQuery } from 'src/app/stores/actions/search';
-import { Store } from '@ngrx/store';
+import { USerData } from 'src/app/types/UserData';
 
 @Component({
   selector: 'app-user-header',
@@ -25,21 +24,25 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   authenticated: boolean = false;
   searchQuery: string = '';
   searchQ: Subscription;
+  subs_userData?: Subscription;
+  userName!: string;
 
   search = new FormGroup({
     q: new FormControl(null),
   });
 
   @ViewChild('searchQ', { static: false }) query!: ElementRef<HTMLInputElement>;
-  constructor(
-    private _userService: UserService,
-    private _router: Router,
-    private _store: Store
-  ) {
+  constructor(private _userService: UserService, private _router: Router) {
     this.is_guest();
+
     this.searchQ = searchQuery.subscribe((q: any) => {
       this.searchQuery = q;
     });
+    if (this.authenticated) {
+      this.subs_userData = this._userService.getUserData().subscribe((data) => {
+        this.userName = data.full_name;
+      });
+    }
   }
 
   ngAfterViewInit() {
@@ -69,10 +72,13 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       searchData = searchData.trim();
       if (searchData != '') {
         searchQuery.next(searchData);
-        // this._store.dispatch(SearchQuery({ q: searchData }));
         this._router.navigate(['/search', searchData]);
       }
     }
+  }
+
+  profile() {
+    this._router.navigate(['/userProfile', this.userName]);
   }
 
   logout() {
@@ -94,5 +100,6 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.searchQ.unsubscribe();
+    this.subs_userData?.unsubscribe();
   }
 }

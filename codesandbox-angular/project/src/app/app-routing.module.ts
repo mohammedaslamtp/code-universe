@@ -18,6 +18,9 @@ import { SearchResultComponent } from './components/search-result/search-result.
 import { FollowersComponent } from './components/user/followers/followers.component';
 import { FollowingComponent } from './components/user/following/following.component';
 import { AllCodesComponent } from './components/user/all-codes/all-codes.component';
+import { PrivateCodesComponent } from './components/user/private-codes/private-codes.component';
+import { PublicCodesComponent } from './components/user/public-codes/public-codes.component';
+import { AccountOwnerGuard } from './guard/account-owner.guard';
 
 const routes: Routes = [
   {
@@ -40,14 +43,22 @@ const routes: Routes = [
     canActivate: [UserHomeGuard],
   },
   {
-    path: 'userProfile',
+    path: 'userProfile/:username',
     component: UserProfileComponent,
     canActivate: [UserHomeGuard],
     children: [
-      { path: '',component:AllCodesComponent },
-      { path: 'allCodes',component:AllCodesComponent },
-      { path: 'followers', component: FollowersComponent },
-      { path: 'following', component: FollowingComponent },
+      { path: '', component: AllCodesComponent },
+      { path: 'allCodes/:id', component: AllCodesComponent },
+      { path: 'followers/:id', component: FollowersComponent },
+      { path: 'following/:id', component: FollowingComponent },
+      {
+        path: 'private/:id',
+        component: PrivateCodesComponent,
+      },
+      {
+        path: 'public/:id',
+        component: PublicCodesComponent,
+      },
     ],
   },
   {

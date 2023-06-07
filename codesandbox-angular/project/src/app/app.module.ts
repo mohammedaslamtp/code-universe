@@ -50,6 +50,9 @@ import { MainService } from './services/main.service';
 import { FollowersComponent } from './components/user/followers/followers.component';
 import { FollowingComponent } from './components/user/following/following.component';
 import { AllCodesComponent } from './components/user/all-codes/all-codes.component';
+import { PublicCodesComponent } from './components/user/public-codes/public-codes.component';
+import { PrivateCodesComponent } from './components/user/private-codes/private-codes.component';
+import { AccountOwnerGuard } from './guard/account-owner.guard';
 
 
 // quill api
@@ -80,6 +83,8 @@ import { AllCodesComponent } from './components/user/all-codes/all-codes.compone
     FollowersComponent,
     FollowingComponent,
     AllCodesComponent,
+    PublicCodesComponent,
+    PrivateCodesComponent,
   ],
   imports: [
     BrowserModule,
@@ -100,7 +105,7 @@ import { AllCodesComponent } from './components/user/all-codes/all-codes.compone
   ],
   providers: [
     UserService,
-    AdminService,
+    
     SocketService,
     MainService,
     {
@@ -113,6 +118,7 @@ import { AllCodesComponent } from './components/user/all-codes/all-codes.compone
     UserHomeGuard,
     CodingGuard,
     BlockUserGuard,
+    AccountOwnerGuard
   ],
   bootstrap: [AppComponent],
 })

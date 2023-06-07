@@ -24,10 +24,16 @@
         <h1 class="text-2xl font-bold text-center">user name</h1>
       </div>
       <div class="flex flex-01 mr-2 justify-end">
-        <p class="mr-5 cursor-pointer" routerLink="/userProfile/followers">
+        <p
+          class="mr-5 cursor-pointer"
+          routerLink="/userProfile/{{ userName }}/followers/{{ userId }}"
+        >
           followers: 123
         </p>
-        <p class="cursor-pointer" routerLink="/userProfile/following">
+        <p
+          class="cursor-pointer"
+          routerLink="/userProfile/{{ userName }}/following/{{ userId }}"
+        >
           following: 123
         </p>
       </div>
@@ -49,7 +55,7 @@
         <ul class="flex font-medium bg-gray-50 flex-row bg-transparent">
           <li>
             <a
-              routerLink="/userProfile/allCodes"
+              [routerLink]="'/userProfile/' + userName + '/allCodes/' + userId"
               class="block py-2 pl-3 pr-3 text-white rounded hover:text-gray-400"
               aria-current="page"
               >All Codes</a
@@ -57,21 +63,21 @@
           </li>
           <li>
             <a
-              routerLink="/userProfile/allCodes"
+              [routerLink]="'/userProfile/' + userName + '/popular/' + userId"
               class="block py-2 pl-3 pr-3 text-white rounded hover:text-gray-400"
               >Popular</a
             >
           </li>
-          <li>
+          <li *ngIf="isAccountOwner">
             <a
-              routerLink="/userProfile/allCodes"
+              [routerLink]="'/userProfile/' + userName + '/public/' + userId"
               class="block py-2 pl-3 pr-3 text-white rounded hover:text-gray-400"
               >Public</a
             >
           </li>
-          <li>
+          <li *ngIf="isAccountOwner">
             <a
-              routerLink="/userProfile/allCodes"
+              [routerLink]="'/userProfile/' + userName + '/private/' + userId"
               class="block py-2 pl-3 pr-3 text-white rounded hover:text-gray-400"
               >Private</a
             >
@@ -86,5 +92,4 @@
     </section>
     <!-- /profile content -->
   </section>
-
 </main>

@@ -23,7 +23,7 @@ export class UserService {
   private api_url = 'http://localhost:3000';
   intervalId: any;
 
-  constructor(private http: HttpClient, private route: Router) {}
+  constructor(private _http: HttpClient, private _route: Router) {}
 
   // create a new account
   signup(newUser: User): Observable<User> {
@@ -31,7 +31,7 @@ export class UserService {
     setTimeout(() => {
       this.tokenRefresh();
     }, 3000);
-    return this.http.post(url, newUser, httpOptions);
+    return this._http.post(url, newUser, httpOptions);
   }
 
   // login to account
@@ -40,25 +40,28 @@ export class UserService {
     setTimeout(() => {
       this.tokenRefresh();
     }, 3000);
-    return this.http.post(url, login, httpOptions);
+    return this._http.post(url, login, httpOptions);
   }
 
   // fetch user data
-  getUserData(): Observable<USerData> {
-    const url = `${this.api_url}/getUserData`;
-    return this.http.get<USerData>(url, httpOptions);
+  getUserData(username?: string): Observable<USerData> {
+    let url = `${this.api_url}/getUserData`;
+    if (username) {
+      url = `${this.api_url}/getUserData?username=${username}`;
+    }
+    return this._http.get<USerData>(url, httpOptions);
   }
 
   // generate OTP for verification
   genreateOtp(): Observable<any> {
     const url = `${this.api_url}/generateOtp`;
-    return this.http.get(url, httpOptions);
+    return this._http.get(url, httpOptions);
   }
 
   // verify your OTP
   verifyOtp(otp: number | string): Observable<any> {
     const url = `${this.api_url}/verifyOtp`;
-    return this.http.post(url, { otp: otp }, httpOptions);
+    return this._http.post(url, { otp: otp }, httpOptions);
   }
 
   // otp verification alert close
@@ -109,7 +112,7 @@ export class UserService {
   // generate new access token
   generateToken(token: string | null): Observable<any> {
     const url = `${this.api_url}/generateToken?token=${token}`;
-    return this.http.get(url, httpOptions);
+    return this._http.get(url, httpOptions);
   }
 
   // token storing in local storage
@@ -126,7 +129,7 @@ export class UserService {
   // get template for home page:
   getTemplates(): Observable<Templates> {
     const url = `${this.api_url}/getTemplates`;
-    return this.http.get<Templates>(url, httpOptions);
+    return this._http.get<Templates>(url, httpOptions);
   }
 
   // logout user
@@ -136,7 +139,7 @@ export class UserService {
     coding.next(false);
     this.otpAlertClose();
     clearInterval(this.intervalId);
-    this.route.navigate(['/']);
+    this._route.navigate(['/']);
   }
 
   // running code
@@ -164,7 +167,7 @@ export class UserService {
       js = '';
     }
     const url = `${this.api_url}/saveCode`;
-    return this.http.put(
+    return this._http.put(
       url,
       {
         title: title,
@@ -189,7 +192,7 @@ export class UserService {
   // reload iframe
   reloadIframe(id: string): Observable<any> {
     const url = `${this.api_url}/codeRun?id=${id}`;
-    return this.http.get(url, {
+    return this._http.get(url, {
       responseType: 'text',
     });
   }
@@ -204,7 +207,7 @@ export class UserService {
   ): Observable<any> {
     const url = `${this.api_url}/storeCode`;
     this.runCode;
-    return this.http.put(
+    return this._http.put(
       url,
       { title: title, html: html, css: css, js: js, random: random },
       httpOptions
@@ -214,6 +217,36 @@ export class UserService {
   // remove unwanted codes from database
   removeCode(random: string): Observable<any> {
     const url = `${this.api_url}/removeCode?random=${random}`;
-    return this.http.delete(url, httpOptions);
+    return this._http.delete(url, httpOptions);
+  }
+
+  // get private templates
+  getPrivateCodes(id: string): Observable<Templates> {
+    const url = `${this.api_url}/getPrivateCodes?id=${id}`;
+    return this._http.get<Templates>(url, httpOptions);
+  }
+
+  // get public templates
+  getPublicCodes(id: string): Observable<Templates> {
+    const url = `${this.api_url}/getPublicCodes?id=${id}`;
+    return this._http.get<Templates>(url, httpOptions);
+  }
+
+  // make it private
+  privateCode(id: string): Observable<boolean> {
+    const url = `${this.api_url}/makeItPrivate?id=${id}`;
+    return this._http.patch<boolean>(url, httpOptions);
+  }
+
+  // make it private
+  publicCode(id: string): Observable<boolean> {
+    const url = `${this.api_url}/makeItPublic?id=${id}`;
+    return this._http.patch<boolean>(url, httpOptions);
+  }
+
+  // delete templates
+  deleteCode(id: string): Observable<boolean> {
+    const url = `${this.api_url}/deleteCode?id=${id}`;
+    return this._http.delete<boolean>(url, httpOptions);
   }
 }

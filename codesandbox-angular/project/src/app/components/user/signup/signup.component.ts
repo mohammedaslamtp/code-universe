@@ -6,6 +6,7 @@ import { Store, select } from '@ngrx/store';
 import { Registration } from '../../../stores/actions/signupAction';
 import { reg_errorSelector } from 'src/app/stores/selector';
 import { appStateInterface } from 'src/app/types/appState';
+import { User } from './newUser';
 
 @Component({
   selector: 'app-signup',
@@ -14,6 +15,7 @@ import { appStateInterface } from 'src/app/types/appState';
 })
 export class SignupComponent {
   error_reason$?: Observable<string> | string;
+  userData!: User;
   constructor(private store: Store<appStateInterface>) {
     this.store.pipe(select(reg_errorSelector)).subscribe((err: any) => {
       this.error_reason$ = err;
@@ -29,7 +31,19 @@ export class SignupComponent {
   });
 
   onSubmit() {
-    this.store.dispatch(Registration({ register: this.signup.value }));
+    if (this.signup.value.fullName) {
+      let fullName: string = this.signup.value.fullName;
+      fullName = fullName.trim();
+      this.userData = this.signup.value;
+      this.userData.fullName = fullName;
+      if (fullName != '') {
+        this.store.dispatch(Registration({ register: this.userData }));
+        console.log(fullName);
+      } else {
+        console.log(fullName);
+        this.error_reason$ = 'Full Name must be charecters!';
+      }
+    }
   }
 
   close_alert() {

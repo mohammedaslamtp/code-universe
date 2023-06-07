@@ -10,9 +10,7 @@ const httpOptions = {
   }),
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class AdminService {
   private api_url = 'http://localhost:3000/admin';
 

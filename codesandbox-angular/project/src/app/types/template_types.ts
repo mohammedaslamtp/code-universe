@@ -9,6 +9,8 @@ export interface Template {
   js: string;
   isGuest: boolean;
   isPrivate: boolean;
+  like: [string];
+  views: [string];
   __v: number;
   user: User;
 }
@@ -34,7 +36,6 @@ export interface UserOtp {}
 export interface PinnedItem {}
 export interface Follower {}
 export interface Following {}
-
 
 export type Codes = Code[];
 export interface Code {
