@@ -118,4 +118,83 @@ module.exports = {
         console.log("code remove error: ", err);
       });
   },
+
+  // get private codes
+  getPrivateCodes: async (req, res) => {
+    try {
+      const privateCodes = await Code.find({
+        $and: [{ isPrivate: true }, { user: req.query.id }],
+      }).populate("user");
+      res.status(200).json(privateCodes);
+    } catch (error) {
+      res.status(404).json(error.reason);
+    }
+  },
+
+  // get public codes
+  getPublicCodes: async (req, res) => {
+    try {
+      const publicCodes = await Code.find({
+        $and: [{ isPrivate: false }, { user: req.query.id }],
+      }).populate("user");
+      res.status(200).json(publicCodes);
+    } catch (error) {
+      res.status(404).json(error.reason);
+    }
+  },
+  // make it private
+  makePrivate: (req, res) => {
+    try {
+      Code.findOneAndUpdate(
+        { _id: req.query.id },
+        {
+          isPrivate: true,
+        }
+      )
+        .then(() => {
+          res.status(200).json({ isPrivate: true });
+        })
+        .catch((error) => {
+          res.status(404).json({ isPrivate: true });
+          console.log("updated to private faild: ", error);
+        });
+    } catch (error) {
+      console.log("ERROR!! ", error);
+      res.status(404).json(error.reason);
+    }
+  },
+
+  // make it public
+  makePublic: (req, res) => {
+    try {
+      Code.findByIdAndUpdate(req.query.id, {
+        isPrivate: false,
+      })
+        .then(() => {
+          res.status(200).json({ isPublic: true });
+        })
+        .catch((error) => {
+          res.status(404).json({ isPublic: false });
+          console.log("updated to public faild: ", error);
+        });
+    } catch (error) {
+      res.status(404).json(error.reason);
+    }
+  },
+
+  // delete code
+  deleteCode: (req, res) => {
+    try {
+      Code.findByIdAndRemove(req.query.id)
+        .then(() => {
+          res.status(200).json({ isDeleted: true });
+        })
+        .catch((error) => {
+          console.log("deletion code is faild: ", error);
+          res.status(404).json({ isDeleted: false });
+        });
+    } catch (error) {
+      res.status(404).json(error.reason);
+    }
+  },
 };

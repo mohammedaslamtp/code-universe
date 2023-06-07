@@ -8,15 +8,13 @@ const randomstring = require("randomstring");
 module.exports = {
   // new user registering
   signup: (req, res) => {
+    let data = req.body;
+    let response = {};
     try {
-      console.log("body: ", req.body);
-      let data = req.body;
       const salt = bcrypt.genSaltSync(10);
       let hash_password = bcrypt.hashSync(data.new_password, salt);
-      let response = {};
       User.findOne({ email: data.email }).then((doc) => {
         if (doc) {
-          console.log("data found ", doc);
           res.status(404).json("email already exist!");
         } else {
           User.create({
@@ -28,7 +26,6 @@ module.exports = {
           })
             .then((doc) => {
               console.log("Registered successfully.");
-              console.log("data: ", doc);
               let accessToken = jwt.sign(
                 data,
                 process.env.ACCESS_SECRET_TOKEN,
@@ -44,7 +41,6 @@ module.exports = {
                   expiresIn: "14d",
                 }
               );
-
               response.accessToken = accessToken;
               response.refreshToken = refreshToken;
               response.otp_verified = false;
@@ -53,15 +49,11 @@ module.exports = {
             })
             .catch((err) => {
               if (err.code === 11000) {
-                exist = Object.keys(err.keyValue)[0];
-                console.log(err);
-                res.status(404).json({
-                  duplicate: true,
-                  code: err.code,
-                  keyValue: err.keyValue,
-                  reason: `${exist} already exist!`,
-                });
-                console.log("dupe ", err.code);
+                console.log("dupe error ", err);
+                let exist = Object.keys(err.keyValue)[0];
+                if (exist == "full_name") exist = "Full Name";
+                console.log("exist: ", exist);
+                res.status(404).json(`${exist} already exist!`);
               } else {
                 res.status(404).json({ error: err });
               }
@@ -70,20 +62,22 @@ module.exports = {
       });
     } catch (err) {
       console.log("signup error!", err);
+      if (error instanceof MongoServerError && error.code === 11000) {
+      }
     }
   },
 
   // user login
   login: async (req, res) => {
     try {
-      console.log(req.body);
-      let email = req.body.email;
+      let username = req.body.email;
       let response = {};
-      await User.findOne({ email: email })
+      await User.findOne({
+        $or: [{ email: username }, { full_name: username }],
+      })
         .then((doc) => {
           if (doc !== null) {
             response.email = true;
-            console.log(doc);
             bcrypt.compare(req.body.password, doc.password, (err, result) => {
               if (err) {
                 // bcryption went somthing wrong
@@ -107,7 +101,6 @@ module.exports = {
                         expiresIn: "15m",
                       }
                     );
-
                     let refreshToken = jwt.sign(
                       user,
                       process.env.REFRESH_SECRET_TOKEN,
@@ -115,27 +108,23 @@ module.exports = {
                         expiresIn: "14d",
                       }
                     );
-
                     response.accessToken = accessToken;
                     response.refreshToken = refreshToken;
                     response.otp_verified = false;
                     res.status(200).json(response);
                   } else {
-                    console.log("Blocked User!!!");
                     response.access = false;
                     res.status(401).json("blocked user");
                   }
                 } else {
-                  console.log("password invalid!");
                   response.password = false;
-                  res.status(404).json("Email or password incorrect!");
+                  res.status(404).json("Username or password incorrect!");
                 }
               }
             });
           } else {
-            console.log("email invalid!");
             response.email = false;
-            res.status(404).json("Email or password incorrect!");
+            res.status(404).json("Username or password incorrect!");
           }
         })
         .catch((err) => {
@@ -150,12 +139,21 @@ module.exports = {
   getUserData: async (req, res) => {
     try {
       let result;
-      if (req.user) {
-        result = req.user;
+      if (req.query.username) {
+        result = await User.findOne({ full_name: req.query.username });
+      } else {
+        if (req.user) {
+          result = req.user;
+        }
+      }
+
+      if (req.query.id) {
+        result = await User.findById(req.query.id);
       }
       res.status(200).json(result);
     } catch (error) {
-      console.log(error);
+      console.log('error while fetching user data',error);
+      res.status(404).json(error.reason)
     }
   },
 
@@ -229,12 +227,12 @@ module.exports = {
                 console.log("Retry error: ", retryErr);
                 res.status(404).json({ error: "Failed to send OTP email" });
               } else {
-                emailSent(retryInfo,res,email,OTP);
+                emailSent(retryInfo, res, email, OTP);
               }
             });
           }, retryDelay);
         } else {
-          emailSent(info,res,email,OTP);
+          emailSent(info, res, email, OTP);
         }
       });
     } catch (error) {
@@ -249,11 +247,11 @@ module.exports = {
       console.log("req.user: ", req.user);
       let email = req.user.email;
       let otp = req.body.otp;
-      console.log('otp: ',otp)
+      console.log("otp: ", otp);
       let user = await User.findOne({ email: email });
       console.log("user: ", user);
       if (user.user_otp.otp == otp) {
-        console.log('otp correct')
+        console.log("otp correct");
         let expireDate = user.user_otp.expiresIn;
         let nowDate = new Date();
         console.log("expire date: ", expireDate);
@@ -284,7 +282,7 @@ module.exports = {
 };
 
 // Send message using the transporter
-const emailSent = async (emailInfo,res,email,OTP) => {
+const emailSent = async (emailInfo, res, email, OTP) => {
   try {
     let beginTime = new Date();
     let expiresIn = new Date(beginTime.getTime() + 3 * 60000);

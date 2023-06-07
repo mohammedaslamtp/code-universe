@@ -20,9 +20,7 @@ function authenticateToken(req, res, next) {
       }
       return res.status(404).json(response);
     } else {
-      console.log("data from jwt: ", data);
       let userData = await Users.findOne({ email: data.email });
-      console.log("jwt user. database: ", userData);
       req.user = userData;
     }
     next();

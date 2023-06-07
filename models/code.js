@@ -4,43 +4,52 @@ const code = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Users"
+      ref: "Users",
     },
 
     title: {
       type: String,
-      required: [true, "title is required for a code template"]
+      required: [true, "title is required for a code template"],
     },
 
     template_id: {
       type: String,
-      required: [true, "unique template id is required"]
+      required: [true, "unique template id is required"],
     },
 
     html: {
       type: String,
-      default: ""
+      default: "",
     },
 
     css: {
       type: String,
-      default: ""
+      default: "",
     },
 
     js: {
       type: String,
-      default: ""
+      default: "",
     },
 
     isGuest: {
       type: Boolean,
-      default: false
+      default: false,
+    },
+
+    like: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Users",
+    },
+    views: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Users",
     },
 
     isPrivate: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   { timestamp: true }
 );
