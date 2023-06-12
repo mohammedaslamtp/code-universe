@@ -1,0 +1,100 @@
+
+<!-- for loading -->
+<section class="cards" *ngIf="!trendingTemplates">
+  <article class="card animate-pulse" style="height: 21em; width: 20em">
+    <iframe
+      src="http://127.0.0.1:5500/zzzzzz/"
+      width="320"
+      height="200"
+      frameborder="0"
+    ></iframe>
+    <div class="card__info-hover"></div>
+
+    <div class="card__info mt-5">
+      <h3
+        class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+        style="background-color: rgb(212, 211, 211)"
+      ></h3>
+      <h3
+        class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+        style="background-color: rgb(212, 211, 211)"
+      ></h3>
+
+      <div class="flex justify-around mt-3 items-center">
+        <div class="action">
+          <small
+            ><i class="fa-solid fa-heart" style="color: rgb(0, 0, 0)"></i
+            >&nbsp;...</small
+          >
+        </div>
+        <div class="action">
+          <small
+            ><i class="fa-solid fa-comment" style="color: rgb(0, 0, 0)"></i
+            >&nbsp;...</small
+          >
+        </div>
+        <div class="action">
+          <small
+            ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i
+            >&nbsp;...</small
+          >
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+<!-- /for loading -->
+
+<!-- real data -->
+<section class="cards" *ngIf="trendingTemplates">
+  <article
+    *ngFor="let el of trendingTemplates"
+    class="card border border-zinc-200"
+    style="height: 17.3em; width: 20em; margin-bottom: 1.5em"
+  >
+    <iframe
+      id="{{ el.template_id }}"
+      style="width: 100%"
+      class="www"
+      scrolling="no"
+    ></iframe>
+
+    <div
+      class="card__info mt-2"
+      style="border-top: 0.5px solid rgb(210, 222, 233)"
+    >
+      <h3 class="card__title">{{ el.title }}</h3>
+      <span class="card__by">
+        <a
+          class="card__author"
+          [routerLink]="'/userProfile/' + el.user.full_name"
+          title="{{ el.user.full_name }}"
+          >{{ el.user.full_name }}</a
+        ></span
+      >
+      <div class="flex justify-start mt-3 items-center">
+        <div class="action mr-2">
+          <small
+            ><i class="fa-solid fa-heart" style="color: rgb(175, 0, 0)"></i
+            >&nbsp;{{ el.like.length }}</small
+          >
+        </div>
+        <div class="action mr-2">
+          <small
+            ><i class="fa-solid fa-comment" style="color: rgb(0, 0, 0)"></i
+            >&nbsp;25</small
+          >
+        </div>
+        <div class="action">
+          <small
+            ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i>&nbsp;{{
+              el.views.length
+            }}</small
+          >
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+<!-- /Trending card -->
+

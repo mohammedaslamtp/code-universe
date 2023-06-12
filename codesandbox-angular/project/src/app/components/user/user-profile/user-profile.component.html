@@ -21,20 +21,20 @@
         <a class="cursor-pointer">github.com</a>
       </div>
       <div class="flex-01">
-        <h1 class="text-2xl font-bold text-center">user name</h1>
+        <h1 class="text-2xl font-bold text-center">{{ userName }}</h1>
       </div>
       <div class="flex flex-01 mr-2 justify-end">
         <p
           class="mr-5 cursor-pointer"
           routerLink="/userProfile/{{ userName }}/followers/{{ userId }}"
         >
-          followers: 123
+          followers: {{ followersCount }}
         </p>
         <p
           class="cursor-pointer"
           routerLink="/userProfile/{{ userName }}/following/{{ userId }}"
         >
-          following: 123
+          following: {{ followingCount }}
         </p>
       </div>
     </div>
@@ -57,21 +57,25 @@
             <a
               [routerLink]="'/userProfile/' + userName + '/allCodes/' + userId"
               class="block py-2 pl-3 pr-3 text-white rounded hover:text-gray-400"
+              [ngStyle]="
+                _allCodes
+                  ? { color: 'rgb(156 163 175)', 'font-weight': 'bolder' }
+                  : { color: '#fff' }
+              "
               aria-current="page"
               >All Codes</a
             >
           </li>
-          <li>
-            <a
-              [routerLink]="'/userProfile/' + userName + '/popular/' + userId"
-              class="block py-2 pl-3 pr-3 text-white rounded hover:text-gray-400"
-              >Popular</a
-            >
-          </li>
+
           <li *ngIf="isAccountOwner">
             <a
               [routerLink]="'/userProfile/' + userName + '/public/' + userId"
               class="block py-2 pl-3 pr-3 text-white rounded hover:text-gray-400"
+              [ngStyle]="
+                _public
+                  ? { color: 'rgb(156 163 175)', 'font-weight': 'bolder' }
+                  : { color: '#fff' }
+              "
               >Public</a
             >
           </li>
@@ -79,6 +83,11 @@
             <a
               [routerLink]="'/userProfile/' + userName + '/private/' + userId"
               class="block py-2 pl-3 pr-3 text-white rounded hover:text-gray-400"
+              [ngStyle]="
+                _private
+                  ? { color: 'rgb(156 163 175)', 'font-weight': 'bolder' }
+                  : { color: '#fff' }
+              "
               >Private</a
             >
           </li>

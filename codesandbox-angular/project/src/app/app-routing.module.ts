@@ -13,57 +13,104 @@ import { GuestCodingComponent } from './components/user/guest-coding/guest-codin
 import { CodingGuard } from './guard/coding.guard';
 import { BlockUserGuard } from './guard/block-user.guard';
 import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
-import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
+import {
+  UserProfileComponent,
+  allCodesPage,
+} from './components/user/user-profile/user-profile.component';
 import { SearchResultComponent } from './components/search-result/search-result.component';
 import { FollowersComponent } from './components/user/followers/followers.component';
 import { FollowingComponent } from './components/user/following/following.component';
 import { AllCodesComponent } from './components/user/all-codes/all-codes.component';
 import { PrivateCodesComponent } from './components/user/private-codes/private-codes.component';
 import { PublicCodesComponent } from './components/user/public-codes/public-codes.component';
-import { AccountOwnerGuard } from './guard/account-owner.guard';
+import { YourWorksComponent } from './components/user/your-works/your-works.component';
+import { TrendingComponent } from './components/user/trending/trending.component';
+import { FollowingCodesComponent } from './components/user/following-codes/following-codes.component';
 
 const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
     canActivate: [UserHomeGuard, BlockUserGuard],
+    children: [
+      {
+        path: '',
+        component: TrendingComponent,
+        canActivate: [BlockUserGuard],
+      },
+      {
+        path: 'trending',
+        component: TrendingComponent,
+        canActivate: [BlockUserGuard],
+      },
+      {
+        path: 'followingCodes',
+        component: FollowingCodesComponent,
+        canActivate: [BlockUserGuard],
+      },
+      {
+        path: 'yourWorks',
+        component: YourWorksComponent,
+        canActivate: [BlockUserGuard],
+      },
+    ],
   },
   { path: '', component: GuestHomeComponent, canActivate: [GuestUserGuard] },
   { path: 'login', component: LoginComponent, canActivate: [AuthUserGuard] },
   { path: 'signup', component: SignupComponent, canActivate: [AuthUserGuard] },
-  { path: 'user/otp', component: OtpComponent, canActivate: [UserHomeGuard] },
+  {
+    path: 'user/otp',
+    component: OtpComponent,
+    canActivate: [UserHomeGuard, BlockUserGuard],
+  },
   {
     path: 'coding',
     component: GuestCodingComponent,
     canDeactivate: [CodingGuard],
+    canActivate: [BlockUserGuard],
   },
   {
     path: 'liveCoding',
     component: LiveCodingComponent,
-    canActivate: [UserHomeGuard],
+    canActivate: [UserHomeGuard, BlockUserGuard],
   },
   {
     path: 'userProfile/:username',
     component: UserProfileComponent,
-    canActivate: [UserHomeGuard],
+    canActivate: [UserHomeGuard, BlockUserGuard],
     children: [
-      { path: '', component: AllCodesComponent },
-      { path: 'allCodes/:id', component: AllCodesComponent },
-      { path: 'followers/:id', component: FollowersComponent },
-      { path: 'following/:id', component: FollowingComponent },
+      { path: '', component: AllCodesComponent, canActivate: [BlockUserGuard] },
+      {
+        path: 'allCodes/:id',
+        component: AllCodesComponent,
+        canActivate: [UserHomeGuard, BlockUserGuard],
+      },
+      {
+        path: 'followers/:id',
+        component: FollowersComponent,
+        canActivate: [UserHomeGuard, BlockUserGuard],
+      },
+      {
+        path: 'following/:id',
+        component: FollowingComponent,
+        canActivate: [UserHomeGuard, BlockUserGuard],
+      },
       {
         path: 'private/:id',
         component: PrivateCodesComponent,
+        canActivate: [UserHomeGuard, BlockUserGuard],
       },
       {
         path: 'public/:id',
         component: PublicCodesComponent,
+        canActivate: [UserHomeGuard, BlockUserGuard],
       },
     ],
   },
   {
     path: 'search/:q',
     component: SearchResultComponent,
+    canActivate: [BlockUserGuard],
   },
   { path: '404', component: NotFoundComponent },
   {

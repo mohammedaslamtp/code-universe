@@ -45,15 +45,19 @@ import { GenerateOtpComponent } from './components/user/generate-otp/generate-ot
 import { OtpVeriyAlertComponent } from './components/user/otp-veriy-alert/otp-veriy-alert.component';
 import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
-import { SearchResultComponent, searchQuery } from './components/search-result/search-result.component';
+import {
+  SearchResultComponent,
+  searchQuery,
+} from './components/search-result/search-result.component';
 import { MainService } from './services/main.service';
 import { FollowersComponent } from './components/user/followers/followers.component';
 import { FollowingComponent } from './components/user/following/following.component';
 import { AllCodesComponent } from './components/user/all-codes/all-codes.component';
 import { PublicCodesComponent } from './components/user/public-codes/public-codes.component';
 import { PrivateCodesComponent } from './components/user/private-codes/private-codes.component';
-import { AccountOwnerGuard } from './guard/account-owner.guard';
-
+import { YourWorksComponent } from './components/user/your-works/your-works.component';
+import { TrendingComponent } from './components/user/trending/trending.component';
+import { FollowingCodesComponent } from './components/user/following-codes/following-codes.component';
 
 // quill api
 // import { QuillModule } from 'ngx-quill';
@@ -85,6 +89,9 @@ import { AccountOwnerGuard } from './guard/account-owner.guard';
     AllCodesComponent,
     PublicCodesComponent,
     PrivateCodesComponent,
+    YourWorksComponent,
+    TrendingComponent,
+    FollowingCodesComponent,
   ],
   imports: [
     BrowserModule,
@@ -105,7 +112,7 @@ import { AccountOwnerGuard } from './guard/account-owner.guard';
   ],
   providers: [
     UserService,
-    
+
     SocketService,
     MainService,
     {
@@ -118,7 +125,6 @@ import { AccountOwnerGuard } from './guard/account-owner.guard';
     UserHomeGuard,
     CodingGuard,
     BlockUserGuard,
-    AccountOwnerGuard
   ],
   bootstrap: [AppComponent],
 })

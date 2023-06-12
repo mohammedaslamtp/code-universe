@@ -134,7 +134,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
               const blob = new Blob([response], { type: 'text/html' });
               const url = URL.createObjectURL(blob);
               this.iFrame.nativeElement.src = url;
-              console.log('iframe: ',this.iFrame)
             },
             (err) => {
               console.log(err);

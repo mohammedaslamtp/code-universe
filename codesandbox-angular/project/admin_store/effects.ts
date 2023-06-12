@@ -38,7 +38,6 @@ export class admin_effects {
           map((_loginRes) => {
             if (_loginRes.adminToken)
               localStorage.setItem('admin_token', _loginRes?.adminToken);
-            console.log('result: ', _loginRes);
             this.Toast.fire({
               icon: 'success',
               title: 'Admin Confirmed👍',
@@ -48,7 +47,6 @@ export class admin_effects {
             return loginAction.ad_LoginSuccess({ admin_login: _loginRes });
           }),
           catchError((err) => {
-            console.log('admin login error! ', err);
             return of(loginAction.ad_LoginFailure({ error: err.error }));
           })
         );

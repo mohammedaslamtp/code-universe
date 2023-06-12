@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 })
 export class BlockUserGuard implements CanActivate {
   is_blocked!: boolean;
-  constructor(private route: Router, private userService: UserService) {}
+  constructor(private _route: Router, private _userService: UserService) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -25,7 +25,7 @@ export class BlockUserGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    return this.userService.getUserData().pipe(
+    return this._userService.getUserData().pipe(
       map((data) => {
         this.is_blocked = data.is_spam;
         if (this.is_blocked == false) {
@@ -50,10 +50,9 @@ export class BlockUserGuard implements CanActivate {
           }).then((result) => {
             /* Read more about handling dismissals below */
             if (result.dismiss === Swal.DismissReason.timer) {
-              console.log('alert closed');
               localStorage.removeItem('token');
               localStorage.removeItem('refresh_token');
-              this.route.navigate(['/login']);
+              this._route.navigate(['/login']);
             }
           });
           return false;

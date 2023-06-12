@@ -78,13 +78,12 @@
   <!-- /for loading -->
 </section>
 
-
 <section class="flex flex-wrap">
   <!-- card -->
   <article
     class="card border border-zinc-200"
     style="height: 18.3em; width: 20em; margin-bottom: 1.5em"
-    *ngFor="let el of publicCodes"
+    *ngFor="let el of publicCodes; index as i"
   >
     <iframe
       id="{{ el.template_id }}"
@@ -99,33 +98,49 @@
       <div class="flex justify-between">
         <h3 class="card__title" title="{{ el.title }}">{{ el.title }}</h3>
         <button
-          id="dropdownLeftButton"
-          [attr.data-dropdown-toggle]="el._id"
+          id="{{ 'dropdownLeftButton-' + el._id }}"
+          (click)="toggleDropdown(el._id)"
           data-dropdown-placement="top"
           class="p-2"
           type="button"
+          role="button"
         >
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
+
         <!-- Dropdown menu -->
         <div
-          id="{{ el._id }}"
-          class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+          role="menu"
+          [id]="el._id"
+          [ngClass]="{
+            hidden: !dropdownOpen[el._id],
+            'bg-white': true,
+            'divide-y': true,
+            'divide-gray-100': true,
+            'rounded-lg': true,
+            shadow: true,
+            'w-44': true,
+            'dark:bg-gray-700': true,
+            absolute: true
+          }"
+          style="right: 3.4em"
         >
           <ul
             class="py-2 text-sm text-gray-700 dark:text-gray-200"
-            aria-labelledby="dropdownLeftButton"
+            [attr.aria-labelledby]="'dropdownLeftButton-' + el._id"
           >
             <li>
               <a
                 class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                (click)="quiqkView(el)"
                 ><i class="fa-solid fa-thumbtack"></i>&nbsp;&nbsp;&nbsp;Add to
                 Pin</a
               >
             </li>
             <li>
-              <a class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              (click)="makePrivate(el._id)"
+              <a
+                class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                (click)="makePrivate(el._id)"
               >
                 <i class="fa-solid fa-lock"></i>
                 &nbsp;&nbsp;&nbsp;Make it private</a
@@ -133,6 +148,7 @@
             </li>
             <li>
               <a
+                (click)="deleteCode(el._id, el.title)"
                 class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 ><i class="fa-solid fa-delete-left"></i>&nbsp; Delete</a
               >
@@ -141,7 +157,13 @@
         </div>
       </div>
       <div class="card__by">
-        <a class="card__author" [routerLink]="'/userProfile/'+el.user.full_name" title="{{ el.user.full_name }}">{{el.user.full_name}}</a></div>
+        <a
+          class="card__author"
+          [routerLink]="'/userProfile/' + el.user.full_name"
+          title="{{ el.user.full_name }}"
+          >{{ el.user.full_name }}</a
+        >
+      </div>
       <div class="flex mt-3 items-center">
         <div class="action mr-1">
           <small class="flex items-center"
@@ -165,7 +187,6 @@
   <!-- /card -->
 </section>
 
-
 <!-- empty case -->
 <div
   class="w-full h-32 rounded-lg flex flex-col items-center justify-center"
@@ -176,3 +197,64 @@
   <a routerLink="/coding" class="text-sky-400 mt-4">Go build One!</a>
 </div>
 <!-- /empty case -->
+
+<!-- actions loading -->
+<!-- 
+<div
+  class=""
+  style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(
+      0,
+      0,
+      0,
+      0.5
+    ); /* Set the desired background opacity */
+    pointer-events: all;
+  "
+></div>
+<div
+  class="loader loader--style2 bg-gray-200 flex justify-center content-center w-fit absolute"
+  title="Please wait.."
+  style="
+  z-index: 100;
+  top: 50%;
+  left: 50%;
+  "
+>
+  <svg
+    version="1.1"
+    id="loader-1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    x="0px"
+    y="0px"
+    width="40px"
+    height="40px"
+    viewBox="0 0 50 50"
+    style="enable-background: new 0 0 50 50"
+    xml:space="preserve"
+  >
+    <path
+      fill="#000"
+      d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z"
+    >
+      <animateTransform
+        attributeType="xml"
+        attributeName="transform"
+        type="rotate"
+        from="0 25 25"
+        to="360 25 25"
+        dur="0.6s"
+        repeatCount="indefinite"
+      />
+    </path>
+  </svg>
+</div> -->
+
+<!-- /actions loading -->

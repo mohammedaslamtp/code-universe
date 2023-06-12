@@ -44,10 +44,11 @@ export class UserService {
   }
 
   // fetch user data
-  getUserData(username?: string): Observable<USerData> {
+  getUserData(str?: string): Observable<USerData> {
     let url = `${this.api_url}/getUserData`;
-    if (username) {
-      url = `${this.api_url}/getUserData?username=${username}`;
+    str = str?.trim();
+    if (str != ''&& (str != undefined&&str != null)) {
+      url = `${this.api_url}/getUserData?str=${str}`;
     }
     return this._http.get<USerData>(url, httpOptions);
   }
@@ -89,9 +90,7 @@ export class UserService {
     this.generateToken(localStorage.getItem('refresh_token')).subscribe(
       (token) => {
         if (token) {
-          console.log('token: ', token);
           localStorage.setItem('token', token);
-          console.log('after set: ', localStorage.getItem('token'));
         }
       }
     );

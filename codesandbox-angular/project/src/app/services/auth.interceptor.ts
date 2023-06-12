@@ -4,19 +4,23 @@ import {
   HttpHandler,
   HttpInterceptor,
   HttpEvent,
+  HttpErrorResponse,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthInterceptor implements HttpInterceptor {
-  constructor() {}
+  constructor(private _router: Router, private _userService: UserService) {}
 
   intercept(
-    req: HttpRequest<unknown>,
+    req: HttpRequest<any>,
     next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
+  ): Observable<HttpEvent<any>> {
     if (req.url.includes('/admin')) {
       req = req.clone({
         setHeaders: {
@@ -30,6 +34,16 @@ export class AuthInterceptor implements HttpInterceptor {
         },
       });
     }
-    return next.handle(req);
+    return next.handle(req).pipe(
+      catchError((e: HttpErrorResponse) => {
+        console.log('interceptor error: ', e);
+        if (e.status == 401) {
+          // Redirect the user to the login page
+          this._userService.logout();
+          this._router.navigate(['/login']);
+        }
+        return throwError(e);
+      })
+    );
   }
 }

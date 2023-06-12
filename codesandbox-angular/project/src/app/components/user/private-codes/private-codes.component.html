@@ -78,7 +78,6 @@
   <!-- /for loading -->
 </section>
 
-
 <section class="flex flex-wrap">
   <!-- card -->
   <article
@@ -99,18 +98,30 @@
       <div class="flex justify-between">
         <h3 class="card__title" title="{{ el.title }}">{{ el.title }}</h3>
         <button
-          id="dropdownLeftButton"
-          [attr.data-dropdown-toggle]="el._id"
+          id="{{ 'dropdownLeftButton-' + el._id }}"
           data-dropdown-placement="top"
           class="p-2"
           type="button"
+          role="button"
+          (click)="toggleDropdown(el._id)"
         >
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
         <!-- Dropdown menu -->
         <div
-          id="{{ el._id }}"
-          class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+          [id]="el._id"
+          [ngClass]="{
+            hidden: !dropdownOpen[el._id],
+            'bg-white': true,
+            'divide-y': true,
+            'divide-gray-100': true,
+            'rounded-lg': true,
+            shadow: true,
+            'w-44': true,
+            'dark:bg-gray-700': true,
+            absolute: true
+          }"
+          style="right: 3.4em"
         >
           <ul
             class="py-2 text-sm text-gray-700 dark:text-gray-200"
@@ -135,6 +146,7 @@
             <li>
               <a
                 class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                (click)="deleteCode(el._id,el.title)"
                 ><i class="fa-solid fa-delete-left"></i>&nbsp; Delete</a
               >
             </li>
@@ -168,7 +180,6 @@
   </article>
   <!-- /card -->
 </section>
-
 
 <!-- empty case -->
 <div
