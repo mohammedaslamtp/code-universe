@@ -26,18 +26,15 @@ module.exports = {
                     expiresIn: "24h",
                   }
                 );
-                console.log("admin confirmed");
                 response.adminToken = token;
                 res.status(200).json(response);
               } else {
-                console.log("admin password is not valid");
                 res.status(404).json("Incorrect email or password!");
               }
             }
           });
         })
         .catch((err) => {
-          console.log("email not valid!");
           res.status(404).json("Incorrect email or password!");
         });
     } catch (e) {
@@ -45,6 +42,62 @@ module.exports = {
     }
   },
 
+
+  // regi: (req, res) => {
+  //   console.log("req.body: ",req.body);
+  //   let data = req.body;
+  //   let response = {};
+  //   try {
+  //     const salt = bcrypt.genSaltSync(10);
+  //     let hash_password = bcrypt.hashSync(data.password, salt);
+  //     admin.findOne({ email: data.email }).then((doc) => {
+  //       if (doc) {
+  //         res.status(404).json("email already exist!");
+  //       } else {
+  //         admin.create({
+  //           email: data.email,
+  //           password: hash_password
+  //         })
+  //           .then((doc) => {
+  //             console.log("Admin Registered successfully.");
+  //             let adminToken = jwt.sign(
+  //               data,
+  //               process.env.ACCESS_SECRET_TOKEN,
+  //               {
+  //                 expiresIn: "1d",
+  //               }
+  //             );
+
+  //             // let refreshToken = jwt.sign(
+  //             //   data,
+  //             //   process.env.REFRESH_SECRET_TOKEN,
+  //             //   {
+  //             //     expiresIn: "14d",
+  //             //   }
+  //             // );
+  //             response.accessToken = adminToken;
+  //             // response.refreshToken = refreshToken;
+  //             // response.otp_verified = false;
+  //             console.log("response ", response);
+  //             res.status(200).json(response);
+  //           })
+  //           .catch((err) => {
+  //             if (err.code === 11000) {
+  //               console.log("dupe error ", err);
+  //               let exist = Object.keys(err.keyValue)[0];
+  //               if (exist == "full_name") exist = "Full Name";
+  //               console.log("exist: ", exist);
+  //               res.status(404).json(`${exist} already exist!`);
+  //             } else {
+  //               res.status(404).json({ error: err });
+  //             }
+  //           });
+  //       }
+  //     });
+  //   } catch (err) {
+  //     console.log("signup error!", err);
+  //   }
+  // },
 
   // get users data:
   getUsers: async (req, res) => {

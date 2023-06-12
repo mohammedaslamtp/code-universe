@@ -7,18 +7,16 @@ function authenticateToken(req, res, next) {
   const token = authHeader && authHeader.split(" ")[1];
 
   if (token == null) {
-    console.log("token null...");
-    return res.json("401");
+    return res.status(401).json("401");
   }
 
   jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, async (err, data) => {
     if (err) {
-      console.log("jwr middleware error ", err);
       response.error = err.message;
       if (err.expiredAt) {
         response.expiredAt = err.expiredAt;
       }
-      return res.status(404).json(response);
+      return res.status(401).json(response);
     } else {
       let userData = await Users.findOne({ email: data.email });
       req.user = userData;

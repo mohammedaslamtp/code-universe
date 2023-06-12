@@ -139,21 +139,23 @@ module.exports = {
   getUserData: async (req, res) => {
     try {
       let result;
-      if (req.query.username) {
-        result = await User.findOne({ full_name: req.query.username });
-      } else {
-        if (req.user) {
-          result = req.user;
+      const query = req.query.str;
+      if (query) {
+        console.log("q: ", query);
+        if (!result) {
+          result = await User.findById(query).exec();
         }
+      } else {
+        result = req.user;
       }
-
-      if (req.query.id) {
-        result = await User.findById(req.query.id);
+      if (result) {
+        res.status(200).json(result);
+      } else {
+        res.status(404).json("invalid username or id!");
       }
-      res.status(200).json(result);
+      console.log("result*********: ", result);
     } catch (error) {
-      console.log('error while fetching user data',error);
-      res.status(404).json(error.reason)
+      res.status(404).json(error);
     }
   },
 
@@ -170,7 +172,6 @@ module.exports = {
       );
       res.status(200).json(newToken);
     } catch (error) {
-      console.log("generate token error!", error);
       res.status(404).json(error);
     }
   },
@@ -213,11 +214,9 @@ module.exports = {
         Do not share this OTP with anyone, including Codebox support representatives. We will never ask you for your OTP.
         Thank you for choosing Codebox. We appreciate your trust.</p></pre>`,
       };
-      console.log("message: ", message);
 
       transporter.sendMail(message, (err, info) => {
         if (err) {
-          console.log("error: ", err);
           // Retry sending the email after a delay (e.g., 5 seconds)1
           const retryDelay = 4000;
           setTimeout(() => {
