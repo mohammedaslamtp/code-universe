@@ -5,6 +5,8 @@ const code = require("../controller/code_controller");
 const mainController = require("../controller/main_controller");
 const auth_token = require("../middlewares/token");
 const code_controller = require("../controller/code_controller");
+const social_controller = require("../controller/social_controller");
+
 
 route
   .post("/signup", authUser.signup)
@@ -24,4 +26,6 @@ route
   .patch("/makeItPrivate",auth_token.authenticate,code_controller.makePrivate)
   .patch("/makeItPublic",auth_token.authenticate,code_controller.makePublic)
   .delete("/deleteCode",auth_token.authenticate,code_controller.deleteCode)
+  .patch("/following",auth_token.authenticate,social_controller.follow)
+  .patch("/unFollowing",auth_token.authenticate,social_controller.unFollow)
 module.exports = route;

@@ -139,21 +139,25 @@ module.exports = {
   getUserData: async (req, res) => {
     try {
       let result;
-      const query = req.query.str;
-      if (query) {
-        console.log("q: ", query);
-        if (!result) {
-          result = await User.findById(query).exec();
-        }
-      } else {
+      const queryName = req.query.name;
+      if (req.query.name) {
+        result = await User.findOne({ full_name: queryName }).exec();
+      }
+
+      const qId = req.query.id;
+      if (req.query.id) {
+        result = await User.findById(qId).exec();
+      }
+
+      if (queryName == undefined && qId == undefined) {
         result = req.user;
       }
+
       if (result) {
         res.status(200).json(result);
       } else {
         res.status(404).json("invalid username or id!");
       }
-      console.log("result*********: ", result);
     } catch (error) {
       res.status(404).json(error);
     }
