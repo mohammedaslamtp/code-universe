@@ -47,8 +47,8 @@ export class UserService {
   getUserData(str?: string): Observable<USerData> {
     let url = `${this.api_url}/getUserData`;
     str = str?.trim();
-    if (str != ''&& (str != undefined&&str != null)) {
-      url = `${this.api_url}/getUserData?str=${str}`;
+    if (str != '' && str != undefined && str != null) {
+      url = `${this.api_url}/getUserData?name=${str}`;
     }
     return this._http.get<USerData>(url, httpOptions);
   }
@@ -68,7 +68,7 @@ export class UserService {
   // otp verification alert close
   otpAlertClose() {
     let alert: any = document.getElementById('otp_alert');
-    alert.style.display = 'none';
+    if(alert.style)alert.style.display = 'none';
   }
 
   // refreshing token
@@ -77,9 +77,7 @@ export class UserService {
       this.generateToken(localStorage.getItem('refresh_token')).subscribe(
         (token) => {
           if (token) {
-            console.log('refresh token: ', token);
             localStorage.setItem('token', token);
-            console.log('refresh after set: ', localStorage.getItem('token'));
           }
         }
       );
@@ -115,8 +113,8 @@ export class UserService {
   }
 
   // token storing in local storage
-  storeToken(token: string, refreshToken: string) {
-    localStorage.setItem('token', token);
+  storeToken(accessToken: string, refreshToken: string) {
+    localStorage.setItem('token', accessToken);
     localStorage.setItem('refresh_token', refreshToken);
   }
 

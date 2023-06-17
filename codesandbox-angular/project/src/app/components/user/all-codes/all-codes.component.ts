@@ -6,6 +6,7 @@ import { USerData } from 'src/app/types/UserData';
 import { Templates } from 'src/app/types/template_types';
 import { Id, Name, allCodesPage } from '../user-profile/user-profile.component';
 import Swal from 'sweetalert2';
+import { MainService } from 'src/app/services/main.service';
 
 @Component({
   selector: 'app-all-codes',
@@ -26,8 +27,10 @@ export class AllCodesComponent implements OnDestroy {
   isAccountOwner: boolean = false;
   subs_username!: Subscription;
   subs_Id!: Subscription;
+  subs_tempUserData!: Subscription;
   constructor(
     private _userService: UserService,
+    private _mainService: MainService,
     private _activatedRoute: ActivatedRoute,
     private _router: Router
   ) {
@@ -44,9 +47,9 @@ export class AllCodesComponent implements OnDestroy {
         }
       } else if (param.get('username')) {
         const username = param.get('username');
+        this.userName = username;
         Name.next(username);
-        this.subs_username = Name.subscribe((val) => (this.userName = val));
-        if (typeof this.userName == 'string') {
+        if (this.userName) {
           this.updateData(this.userName, 'username');
         }
       } else {
@@ -64,56 +67,75 @@ export class AllCodesComponent implements OnDestroy {
   }
 
   updateData(str: string, through: string) {
-    this.subs_userData = this._userService.getUserData(str).subscribe(
-      (data) => {
-        this.userName = data.full_name;
-        if (through == 'id') {
-          this._userService.getUserData().subscribe((data) => {
-            if (data._id == this.userData?._id) {
-              this.isAccountOwner = true;
-            } else {
-              this.isAccountOwner = false;
-            }
-          });
-        } else if (through == 'username') {
-          if (data.full_name == this.userData?.full_name) {
-            this.isAccountOwner = true;
-          } else {
-            this.isAccountOwner = false;
-          }
-        }
-        // getting all templates
-        this.subs_templates = this._userService
-          .getTemplates()
-          .subscribe((data: any) => {
-            this.templates = data?.all_templates;
-            // filtering own templates
-            if (this.userName) {
-              this.ownTemplates = this.templates.filter(
-                (el) =>
-                  el.user.full_name == this.userName && el.isPrivate == false
-              );
-            } else if (this.userId) {
-              this.ownTemplates = this.templates.filter(
-                (el) => el.user._id == this.userId && el.isPrivate == false
-              );
-            }
-            this.isLoading = false;
-            if (this.ownTemplates.length == 0) {
-              this.empty = true;
-              this.isLoading = false;
-            } else {
-              this.empty = false;
-              this.isLoading = false;
-            }
-          });
-      },
-      (e) => {
-        if (e) {
+    if (through == 'id') {
+      this.subs_userData = this._mainService.getUserData(str).subscribe(
+        (data) => {
+          this.userData = data;
+          this.userName = data.full_name;
+          this.subs_tempUserData = this._userService
+            .getUserData()
+            .subscribe((data) => {
+              if (data._id == this.userData?._id) {
+                this.isAccountOwner = true;
+              } else {
+                this.isAccountOwner = false;
+              }
+            });
+        },
+        (e) => {
           this._router.navigate(['**']);
         }
+      );
+    } else if (through == 'username') {
+      this.subs_userData = this._userService.getUserData(str).subscribe(
+        (data) => {
+          this.userName = data.full_name;
+          this.userData = data;
+          this.subs_tempUserData = this._userService
+            .getUserData()
+            .subscribe((data) => {
+              if (data.full_name == this.userData?.full_name) {
+                this.isAccountOwner = true;
+              } else {
+                this.isAccountOwner = false;
+              }
+            });
+        },
+        (e) => {
+          this._router.navigate(['**']);
+        }
+      );
+      if (this.userName === this.userData?.full_name) {
+        this.isAccountOwner = true;
+      } else {
+        this.isAccountOwner = false;
       }
-    );
+    }
+
+    // getting all templates
+    this.subs_templates = this._userService
+      .getTemplates()
+      .subscribe((data: any) => {
+        this.templates = data?.all_templates;
+        // filtering own templates
+        if (this.userName) {
+          this.ownTemplates = this.templates.filter(
+            (el) => el.user.full_name == this.userName && el.isPrivate == false
+          );
+        } else if (this.userId) {
+          this.ownTemplates = this.templates.filter(
+            (el) => el.user._id == this.userId && el.isPrivate == false
+          );
+        }
+        this.isLoading = false;
+        if (this.ownTemplates.length == 0) {
+          this.empty = true;
+          this.isLoading = false;
+        } else {
+          this.empty = false;
+          this.isLoading = false;
+        }
+      });
   }
 
   // preview of code

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { Templates } from 'src/app/types/template_types';
@@ -9,12 +9,11 @@ import { Trending } from '../home/home.component';
   templateUrl: './trending.component.html',
   styleUrls: ['./trending.component.css'],
 })
-export class TrendingComponent implements OnDestroy {
+export class TrendingComponent implements OnDestroy, AfterViewInit, OnInit {
   trendingTemplates!: Templates;
   subs_templates_array: Subscription;
 
   constructor(private _userService: UserService) {
-    Trending.next(true)
     this.subs_templates_array = this._userService.getTemplates().subscribe(
       (templates: any) => {
         this.trendingTemplates = templates.all_templates;
@@ -22,18 +21,30 @@ export class TrendingComponent implements OnDestroy {
         this.trendingTemplates = this.trendingTemplates?.filter(
           (val) => val.isPrivate == false
         );
-        setTimeout(() => {
-          if (this.trendingTemplates) {
-            for (const el of this.trendingTemplates) {
-              this.previewOfCode(el.template_id);
-            }
-          }
-        }, 500);
       },
       (err) => {
         console.log('template data error: ', err);
       }
     );
+  }
+
+  ngOnInit(): void {
+    setTimeout(() => Trending.next(true), 0);
+  }
+
+  like(id:string){
+    const audio = new Audio('assets/sounds/click-like.mp3')
+    audio.play();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      if (this.trendingTemplates) {
+        for (const el of this.trendingTemplates) {
+          this.previewOfCode(el.template_id);
+        }
+      }
+    }, 500);
   }
 
   // view templates
@@ -58,7 +69,7 @@ export class TrendingComponent implements OnDestroy {
     );
   }
   ngOnDestroy(): void {
-    Trending.next(false)
+    Trending.next(false);
     this.subs_templates_array?.unsubscribe();
     this.subs_codePreview?.unsubscribe();
   }

@@ -58,6 +58,7 @@ import { PrivateCodesComponent } from './components/user/private-codes/private-c
 import { YourWorksComponent } from './components/user/your-works/your-works.component';
 import { TrendingComponent } from './components/user/trending/trending.component';
 import { FollowingCodesComponent } from './components/user/following-codes/following-codes.component';
+import { SocialService } from './services/soical.service';
 
 // quill api
 // import { QuillModule } from 'ngx-quill';
@@ -112,7 +113,7 @@ import { FollowingCodesComponent } from './components/user/following-codes/follo
   ],
   providers: [
     UserService,
-
+    SocialService,
     SocketService,
     MainService,
     {
