@@ -8,7 +8,6 @@ module.exports = {
     try {
       console.log("id ", req.query.id);
       let id = req.query.id;
-      if (req.user) console.log(req.user);
       let template = await Code.findOne({ template_id: id });
       let html = template.html;
       let css = template.css;
