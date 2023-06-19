@@ -4,7 +4,7 @@ import * as loginAction from './actions/loginAction';
 import * as regAction from './actions/signupAction';
 import * as otpAction from './actions/generateOtp';
 import * as searchAction from './actions/search';
-import { User } from '../components/user/signup/newUser';
+import * as downloadAction from './actions/downloadCodes';
 
 // initial state:
 export const initialState: authState = {
@@ -79,7 +79,6 @@ export const otpRequestReducer = createReducer(
   }))
 );
 
-
 // search templates
 export const searchReducer = createReducer(
   initialState,
@@ -95,6 +94,28 @@ export const searchReducer = createReducer(
     error: null,
   })),
   on(searchAction.SearchFailure, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: null,
+    error: action.error,
+  }))
+);
+
+// download templates
+export const downloadCodesReducer = createReducer(
+  initialState,
+  on(downloadAction.codesDownload, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  on(downloadAction.downloadCodesSuccess, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: action.downloadData,
+    error: null,
+  })),
+  on(downloadAction.downloadCodesFailure, (state, action) => ({
     ...state,
     isLoading: false,
     data: null,

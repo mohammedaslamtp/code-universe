@@ -21,7 +21,12 @@ import { UserHomeGuard } from './guard/user-home.guard';
 import { CodingGuard } from './guard/coding.guard';
 import { BlockUserGuard } from './guard/block-user.guard';
 
-import { loginReducer, registerReducer, searchReducer } from './stores/reducer';
+import {
+  downloadCodesReducer,
+  loginReducer,
+  registerReducer,
+  searchReducer,
+} from './stores/reducer';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -58,6 +63,7 @@ import { YourWorksComponent } from './components/user/your-works/your-works.comp
 import { TrendingComponent } from './components/user/trending/trending.component';
 import { FollowingCodesComponent } from './components/user/following-codes/following-codes.component';
 import { SocialService } from './services/soical.service';
+import { DownloadService } from './services/download.service';
 
 // quill api
 // import { QuillModule } from 'ngx-quill';
@@ -109,12 +115,14 @@ import { SocialService } from './services/soical.service';
     StoreModule.forFeature('loginData', loginReducer),
     StoreModule.forFeature('registerData', registerReducer),
     StoreModule.forFeature('search', searchReducer),
+    StoreModule.forFeature('downloadCode', downloadCodesReducer),
   ],
   providers: [
     UserService,
     SocialService,
     SocketService,
     MainService,
+    DownloadService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

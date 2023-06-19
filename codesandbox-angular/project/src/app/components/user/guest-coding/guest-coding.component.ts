@@ -20,8 +20,21 @@ import * as htmlParser from 'prettier/parser-html';
 import * as jsParser from 'prettier/parser-babel';
 import * as cssParser from 'prettier/parser-postcss';
 import { Renderer2 } from '@angular/core';
+import * as JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 import { coding, logModToggle } from 'src/app/services/shared-values.service';
+import { Subscription } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { codesDownload } from 'src/app/stores/actions/downloadCodes';
+import {
+  downloadCode_errorSelector,
+  downloadCode_loadingSelector,
+  downloadCode_resultSelector,
+} from 'src/app/stores/selector';
+import { appStateInterface } from 'src/app/types/appState';
+import { CodesForDownload } from 'src/app/types/downloadCode';
+import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
 @Component({
   selector: 'app-guest-coding',
   templateUrl: './guest-coding.component.html',
@@ -44,18 +57,53 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   isLoggedIn!: boolean;
   toggle: boolean = false;
   saved: boolean = false;
+  templateId!: string;
+  subs_downloadDataLoading!: Subscription;
+  subs_downloadDataSuccess!: Subscription;
+  subs_downloadDataError!: Subscription;
+  downloadLoading$!: boolean | null;
+  downloadCodeResult$!: CodesForDownload;
+  downloadCodeError$!: string | null;
   setLogModTrue(bool: boolean) {
     logModToggle.next(bool);
   }
   scriptCode!: any;
   scriptInserted: boolean = false;
+  intervelIdLoading!: any;
+  intervelIdResult!: any;
+  intervelIdError!: any;
 
-  constructor(private _userService: UserService, private _renderer: Renderer2) {
+  constructor(
+    private _userService: UserService,
+    private _renderer: Renderer2,
+    private _store: Store<appStateInterface>
+  ) {
     if (this._userService.loggedIn()) {
       this.isLoggedIn = true;
     } else {
       this.isLoggedIn = false;
     }
+
+    // updating download loading from state
+    this.subs_downloadDataLoading = this._store
+      .pipe(select(downloadCode_loadingSelector))
+      .subscribe((loading) => {
+        this.downloadLoading$ = loading;
+      });
+
+    // updating download success state
+    this.subs_downloadDataSuccess = this._store
+      .pipe(select(downloadCode_resultSelector))
+      .subscribe((data: any) => {
+        this.downloadCodeResult$ = data;
+      });
+
+    // updating download error state
+    this.subs_downloadDataError = this._store
+      .pipe(select(downloadCode_errorSelector))
+      .subscribe((error) => {
+        this.downloadCodeError$ = error;
+      });
   }
 
   private html_CodeMirror: any;
@@ -230,6 +278,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
       .runCode(this.html, this.css, this.js, title?.innerText, this.random)
       .subscribe(
         (data) => {
+          this.codeRun();
           this.random = data.template_id;
           // saving code after end running code
           this._userService
@@ -244,6 +293,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
               (res) => {
                 this.saved = true;
                 if (res.saved) {
+                  this.templateId = res?.templateId;
                   const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -357,7 +407,70 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // to download the code as zip file:
-  downloadCodes(id: string) {}
+  downloadCode(html: string, css: string, js: string) {
+    const zip = new JSZip();
+    const title = document.getElementById('editable');
+
+    // Add the files to the ZIP
+    if (html != '') {
+      console.log('html ',html)
+      zip.file('index.html', html);
+    }
+    if (css != '') {
+      zip.file('style.css', css);
+    }
+    if (js != '') {
+      zip.file('script.js', js);
+    }
+    // Generate the ZIP file asynchronously
+    zip
+      .generateAsync({ type: 'blob' })
+      .then((content) => {
+        saveAs(content, `${title?.innerText}-codebox.zip`);
+      })
+      .catch((error) => {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          },
+        });
+        Toast.fire({
+          icon: 'error',
+          title: 'Network issue! Please try again..',
+        });
+      });
+  }
+
+  // get codes for download data
+  getCodes() {
+    this._store.dispatch(codesDownload({ id: this.templateId }));
+    this.intervelIdLoading = setInterval(() => {
+      if (this.downloadLoading$) {
+        clearInterval(this.intervelIdLoading);
+      }
+    }, 1000);
+    this.intervelIdResult = setInterval(() => {
+      if (this.downloadCodeResult$) {
+        this.downloadCode(
+          this.downloadCodeResult$.html,
+          this.downloadCodeResult$.css,
+          this.downloadCodeResult$.js
+        );
+        clearInterval(this.intervelIdResult);
+      }
+    }, 1000);
+    this.intervelIdError = setInterval(() => {
+      if (this.downloadCodeError$) {
+        clearInterval(this.intervelIdError);
+      }
+    }, 1000);
+  }
 
   closeModal = () => (this.toggle = false);
 
@@ -387,5 +500,9 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
     if ((!this.isLoggedIn && this.random) || !this.saved) {
       this._userService.removeCode(this.random);
     }
+
+    this.subs_downloadDataLoading?.unsubscribe();
+    this.subs_downloadDataSuccess?.unsubscribe();
+    this.subs_downloadDataError?.unsubscribe();
   }
 }

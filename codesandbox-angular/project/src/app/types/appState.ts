@@ -8,4 +8,5 @@ export interface appStateInterface {
   code: Code;
   otp:authState;
   search:authState;
+  downloadCode:authState;
 }

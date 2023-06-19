@@ -1,14 +1,12 @@
-import { Injectable, isDevMode } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { User } from '../components/user/signup/newUser';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LOGIN } from '../components/user/login/userLogin';
 import { Router } from '@angular/router';
 import { coding, popupLog } from './shared-values.service';
 import { Templates } from '../types/template_types';
 import { USerData } from '../types/UserData';
-// import { apiUrl } from '../../environments/environment.development';
-// import { domain } from '../../environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -16,9 +14,7 @@ const httpOptions = {
   }),
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class UserService {
   private api_url = 'http://localhost:3000';
   intervalId: any;
@@ -68,7 +64,7 @@ export class UserService {
   // otp verification alert close
   otpAlertClose() {
     let alert: any = document.getElementById('otp_alert');
-    if(alert.style)alert.style.display = 'none';
+    if (alert.style) alert.style.display = 'none';
   }
 
   // refreshing token

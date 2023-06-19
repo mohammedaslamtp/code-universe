@@ -53,3 +53,22 @@ export const search_resultSelector = createSelector(selectFeature, (state) => {
 export const search_errorSelector = createSelector(selectFeature, (state) => {
   return state?.error;
 });
+
+// download template selector:
+selectFeature = (state: appStateInterface) => state.downloadCode;
+export const downloadCode_loadingSelector = createSelector(
+  selectFeature,
+  (state) => state?.isLoading
+);
+export const downloadCode_resultSelector = createSelector(
+  selectFeature,
+  (state) => {
+    return state?.data;
+  }
+);
+export const downloadCode_errorSelector = createSelector(
+  selectFeature,
+  (state) => {
+    return state?.error;
+  }
+);

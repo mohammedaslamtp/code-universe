@@ -8,10 +8,12 @@ import * as loginAction from './actions/loginAction';
 import * as registerAction from './actions/signupAction';
 import * as otpRequestAction from './actions/generateOtp';
 import * as searchAction from './actions/search';
+import * as downloadAction from './actions/downloadCodes';
 import Swal from 'sweetalert2';
 import { otpSentLoad } from '../components/user/otp/otp.component';
 import { MainService } from '../services/main.service';
-import { Codes, Template, Templates } from '../types/template_types';
+import { DownloadService } from '../services/download.service';
+import { CodesForDownload } from '../types/downloadCode';
 
 @Injectable()
 export class effects {
@@ -19,6 +21,7 @@ export class effects {
     private _actions$: Actions,
     private _userService: UserService,
     private _mainService: MainService,
+    private _downloadService: DownloadService,
     private _route: Router
   ) {}
 
@@ -76,11 +79,9 @@ export class effects {
     this._actions$.pipe(
       ofType(otpRequestAction.otpRequest),
       mergeMap((res) => {
-        console.log('otp effect res: ', res);
         otpSentLoad.next(true);
         return this._userService.genreateOtp().pipe(
           map((_otpRes) => {
-            console.log('result otp generation: ', _otpRes);
             setTimeout(() => {
               if (_otpRes.isGenerated) {
                 const Toast = Swal.mixin({
@@ -132,12 +133,32 @@ export class effects {
       ofType(searchAction.SearchQuery),
       mergeMap((res) => {
         return this._mainService.search(res.q).pipe(
-          map((searchResult:any) => {
-            console.log(searchResult);
+          map((searchResult: any) => {
             return searchAction.SearchSuccess({ search: searchResult });
           }),
           catchError((err) => {
             return of(searchAction.SearchFailure({ error: err.error }));
+          })
+        );
+      })
+    )
+  );
+
+  // download codes:
+  downloadCodes$ = createEffect(() =>
+    this._actions$.pipe(
+      ofType(downloadAction.codesDownload),
+      mergeMap((res) => {
+        return this._downloadService.getCodes(res.id).pipe(
+          map((downloadResult: CodesForDownload) => {
+            return downloadAction.downloadCodesSuccess({
+              downloadData: downloadResult,
+            });
+          }),
+          catchError((err) => {
+            return of(
+              downloadAction.downloadCodesFailure({ error: err.error })
+            );
           })
         );
       })

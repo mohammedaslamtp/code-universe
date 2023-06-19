@@ -1,5 +1,4 @@
 import { createAction, props } from '@ngrx/store';
-import { search } from '../../types/search';
 import { Codes } from 'src/app/types/template_types';
 
 export const SearchQuery = createAction(
