@@ -5,6 +5,7 @@ import {
   ViewChild,
   HostListener,
   OnDestroy,
+  AfterViewInit,
 } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import {
@@ -26,7 +27,7 @@ import { coding, logModToggle } from 'src/app/services/shared-values.service';
   templateUrl: './guest-coding.component.html',
   styleUrls: ['./guest-coding.component.css'],
 })
-export class GuestCodingComponent implements OnInit, OnDestroy {
+export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   // confirmation for reaload
   @HostListener('window:beforeunload', ['$event'])
   confirmExit(event: BeforeUnloadEvent): void {
@@ -39,22 +40,32 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   html?: string | null;
   css?: string | null;
   js?: string | null;
-  intervalId: any;
   isLoading: boolean = true;
   isLoggedIn!: boolean;
   toggle: boolean = false;
+  saved: boolean = false;
   setLogModTrue(bool: boolean) {
     logModToggle.next(bool);
   }
+  scriptCode!: any;
+  scriptInserted: boolean = false;
 
-  constructor(
-    private _userService: UserService,
-    private _renderer: Renderer2
-  ) {}
+  constructor(private _userService: UserService, private _renderer: Renderer2) {
+    if (this._userService.loggedIn()) {
+      this.isLoggedIn = true;
+    } else {
+      this.isLoggedIn = false;
+    }
+  }
+
+  private html_CodeMirror: any;
+  private css_CodeMirror: any;
+  private js_CodeMirror: any;
 
   ngOnInit(): void {
-    const scriptCode = `
-    const html_CodeMirror = CodeMirror(document.getElementById("html"), {
+    if (!this.scriptInserted) {
+      this.scriptCode = `
+     this.html_CodeMirror = CodeMirror(document.getElementById("html"), {
       lineNumbers: true,
       value: "<!-- write your HTML code here.. -->",
       theme: "ayu-mirage",
@@ -65,7 +76,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
       autocorrect: true,
       autocapitalize: true,
     });
-    const css_CodeMirror = CodeMirror(document.getElementById("css"), {
+    this.css_CodeMirror = CodeMirror(document.getElementById("css"), {
       lineNumbers: true,
       value: "/* write your CSS code here.. */",
       theme: "ayu-mirage",
@@ -75,7 +86,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
       autocorrect: true,
       autocapitalize: true,
     });
-    const js_CodeMirror = CodeMirror(document.getElementById("js"), {
+    this.js_CodeMirror = CodeMirror(document.getElementById("js"), {
       lineNumbers: true,
       value: "//write your JS code here..",
       theme: "ayu-mirage",
@@ -86,28 +97,24 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
       autocapitalize: true,
     });
   `;
-    const script = this._renderer.createElement('script');
-    script.textContent = scriptCode;
-    const targetElement = document.getElementById('data');
-    this._renderer.appendChild(targetElement, script);
+      const script = this._renderer.createElement('script');
+      this._renderer.setAttribute(script, 'id', 'codeMirror_script');
+      script.textContent = this.scriptCode;
 
+      const targetElement = document.getElementById('data');
+      const existingScriptElement =
+        document.getElementById('codeMirror_script');
+
+      if (existingScriptElement) {
+        existingScriptElement.textContent = '';
+      } else {
+        this._renderer.appendChild(targetElement, script);
+      }
+
+      this.scriptInserted = true;
+    }
     coding.next(true);
     window.addEventListener('message', this.receiveMessage.bind(this));
-    html_editor((data: string | null) => {
-      this.html = data;
-    });
-    css_editor((data: string | null) => {
-      this.css = data;
-    });
-    js_editor((data: string | null) => {
-      this.js = data;
-    });
-
-    if (localStorage.getItem('token')) {
-      this.isLoggedIn = true;
-    } else {
-      this.isLoggedIn = false;
-    }
 
     // resizing style
     const dataDiv: any = document.getElementById('data');
@@ -146,16 +153,18 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     document.addEventListener('mouseup', (e: any) => {
       isResizing = false;
     });
+  }
 
-    // checking user logged in or not regularly and updating
-    this.intervalId = setInterval(() => {
-      if (localStorage.getItem('token')) {
-        this.isLoggedIn = true;
-      } else {
-        this.isLoggedIn = false;
-      }
-    }, 1000);
-    this.codeRun();
+  ngAfterViewInit(): void {
+    html_editor((data: string | null) => {
+      this.html = data;
+    });
+    css_editor((data: string | null) => {
+      this.css = data;
+    });
+    js_editor((data: string | null) => {
+      this.js = data;
+    });
   }
 
   // javascirpt errors for console
@@ -214,7 +223,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   }
 
   // save code
-  saved: boolean = false;
   saveCode() {
     // running code before saving
     const title = document.getElementById('editable');
@@ -320,6 +328,37 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     return formattedCode;
   }
 
+  pressedKeys: Set<string> = new Set<string>();
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    this.pressedKeys.add(event.key);
+    if (
+      this.pressedKeys.has('Alt') &&
+      (this.pressedKeys.has('s') || this.pressedKeys.has('S'))
+    ) {
+      if (this.isLoggedIn) {
+        this.saveCode();
+      } else {
+        this.popup();
+      }
+    } else if (
+      this.pressedKeys.has('Control') &&
+      this.pressedKeys.has('Enter')
+    ) {
+      this.codeRun();
+    }
+  }
+
+  @HostListener('document:keyup', ['$event'])
+  onDocumentKeyUp(event: KeyboardEvent) {
+    if (event.key) {
+      this.pressedKeys.delete(event.key);
+    }
+  }
+
+  // to download the code as zip file:
+  downloadCodes(id: string) {}
+
   closeModal = () => (this.toggle = false);
 
   login: boolean = false;
@@ -331,8 +370,19 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     this.signup = true;
   }
 
+  // removing exist codeMirror instance
+  removeScriptCode() {
+    const element = document.getElementById('codeMirror_script');
+    if (element && element.parentNode) {
+      this._renderer.removeChild(element.parentNode, element);
+      element.textContent = null;
+      element.parentNode.removeChild(element);
+      this.scriptCode = null;
+    }
+  }
+
   ngOnDestroy(): void {
-    clearInterval(this.intervalId);
+    this.removeScriptCode();
     coding.next(false);
     if ((!this.isLoggedIn && this.random) || !this.saved) {
       this._userService.removeCode(this.random);

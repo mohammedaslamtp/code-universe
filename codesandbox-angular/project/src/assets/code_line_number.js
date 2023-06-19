@@ -1,12 +1,15 @@
+// html editor
 export const html_editor = (cb) => {
   const targetNode = document.querySelector("#html .CodeMirror-code");
   const config = { attributes: true, childList: true, subtree: true };
   let data = "";
-  const observer = new MutationObserver((_mutationsList, _observer) => {
-    data = html_CodeMirror.getValue();
-    cb(data);
-  });
-  observer.observe(targetNode, config);
+  if (html_CodeMirror) {
+    const observer = new MutationObserver((_mutationsList, _observer) => {
+      data = html_CodeMirror.getValue();
+      cb(data);
+    });
+    observer.observe(targetNode, config);
+  }
 };
 
 // update formatted code

@@ -67,7 +67,7 @@ const routes: Routes = [
     path: 'coding',
     component: GuestCodingComponent,
     canDeactivate: [CodingGuard],
-    canActivate: [BlockUserGuard],
+    // canActivate: [BlockUserGuard],
   },
   {
     path: 'liveCoding',
