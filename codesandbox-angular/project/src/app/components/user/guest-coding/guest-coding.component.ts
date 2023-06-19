@@ -7,22 +7,20 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
-// import {
-//   html_editor,
-//   css_editor,
-//   js_editor,
-//   updateFormatedCode,
-// } from 'src/assets/code_line_number';
+import {
+  html_editor,
+  css_editor,
+  js_editor,
+  updateFormatedCode,
+} from 'src/assets/code_line_number';
 import Swal from 'sweetalert2';
 import * as prettier from 'prettier';
 import * as htmlParser from 'prettier/parser-html';
 import * as jsParser from 'prettier/parser-babel';
 import * as cssParser from 'prettier/parser-postcss';
-
-
+import { Renderer2 } from '@angular/core';
 
 import { coding, logModToggle } from 'src/app/services/shared-values.service';
-// import {CodeMirror} from'@codemirror-toolkit/react'
 @Component({
   selector: 'app-guest-coding',
   templateUrl: './guest-coding.component.html',
@@ -49,20 +47,61 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     logModToggle.next(bool);
   }
 
-  constructor(private _userService: UserService) {}
+  constructor(
+    private _userService: UserService,
+    private _renderer: Renderer2
+  ) {}
 
   ngOnInit(): void {
+    const scriptCode = `
+    const html_CodeMirror = CodeMirror(document.getElementById("html"), {
+      lineNumbers: true,
+      value: "<!-- write your HTML code here.. -->",
+      theme: "ayu-mirage",
+      mode: "text/html",
+      dragDrop: "drop",
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      autocorrect: true,
+      autocapitalize: true,
+    });
+    const css_CodeMirror = CodeMirror(document.getElementById("css"), {
+      lineNumbers: true,
+      value: "/* write your CSS code here.. */",
+      theme: "ayu-mirage",
+      mode: "css",
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      autocorrect: true,
+      autocapitalize: true,
+    });
+    const js_CodeMirror = CodeMirror(document.getElementById("js"), {
+      lineNumbers: true,
+      value: "//write your JS code here..",
+      theme: "ayu-mirage",
+      mode: "javascript",
+      autocorrect: true,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      autocapitalize: true,
+    });
+  `;
+    const script = this._renderer.createElement('script');
+    script.textContent = scriptCode;
+    const targetElement = document.getElementById('data');
+    this._renderer.appendChild(targetElement, script);
+
     coding.next(true);
     window.addEventListener('message', this.receiveMessage.bind(this));
-    // html_editor('html', (data: string | null) => {
-    //   this.html = data;
-    // });
-    // css_editor('css', (data: string | null) => {
-    //   this.css = data;
-    // });
-    // js_editor('js', (data: string | null) => {
-    //   this.js = data;
-    // });
+    html_editor((data: string | null) => {
+      this.html = data;
+    });
+    css_editor((data: string | null) => {
+      this.css = data;
+    });
+    js_editor((data: string | null) => {
+      this.js = data;
+    });
 
     if (localStorage.getItem('token')) {
       this.isLoggedIn = true;
@@ -247,18 +286,10 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
       plugins: [htmlParser],
       htmlWhitespaceSensitivity: 'strict',
     });
-    // updateFormatedCode('html', formattedCode);
-    let code = document.querySelectorAll("#html .CodeMirror-code")
-
-
-
-    // let preCode = document.querySelector('pre')
-    console.log(code)
-    console.log(formattedCode)
     this.html = formattedCode;
+    updateFormatedCode('html', formattedCode);
     return formattedCode;
   }
-
 
   // to format css codes
   formatCSSCode(): string {
@@ -268,6 +299,8 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
       plugins: [cssParser],
       htmlWhitespaceSensitivity: 'strict',
     });
+    this.css = formattedCode;
+    updateFormatedCode('css', formattedCode);
     return formattedCode;
   }
 
@@ -282,6 +315,8 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
       plugins: [jsParser],
       htmlWhitespaceSensitivity: 'strict',
     });
+    this.js = formattedCode;
+    updateFormatedCode('js', formattedCode);
     return formattedCode;
   }
 
