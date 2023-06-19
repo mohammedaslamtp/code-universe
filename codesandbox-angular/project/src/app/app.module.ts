@@ -6,7 +6,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { UserService } from './services/user.service';
-import { AdminService } from './services/admin.service';
 import { SocketService } from './services/socket.service';
 
 import { AuthInterceptor } from './services/auth.interceptor';

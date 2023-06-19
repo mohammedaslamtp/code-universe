@@ -68,24 +68,30 @@
     <section class="flex flex-col" id="data">
       <div class="w-full" style="height: 4em"></div>
       <div
+      class="flex justify-end items-center"
         style="width: 23em; height: 2em; background-color: rgb(203, 203, 203)"
         id="html-header"
       >
         <p class="text-right mr-2">HTML</p>
+        <button class="border p-1 bg-blue-200 py-0 m-1 rounded" (click)="formatHTMLCode()">format</button>
       </div>
       <div class="code-sizing overflow-hidden" id="html"></div>
       <div
+      class="flex justify-end items-center"
         style="width: 23em; height: 2em; background-color: rgb(203, 203, 203)"
         id="css-header"
       >
         <p class="text-right mr-2">CSS</p>
+        <button class="border p-1 bg-blue-200 py-0 m-1 rounded" (click)="formatCSSCode()">format</button>
       </div>
       <div class="code-sizing overflow-hidden" id="css"></div>
       <div
+      class="flex justify-end items-center"
         style="width: 23em; height: 2em; background-color: rgb(203, 203, 203)"
         id="js-header"
       >
         <p class="text-right mr-2">JS</p>
+        <button class="border p-1 bg-blue-200 py-0 m-1 rounded" (click)="formatJSCode()">format</button>
       </div>
       <div class="code-sizing overflow-hidden" id="js"></div>
     </section>

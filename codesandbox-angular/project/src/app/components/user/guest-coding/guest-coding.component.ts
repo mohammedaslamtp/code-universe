@@ -7,15 +7,22 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
-import {
-  html_editor,
-  css_editor,
-  js_editor,
-} from 'src/assets/code_line_number';
+// import {
+//   html_editor,
+//   css_editor,
+//   js_editor,
+//   updateFormatedCode,
+// } from 'src/assets/code_line_number';
 import Swal from 'sweetalert2';
+import * as prettier from 'prettier';
+import * as htmlParser from 'prettier/parser-html';
+import * as jsParser from 'prettier/parser-babel';
+import * as cssParser from 'prettier/parser-postcss';
+
+
 
 import { coding, logModToggle } from 'src/app/services/shared-values.service';
-
+// import {CodeMirror} from'@codemirror-toolkit/react'
 @Component({
   selector: 'app-guest-coding',
   templateUrl: './guest-coding.component.html',
@@ -42,20 +49,20 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     logModToggle.next(bool);
   }
 
-  constructor(private userService: UserService) {}
+  constructor(private _userService: UserService) {}
 
   ngOnInit(): void {
     coding.next(true);
     window.addEventListener('message', this.receiveMessage.bind(this));
-    html_editor('html', (data: string | null) => {
-      this.html = data;
-    });
-    css_editor('css', (data: string | null) => {
-      this.css = data;
-    });
-    js_editor('js', (data: string | null) => {
-      this.js = data;
-    });
+    // html_editor('html', (data: string | null) => {
+    //   this.html = data;
+    // });
+    // css_editor('css', (data: string | null) => {
+    //   this.css = data;
+    // });
+    // js_editor('js', (data: string | null) => {
+    //   this.js = data;
+    // });
 
     if (localStorage.getItem('token')) {
       this.isLoggedIn = true;
@@ -123,12 +130,12 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   random!: string;
   codeRun() {
     const title = document.getElementById('editable');
-    this.userService
+    this._userService
       .runCode(this.html, this.css, this.js, title?.innerText, this.random)
       .subscribe(
         (data) => {
           this.random = data.template_id;
-          this.userService.reloadIframe(data.template_id).subscribe(
+          this._userService.reloadIframe(data.template_id).subscribe(
             (response: any) => {
               if (response) this.isLoading = false;
               const blob = new Blob([response], { type: 'text/html' });
@@ -172,13 +179,13 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   saveCode() {
     // running code before saving
     const title = document.getElementById('editable');
-    this.userService
+    this._userService
       .runCode(this.html, this.css, this.js, title?.innerText, this.random)
       .subscribe(
         (data) => {
           this.random = data.template_id;
           // saving code after end running code
-          this.userService
+          this._userService
             .saveCode(
               title?.innerText,
               this.html,
@@ -223,12 +230,59 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
 
   // for guestUser only
   popup() {
-    if (this.userService.loggedIn()) {
+    if (this._userService.loggedIn()) {
       this.isLoggedIn = true;
     } else {
       this.isLoggedIn = false;
       this.toggle = true;
     }
+  }
+
+  // to format html codes
+  CodeForFormat!: string;
+  formatHTMLCode(): string {
+    this.CodeForFormat = this.html + '';
+    const formattedCode = prettier.format(this.CodeForFormat, {
+      parser: `html`,
+      plugins: [htmlParser],
+      htmlWhitespaceSensitivity: 'strict',
+    });
+    // updateFormatedCode('html', formattedCode);
+    let code = document.querySelectorAll("#html .CodeMirror-code")
+
+
+
+    // let preCode = document.querySelector('pre')
+    console.log(code)
+    console.log(formattedCode)
+    this.html = formattedCode;
+    return formattedCode;
+  }
+
+
+  // to format css codes
+  formatCSSCode(): string {
+    this.CodeForFormat = this.css + '';
+    const formattedCode = prettier.format(this.CodeForFormat, {
+      parser: `css`,
+      plugins: [cssParser],
+      htmlWhitespaceSensitivity: 'strict',
+    });
+    return formattedCode;
+  }
+
+  // to format js codes
+  formatJSCode(): string {
+    this.CodeForFormat = this.js + '';
+    const formattedCode = prettier.format(this.CodeForFormat, {
+      singleQuote: true,
+      trailingComma: 'es5',
+      tabWidth: 2,
+      parser: 'babel',
+      plugins: [jsParser],
+      htmlWhitespaceSensitivity: 'strict',
+    });
+    return formattedCode;
   }
 
   closeModal = () => (this.toggle = false);
@@ -246,9 +300,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     clearInterval(this.intervalId);
     coding.next(false);
     if ((!this.isLoggedIn && this.random) || !this.saved) {
-      this.userService.removeCode(this.random).subscribe((data) => {
-        console.log('response for remove code: ', data);
-      });
+      this._userService.removeCode(this.random);
     }
   }
 }
