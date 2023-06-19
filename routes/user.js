@@ -28,4 +28,5 @@ route
   .delete("/deleteCode",auth_token.authenticate,code_controller.deleteCode)
   .patch("/following",auth_token.authenticate,social_controller.follow)
   .patch("/unFollowing",auth_token.authenticate,social_controller.unFollow)
+  .get("/codeForDownload",auth_token.authenticate,code_controller.downloadCode)
 module.exports = route;

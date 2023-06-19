@@ -6,12 +6,11 @@ module.exports = {
   // to render code page:
   runCode: async (req, res) => {
     try {
-      console.log("id ", req.query.id);
-      let id = req.query.id;
-      let template = await Code.findOne({ template_id: id });
-      let html = template.html;
-      let css = template.css;
-      let js = template.js;
+      const id = req.query.id;
+      const template = await Code.findOne({ template_id: id });
+      const html = template.html;
+      const css = template.css;
+      const js = template.js;
       res.render("index", { html, css, js });
     } catch (error) {
       console.log("code page render error: ", error);
@@ -22,7 +21,6 @@ module.exports = {
   saveCodeData: async (req, res) => {
     try {
       let randomId;
-      console.log(req.body);
       if (req.body.random) {
         randomId = req.body.random;
       } else {
@@ -31,10 +29,10 @@ module.exports = {
           .toString("hex") // convert to hexadecimal format
           .slice(0, 30); // trim to desired length
       }
-      let title = req.body.title;
-      let html = req.body.html;
-      let css = req.body.css;
-      let js = req.body.js;
+      const title = req.body.title;
+      const html = req.body.html;
+      const css = req.body.css;
+      const js = req.body.js;
       let code;
       if (!req.body.random) {
         code = await Code.create({
@@ -59,7 +57,6 @@ module.exports = {
           }
         );
       }
-      console.log(code, " saved");
       res.status(200).json(code);
     } catch (error) {
       console.log("code snippet saving error! ", error);
@@ -69,8 +66,6 @@ module.exports = {
   // store to as users template
   storeTemplate: async (req, res) => {
     try {
-      console.log("uzzer: ", req.user);
-      console.log("body: ", req.body);
       const random = req.body.random;
       const title = req.body.title;
       const html = req.body.html;
@@ -94,16 +89,14 @@ module.exports = {
           }
         )
           .then((data) => {
-            console.log("code save success: ", data);
-            res.status(200).json({ saved: true });
+            res.status(200).json({ saved: true, templateId: random });
           })
           .catch((err) => {
-            console.log("error: ", err);
             res.status(404).json({ saved: false });
           });
       }
     } catch (error) {
-      console.log("code store error: ", error);
+      res.status(404).json({ saved: false });
     }
   },
 
@@ -155,10 +148,8 @@ module.exports = {
         })
         .catch((error) => {
           res.status(404).json({ isPrivate: true });
-          console.log("updated to private faild: ", error);
         });
     } catch (error) {
-      console.log("ERROR!! ", error);
       res.status(404).json(error.reason);
     }
   },
@@ -174,7 +165,6 @@ module.exports = {
         })
         .catch((error) => {
           res.status(404).json({ isPublic: false });
-          console.log("updated to public faild: ", error);
         });
     } catch (error) {
       res.status(404).json(error.reason);
@@ -189,11 +179,26 @@ module.exports = {
           res.status(200).json({ isDeleted: true });
         })
         .catch((error) => {
-          console.log("deletion code is faild: ", error);
           res.status(404).json({ isDeleted: false });
         });
     } catch (error) {
       res.status(404).json(error.reason);
+    }
+  },
+
+  // download code
+  downloadCode: (req, res) => {
+    try {
+      const templateId = req.query.templateId;
+      Code.findOne({ template_id: templateId })
+        .then((data) => {
+          res.status(200).json({ html: data.html, css: data.css, js: data.js });
+        })
+        .catch((error) => {
+          res.status(404).json(error.message);
+        });
+    } catch (error) {
+      console.log(error);
     }
   },
 };
