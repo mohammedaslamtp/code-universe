@@ -61,7 +61,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   subs_downloadDataLoading!: Subscription;
   subs_downloadDataSuccess!: Subscription;
   subs_downloadDataError!: Subscription;
-  downloadLoading$!: boolean | null;
+  downloadLoading$: boolean | null = false; 
   downloadCodeResult$!: CodesForDownload;
   downloadCodeError$!: string | null;
   setLogModTrue(bool: boolean) {
@@ -88,7 +88,9 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subs_downloadDataLoading = this._store
       .pipe(select(downloadCode_loadingSelector))
       .subscribe((loading) => {
-        this.downloadLoading$ = loading;
+        if (loading == true) {
+          this.downloadLoading$ = loading;
+        }
       });
 
     // updating download success state
@@ -378,6 +380,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
     return formattedCode;
   }
 
+  // combo shortcuts
   pressedKeys: Set<string> = new Set<string>();
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
@@ -413,7 +416,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Add the files to the ZIP
     if (html != '') {
-      console.log('html ',html)
       zip.file('index.html', html);
     }
     if (css != '') {
@@ -426,9 +428,11 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
     zip
       .generateAsync({ type: 'blob' })
       .then((content) => {
+        this.downloadLoading$ = false;
         saveAs(content, `${title?.innerText}-codebox.zip`);
       })
       .catch((error) => {
+        this.downloadLoading$ = false;
         const Toast = Swal.mixin({
           toast: true,
           position: 'top-end',
