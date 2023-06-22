@@ -108,6 +108,7 @@
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
         <!-- Dropdown menu -->
+
         <div
           [id]="el._id"
           [ngClass]="{
@@ -146,7 +147,7 @@
             <li>
               <a
                 class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                (click)="deleteCode(el._id,el.title)"
+                (click)="deleteCode(el._id, el.title)"
                 ><i class="fa-solid fa-delete-left"></i>&nbsp; Delete</a
               >
             </li>
@@ -191,3 +192,4 @@
   <a routerLink="/coding" class="text-sky-400 mt-4">Go build One!</a>
 </div>
 <!-- /empty case -->
+

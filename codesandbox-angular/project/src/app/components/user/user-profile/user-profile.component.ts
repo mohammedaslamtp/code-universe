@@ -1,10 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { CoreModule } from 'src/app/modules/core/core.module';
 import { SocialService } from 'src/app/services/soical.service';
 import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
 import Swal from 'sweetalert2';
+import { UserHeaderComponent } from '../user-header/user-header.component';
 
 export const allCodesPage = new BehaviorSubject<boolean>(false);
 export const publicPage = new BehaviorSubject<boolean>(false);
@@ -170,6 +173,7 @@ export class UserProfileComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.isAccountOwner = false;
     this.subs_owner.unsubscribe();
     this.subs_param?.unsubscribe();
     this.subs_userid?.unsubscribe();

@@ -74,39 +74,7 @@ const routes: Routes = [
     component: LiveCodingComponent,
     canActivate: [UserHomeGuard, BlockUserGuard],
   },
-  {
-    path: 'userProfile/:username',
-    component: UserProfileComponent,
-    canActivate: [UserHomeGuard, BlockUserGuard],
-    children: [
-      { path: '', component: AllCodesComponent, canActivate: [BlockUserGuard] },
-      {
-        path: 'allCodes/:id',
-        component: AllCodesComponent,
-        canActivate: [UserHomeGuard, BlockUserGuard],
-      },
-      {
-        path: 'followers/:id',
-        component: FollowersComponent,
-        canActivate: [UserHomeGuard, BlockUserGuard],
-      },
-      {
-        path: 'following/:id',
-        component: FollowingComponent,
-        canActivate: [UserHomeGuard, BlockUserGuard],
-      },
-      {
-        path: 'private/:id',
-        component: PrivateCodesComponent,
-        canActivate: [UserHomeGuard, BlockUserGuard],
-      },
-      {
-        path: 'public/:id',
-        component: PublicCodesComponent,
-        canActivate: [UserHomeGuard, BlockUserGuard],
-      },
-    ],
-  },
+  
   {
     path: 'search/:q',
     component: SearchResultComponent,
@@ -114,9 +82,14 @@ const routes: Routes = [
   },
   { path: '404', component: NotFoundComponent },
   {
+    path: 'userProfile/:username',
+    loadChildren: () =>
+      import('./modules/user-profile/user-profile.module').then((m) => m.UserProfileModule),
+  },
+  {
     path: 'admin',
     loadChildren: () =>
-      import('../../modules/admin/admin.module').then((m) => m.AdminModule),
+      import('./modules/admin/admin.module').then((m) => m.AdminModule),
   },
   { path: '**', redirectTo: '/404' },
 ];

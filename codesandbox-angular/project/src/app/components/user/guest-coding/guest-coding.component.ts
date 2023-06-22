@@ -34,7 +34,7 @@ import {
 } from 'src/app/stores/selector';
 import { appStateInterface } from 'src/app/types/appState';
 import { CodesForDownload } from 'src/app/types/downloadCode';
-import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
+
 @Component({
   selector: 'app-guest-coding',
   templateUrl: './guest-coding.component.html',
@@ -61,13 +61,14 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   subs_downloadDataLoading!: Subscription;
   subs_downloadDataSuccess!: Subscription;
   subs_downloadDataError!: Subscription;
-  downloadLoading$: boolean | null = false; 
+  downloadLoading$: boolean | null = false;
   downloadCodeResult$!: CodesForDownload;
   downloadCodeError$!: string | null;
   setLogModTrue(bool: boolean) {
     logModToggle.next(bool);
   }
   scriptCode!: any;
+  divData!: any;
   scriptInserted: boolean = false;
   intervelIdLoading!: any;
   intervelIdResult!: any;
@@ -120,31 +121,18 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
       value: "<!-- write your HTML code here.. -->",
       theme: "ayu-mirage",
       mode: "text/html",
-      dragDrop: "drop",
-      matchBrackets: true,
-      autoCloseBrackets: true,
-      autocorrect: true,
-      autocapitalize: true,
     });
     this.css_CodeMirror = CodeMirror(document.getElementById("css"), {
       lineNumbers: true,
       value: "/* write your CSS code here.. */",
       theme: "ayu-mirage",
       mode: "css",
-      matchBrackets: true,
-      autoCloseBrackets: true,
-      autocorrect: true,
-      autocapitalize: true,
     });
     this.js_CodeMirror = CodeMirror(document.getElementById("js"), {
       lineNumbers: true,
       value: "//write your JS code here..",
       theme: "ayu-mirage",
       mode: "javascript",
-      autocorrect: true,
-      matchBrackets: true,
-      autoCloseBrackets: true,
-      autocapitalize: true,
     });
   `;
       const script = this._renderer.createElement('script');
@@ -160,7 +148,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         this._renderer.appendChild(targetElement, script);
       }
-
       this.scriptInserted = true;
     }
     coding.next(true);
@@ -338,46 +325,51 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // to format html codes
-  CodeForFormat!: string;
-  formatHTMLCode(): string {
-    this.CodeForFormat = this.html + '';
-    const formattedCode = prettier.format(this.CodeForFormat, {
-      parser: `html`,
-      plugins: [htmlParser],
-      htmlWhitespaceSensitivity: 'strict',
-    });
-    this.html = formattedCode;
-    updateFormatedCode('html', formattedCode);
-    return formattedCode;
+  htmlCodeForFormat!: string;
+  formatHTMLCode(): void {
+    this.htmlCodeForFormat = this.html + '';
+    if (this.html !== undefined) {
+      const formattedCode = prettier.format(this.htmlCodeForFormat, {
+        parser: `html`,
+        plugins: [htmlParser],
+        htmlWhitespaceSensitivity: 'strict',
+      });
+      this.html = formattedCode;
+      updateFormatedCode('html', formattedCode);
+    }
   }
 
   // to format css codes
-  formatCSSCode(): string {
-    this.CodeForFormat = this.css + '';
-    const formattedCode = prettier.format(this.CodeForFormat, {
-      parser: `css`,
-      plugins: [cssParser],
-      htmlWhitespaceSensitivity: 'strict',
-    });
-    this.css = formattedCode;
-    updateFormatedCode('css', formattedCode);
-    return formattedCode;
+  cssCodeForFormat!: string;
+  formatCSSCode(): void {
+    this.cssCodeForFormat = this.css + '';
+    if (this.css !== undefined) {
+      const formattedCode = prettier.format(this.cssCodeForFormat, {
+        parser: `css`,
+        plugins: [cssParser],
+        htmlWhitespaceSensitivity: 'strict',
+      });
+      this.css = formattedCode;
+      updateFormatedCode('css', formattedCode);
+    }
   }
 
   // to format js codes
-  formatJSCode(): string {
-    this.CodeForFormat = this.js + '';
-    const formattedCode = prettier.format(this.CodeForFormat, {
-      singleQuote: true,
-      trailingComma: 'es5',
-      tabWidth: 2,
-      parser: 'babel',
-      plugins: [jsParser],
-      htmlWhitespaceSensitivity: 'strict',
-    });
-    this.js = formattedCode;
-    updateFormatedCode('js', formattedCode);
-    return formattedCode;
+  jsCodeForFormat!: string;
+  formatJSCode() {
+    this.jsCodeForFormat = this.js + '';
+    if (this.js !== undefined) {
+      const formattedCode = prettier.format(this.jsCodeForFormat, {
+        singleQuote: true,
+        trailingComma: 'es5',
+        tabWidth: 2,
+        parser: 'babel',
+        plugins: [jsParser],
+        htmlWhitespaceSensitivity: 'strict',
+      });
+      this.js = formattedCode;
+      updateFormatedCode('js', formattedCode);
+    }
   }
 
   // combo shortcuts
@@ -386,15 +378,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   onKeyDown(event: KeyboardEvent) {
     this.pressedKeys.add(event.key);
     if (
-      this.pressedKeys.has('Alt') &&
-      (this.pressedKeys.has('s') || this.pressedKeys.has('S'))
-    ) {
-      if (this.isLoggedIn) {
-        this.saveCode();
-      } else {
-        this.popup();
-      }
-    } else if (
       this.pressedKeys.has('Control') &&
       this.pressedKeys.has('Enter')
     ) {

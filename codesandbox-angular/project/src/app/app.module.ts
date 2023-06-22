@@ -2,8 +2,7 @@ import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { UserService } from './services/user.service';
 import { SocketService } from './services/socket.service';
@@ -35,11 +34,7 @@ import { LoginComponent } from './components/user/login/login.component';
 import { SignupComponent } from './components/user/signup/signup.component';
 import { HomeComponent } from './components/user/home/home.component';
 import { GuestHomeComponent } from './components/user/guest-home/guest-home.component';
-import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
-import { UsersComponent } from './components/admin/users/users.component';
-import { AdLoginComponent } from './components/admin/ad-login/ad-login.component';
 import { OtpComponent } from './components/user/otp/otp.component';
-import { HeaderComponent } from './components/admin/header/header.component';
 import { UserHeaderComponent } from './components/user/user-header/user-header.component';
 import { NotFoundComponent } from './components/user/not-found/not-found.component';
 import { GuestCodingComponent } from './components/user/guest-coding/guest-coding.component';
@@ -49,24 +44,14 @@ import { GenerateOtpComponent } from './components/user/generate-otp/generate-ot
 import { OtpVeriyAlertComponent } from './components/user/otp-veriy-alert/otp-veriy-alert.component';
 import { LiveCodingComponent } from './components/user/live-coding/live-coding.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
-import {
-  SearchResultComponent,
-  searchQuery,
-} from './components/search-result/search-result.component';
+import { SearchResultComponent } from './components/search-result/search-result.component';
 import { MainService } from './services/main.service';
-import { FollowersComponent } from './components/user/followers/followers.component';
-import { FollowingComponent } from './components/user/following/following.component';
-import { AllCodesComponent } from './components/user/all-codes/all-codes.component';
-import { PublicCodesComponent } from './components/user/public-codes/public-codes.component';
-import { PrivateCodesComponent } from './components/user/private-codes/private-codes.component';
 import { YourWorksComponent } from './components/user/your-works/your-works.component';
 import { TrendingComponent } from './components/user/trending/trending.component';
 import { FollowingCodesComponent } from './components/user/following-codes/following-codes.component';
 import { SocialService } from './services/soical.service';
 import { DownloadService } from './services/download.service';
-
-// quill api
-// import { QuillModule } from 'ngx-quill';
+import { CoreModule } from './modules/core/core.module';
 
 @NgModule({
   declarations: [
@@ -75,10 +60,7 @@ import { DownloadService } from './services/download.service';
     SignupComponent,
     HomeComponent,
     GuestHomeComponent,
-    DashboardComponent,
-    HeaderComponent,
-    UsersComponent,
-    AdLoginComponent,
+
     OtpComponent,
     UserHeaderComponent,
     NotFoundComponent,
@@ -90,11 +72,6 @@ import { DownloadService } from './services/download.service';
     LiveCodingComponent,
     UserProfileComponent,
     SearchResultComponent,
-    FollowersComponent,
-    FollowingComponent,
-    AllCodesComponent,
-    PublicCodesComponent,
-    PrivateCodesComponent,
     YourWorksComponent,
     TrendingComponent,
     FollowingCodesComponent,
@@ -102,12 +79,9 @@ import { DownloadService } from './services/download.service';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
+    CoreModule,
     BrowserAnimationsModule,
     SharedModule,
-    // QuillModule.forRoot(),
     StoreModule.forRoot({}, {}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     EffectsModule.forRoot([]),

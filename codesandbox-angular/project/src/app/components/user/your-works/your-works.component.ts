@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
@@ -10,13 +10,13 @@ import { YourWorks } from '../home/home.component';
   templateUrl: './your-works.component.html',
   styleUrls: ['./your-works.component.css'],
 })
-export class YourWorksComponent implements OnDestroy {
+export class YourWorksComponent implements OnDestroy, AfterViewInit {
   subs_UserData_collector: Subscription;
   UserData!: USerData;
   yourWorks!: Templates;
   subs_templates_array: Subscription;
   constructor(private _userService: UserService) {
-    YourWorks.next(true)
+    YourWorks.next(true);
     this.subs_UserData_collector = this._userService
       .getUserData()
       .subscribe((data) => {
@@ -32,18 +32,21 @@ export class YourWorksComponent implements OnDestroy {
         this.yourWorks = this.yourWorks?.filter(
           (val) => val.isPrivate == false && val.user._id == this.UserData._id
         );
-        setTimeout(() => {
-          if (this.yourWorks) {
-            for (const el of this.yourWorks) {
-              this.previewOfCode(el.template_id);
-            }
-          }
-        }, 500);
       },
       (err) => {
         console.log('template data error: ', err);
       }
     );
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      if (this.yourWorks) {
+        for (const el of this.yourWorks) {
+          this.previewOfCode(el.template_id);
+        }
+      }
+    }, 500);
   }
 
   // view templates
@@ -69,7 +72,7 @@ export class YourWorksComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    YourWorks.next(false)
+    YourWorks.next(false);
     this.subs_UserData_collector?.unsubscribe();
     this.subs_codePreview?.unsubscribe();
   }

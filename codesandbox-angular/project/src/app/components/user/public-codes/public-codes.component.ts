@@ -7,6 +7,7 @@ import { USerData } from 'src/app/types/UserData';
 import { Template, Templates } from 'src/app/types/template_types';
 import Swal from 'sweetalert2';
 import { publicPage } from '../user-profile/user-profile.component';
+import { CoreModule } from 'src/app/modules/core/core.module';
 
 @Component({
   selector: 'app-public-codes',

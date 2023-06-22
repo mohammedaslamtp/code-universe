@@ -7,9 +7,9 @@ import { USerData } from 'src/app/types/UserData';
 import { Templates } from 'src/app/types/template_types';
 import Swal from 'sweetalert2';
 import { privatePage } from '../user-profile/user-profile.component';
+import { CoreModule } from 'src/app/modules/core/core.module';
 
 @Component({
-  selector: 'app-private-codes',
   templateUrl: './private-codes.component.html',
   styleUrls: ['./private-codes.component.css'],
 })
