@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user.service';
 import { Templates } from 'src/app/types/template_types';
@@ -9,7 +9,7 @@ import { Trending } from '../home/home.component';
   templateUrl: './trending.component.html',
   styleUrls: ['./trending.component.css'],
 })
-export class TrendingComponent implements OnDestroy, AfterViewInit, OnInit {
+export class TrendingComponent implements OnDestroy, OnInit {
   trendingTemplates!: Templates;
   subs_templates_array: Subscription;
 
@@ -30,14 +30,6 @@ export class TrendingComponent implements OnDestroy, AfterViewInit, OnInit {
 
   ngOnInit(): void {
     setTimeout(() => Trending.next(true), 0);
-  }
-
-  like(id:string){
-    const audio = new Audio('assets/sounds/click-like.mp3')
-    audio.play();
-  }
-
-  ngAfterViewInit(): void {
     setTimeout(() => {
       if (this.trendingTemplates) {
         for (const el of this.trendingTemplates) {
@@ -45,6 +37,11 @@ export class TrendingComponent implements OnDestroy, AfterViewInit, OnInit {
         }
       }
     }, 500);
+  }
+
+  like(id: string) {
+    const audio = new Audio('assets/sounds/click-like.mp3');
+    audio.play();
   }
 
   // view templates

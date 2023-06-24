@@ -11,6 +11,7 @@ export class FollowingComponent {
   data: string = '';
 
   constructor(private _renderer: Renderer2) {
+    
     const cdn1 = document.createElement('script');
     cdn1.src =
       'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/javascript-hint.min.js';
@@ -26,6 +27,8 @@ export class FollowingComponent {
 
     document.head.appendChild(cdn1);
     document.head.appendChild(cdn2);
+    document.head.appendChild(cdn3);
+    document.head.appendChild(cdn4);
   }
 
   options = {
@@ -34,6 +37,7 @@ export class FollowingComponent {
     theme: 'ayu-mirage',
     mode: 'javascript',
     extraKeys: { 'Ctrl-Space': 'autocomplete' },
+    
     showCursorWhenSelecting:true,
     lineWiseCopyCut:true,
     autoCloseBrackets: true 

@@ -1,13 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { CoreModule } from 'src/app/modules/core/core.module';
 import { SocialService } from 'src/app/services/soical.service';
 import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
 import Swal from 'sweetalert2';
-import { UserHeaderComponent } from '../user-header/user-header.component';
+import { userProfile } from '../user-header/user-header.component';
+import { domain } from 'src/app/services/shared-values.service';
 
 export const allCodesPage = new BehaviorSubject<boolean>(false);
 export const publicPage = new BehaviorSubject<boolean>(false);
@@ -34,6 +33,7 @@ export class UserProfileComponent implements OnDestroy {
   userData!: USerData;
   userName!: string;
   userId!: string;
+  profilePath!: string;
   isAccountOwner: boolean = true;
   followersCount!: number;
   followingCount!: number;
@@ -67,6 +67,12 @@ export class UserProfileComponent implements OnDestroy {
                   this.followingCount = data.following.length;
                   this.userData = data;
                   this.userId = data._id;
+                  if (data.avatar) {
+                    this.profilePath = `${domain}/${data.avatar}`;
+                  } else {
+                    this.profilePath =
+                      '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png';
+                  }
                   Name.next(data.full_name);
                   this.checkingIsFollowed();
                 },
@@ -76,7 +82,9 @@ export class UserProfileComponent implements OnDestroy {
               );
             Name.subscribe((val: any) => (this.userName = val));
             if (username == this.accountOwnerData.full_name) {
+              this.userName = this.accountOwnerData.full_name;
               this.isAccountOwner = true;
+              userProfile.next(true);
             } else {
               this.isAccountOwner = false;
             }
@@ -173,6 +181,7 @@ export class UserProfileComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    userProfile.next(false);
     this.isAccountOwner = false;
     this.subs_owner.unsubscribe();
     this.subs_param?.unsubscribe();

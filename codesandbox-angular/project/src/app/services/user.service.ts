@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { coding, popupLog } from './shared-values.service';
 import { Templates } from '../types/template_types';
 import { USerData } from '../types/UserData';
+import { environment } from 'src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -16,7 +17,7 @@ const httpOptions = {
 
 @Injectable()
 export class UserService {
-  private api_url = 'http://localhost:3000';
+  private api_url = environment.apiUrl;
   intervalId: any;
 
   constructor(private _http: HttpClient, private _route: Router) {}

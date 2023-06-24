@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthAdminGuard } from 'src/app/admin_guard/auth-admin.guard';
-import { VerifyAdminGuard } from 'src/app/admin_guard/verify-admin.guard';
 import { NotFoundComponent } from 'src/app/components/user/not-found/not-found.component';
 import { CoreModule } from '../core/core.module';
 import { UserService } from 'src/app/services/user.service';
@@ -16,6 +14,10 @@ import { UserHomeGuard } from 'src/app/guard/user-home.guard';
 import { MainService } from 'src/app/services/main.service';
 import { SocialService } from 'src/app/services/soical.service';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { ProfileSettingsComponent } from 'src/app/components/user/profile-settings/profile-settings.component';
+import { SettingsComponent } from 'src/app/components/user/settings/settings.component';
+import { EditorPreferencesComponent } from 'src/app/components/user/editor-preferences/editor-preferences.component';
+import { AccountSettingsComponent } from 'src/app/components/user/account-settings/account-settings.component';
 
 const userProfileRoutes: Routes = [
   {
@@ -53,10 +55,39 @@ const userProfileRoutes: Routes = [
         component: PublicCodesComponent,
         canActivate: [UserHomeGuard, BlockUserGuard],
       },
-      { path: '404', component: NotFoundComponent },
-      { path: '**', redirectTo: '/404' },
     ],
   },
+
+  {
+    path: 'settings/:id',
+    component: SettingsComponent,
+    canActivate: [UserHomeGuard, BlockUserGuard],
+    children: [
+      {
+        path: '',
+        component: ProfileSettingsComponent,
+        canActivate: [UserHomeGuard, BlockUserGuard],
+      },
+      {
+        path: 'profile',
+        component: ProfileSettingsComponent,
+        canActivate: [UserHomeGuard, BlockUserGuard],
+        
+      },
+      {
+        path: 'editor-preference',
+        component: EditorPreferencesComponent,
+        canActivate: [UserHomeGuard, BlockUserGuard],
+      },
+      {
+        path: 'account',
+        component: AccountSettingsComponent,
+        canActivate: [UserHomeGuard, BlockUserGuard],
+      },
+    ],
+  },
+  { path: '404', component: NotFoundComponent },
+  { path: '**', redirectTo: '/404' },
 ];
 
 @NgModule({
@@ -66,6 +97,9 @@ const userProfileRoutes: Routes = [
     PrivateCodesComponent,
     FollowersComponent,
     FollowingComponent,
+    ProfileSettingsComponent,
+    EditorPreferencesComponent,
+    AccountSettingsComponent,
   ],
   imports: [
     CoreModule,
@@ -74,8 +108,8 @@ const userProfileRoutes: Routes = [
   ],
   exports: [CoreModule],
   providers: [
-    AuthAdminGuard,
-    VerifyAdminGuard,
+    UserHomeGuard,
+    BlockUserGuard,
     UserService,
     MainService,
     SocialService,

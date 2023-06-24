@@ -12,14 +12,14 @@ export const generateOtpToggle = new BehaviorSubject<boolean>(false);
   styleUrls: ['./generate-otp.component.css'],
 })
 export class GenerateOtpComponent implements OnInit, OnDestroy {
-  toggle: boolean = true;
+  toggle: boolean = false;
   constructor(private store: Store<appStateInterface>) {}
   ngOnInit(): void {
     generateOtpToggle.subscribe((val) => {
-      if (val) {
-        this.toggle = true;
-      } else if (val == false) {
+      if (val == false) {
         this.toggle = false;
+      } else if (val == true) {
+        this.toggle = true;
       } else {
         this.toggle = false;
       }
@@ -31,7 +31,7 @@ export class GenerateOtpComponent implements OnInit, OnDestroy {
     this.store.dispatch(otpRequest());
   }
 
-  closeModal(){
+  closeModal() {
     generateOtpToggle.next(false);
   }
 

@@ -1,0 +1,44 @@
+<main class="w-full h-full text-gray-400">
+  <div class="flex flex-col items-center bg-zinc-800">
+    <div class="flex h-full w-5/6 p-5 justify-around flex-wrap rounded-t">
+      <div class="flex items-center justify-start">
+        <div class="w-full sm:pb-5 md:pb-0 lg:pb-0">
+          <label
+            class="block w-full pb-5 sm:pb-0 md:pb-0 text-gray-500 font-bold md:text-right md:mb-0"
+          >
+            Upload Profile
+          </label>
+        </div>
+      </div>
+      <div class="flex justify-start">
+        <div class="w-full flex items-center">
+          <div class="">
+            <img
+              class="object-fill rounded mr-4"
+              loading="lazy"
+              width="150"
+              [src]="profilePath"
+              [alt]="userName"
+            />
+          </div>
+          <input
+            class="bg-gray-200 hidden appearance-none border-2 border-gray-200 rounded p-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
+            #fileInput
+            type="file"
+            (change)="handleFileSelect($event)"
+          />
+          <button
+            (click)="openFilePicker()"
+            class="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+          >
+            <span
+              class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+            >
+              Choose file
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

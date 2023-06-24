@@ -7,8 +7,6 @@ import { Templates } from 'src/app/types/template_types';
 import { Id, Name, allCodesPage } from '../user-profile/user-profile.component';
 import Swal from 'sweetalert2';
 import { MainService } from 'src/app/services/main.service';
-import { CoreModule } from 'src/app/modules/core/core.module';
-
 @Component({
   selector: 'app-all-codes',
   templateUrl: './all-codes.component.html',

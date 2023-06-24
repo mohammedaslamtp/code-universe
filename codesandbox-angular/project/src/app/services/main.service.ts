@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Template } from '../types/template_types';
 import { Observable } from 'rxjs';
 import { USerData } from '../types/UserData';
+import { domain } from './shared-values.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -13,7 +14,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class MainService {
-  private _apiUrl = 'http://localhost:3000';
+  private _apiUrl = domain;
   constructor(private _http: HttpClient) {}
 
   // searching codes

@@ -12,8 +12,10 @@ import Swal from 'sweetalert2';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { searchQuery } from '../../search-result/search-result.component';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { USerData } from 'src/app/types/UserData';
+
+export const userProfile = new BehaviorSubject<boolean>(false);
 
 @Component({
   selector: 'app-user-header',
@@ -25,7 +27,10 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   searchQuery: string = '';
   searchQ: Subscription;
   subs_userData?: Subscription;
-  userName!: string;
+  isProfile: boolean = false;
+  subs_userProfile?: Subscription;
+  dropDownOpened: boolean = false;
+  userData!: USerData;
 
   search = new FormGroup({
     q: new FormControl(null),
@@ -34,14 +39,19 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('searchQ', { static: false }) query!: ElementRef<HTMLInputElement>;
   constructor(private _userService: UserService, private _router: Router) {
     this.is_guest();
+    this.subs_userProfile = userProfile.subscribe((val) => {
+      this.isProfile = val;
+    });
 
     this.searchQ = searchQuery.subscribe((q: any) => {
       this.searchQuery = q;
     });
     if (this.authenticated) {
-      this.subs_userData = this._userService.getUserData().subscribe((data) => {
-        this.userName = data.full_name;
-      });
+      this.subs_userData = this._userService
+        .getUserData()
+        .subscribe((data: USerData) => {
+          this.userData = data;
+        });
     }
   }
 
@@ -78,7 +88,15 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   profile() {
-    this._router.navigate(['/userProfile', this.userName]);
+    this._router.navigate(['/userProfile', this.userData.full_name]);
+  }
+
+  dropDown() {
+    if (this.dropDownOpened == true) {
+      this.dropDownOpened = false;
+    } else {
+      this.dropDownOpened = true;
+    }
   }
 
   logout() {
@@ -100,6 +118,8 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.searchQ.unsubscribe();
+    this.subs_userProfile?.unsubscribe();
+    this.dropDownOpened = false;
     this.subs_userData?.unsubscribe();
   }
 }

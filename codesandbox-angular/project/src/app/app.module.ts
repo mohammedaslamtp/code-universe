@@ -46,12 +46,10 @@ import { LiveCodingComponent } from './components/user/live-coding/live-coding.c
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { SearchResultComponent } from './components/search-result/search-result.component';
 import { MainService } from './services/main.service';
-import { YourWorksComponent } from './components/user/your-works/your-works.component';
-import { TrendingComponent } from './components/user/trending/trending.component';
-import { FollowingCodesComponent } from './components/user/following-codes/following-codes.component';
 import { SocialService } from './services/soical.service';
 import { DownloadService } from './services/download.service';
 import { CoreModule } from './modules/core/core.module';
+import { SettingsComponent } from './components/user/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -72,9 +70,7 @@ import { CoreModule } from './modules/core/core.module';
     LiveCodingComponent,
     UserProfileComponent,
     SearchResultComponent,
-    YourWorksComponent,
-    TrendingComponent,
-    FollowingCodesComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserModule,
