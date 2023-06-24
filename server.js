@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const morgan = require("morgan");
+const bodyParser = require("body-parser");
 
 // cors
 const corsOptions = {
@@ -15,8 +16,14 @@ const corsOptions = {
 };
 
 app.use(morgan("dev"));
+app.use(bodyParser.json({limit:'15mb'}));
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 app.set("view engine", "ejs");
 
 // routes representation
@@ -32,6 +39,7 @@ const db = mongoose.connection;
 db.on("error", (error) => console.log(error));
 db.once("open", () => console.log("db connected"));
 
+app.use(express.static("public"));
 app.use("/", user_route);
 app.use("/admin", admin_route);
 
@@ -52,7 +60,7 @@ instrument(io, {
 });
 
 // socket connection
-const socketControll = require('./controller/socket');
+const socketControll = require("./controller/socket");
 io.on("connection", (client) => {
-  socketControll.socketIo(io,client);
+  socketControll.socketIo(io, client);
 });
