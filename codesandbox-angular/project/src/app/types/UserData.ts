@@ -15,5 +15,7 @@ export interface USerData {
   bio: string;
   location: string;
   updatedAt: string;
+  linkedin_link: string;
+  twitter_link: string;
   __v: number;
 }

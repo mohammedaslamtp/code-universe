@@ -10,14 +10,12 @@ const httpOptions = {
   }),
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class SettingsService {
   private _apiUrl: string = domain;
   constructor(private _http: HttpClient) {}
 
-  // searching codes
+  // profile image updation
   profileUpdate(file: File): Observable<apiRes> {
     const formData: FormData = new FormData();
     const url = `${this._apiUrl}/upload`;

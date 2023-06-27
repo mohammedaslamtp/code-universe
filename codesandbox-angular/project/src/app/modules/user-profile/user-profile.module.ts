@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { NotFoundComponent } from 'src/app/components/user/not-found/not-found.component';
 import { CoreModule } from '../core/core.module';
 import { UserService } from 'src/app/services/user.service';
@@ -18,6 +19,7 @@ import { ProfileSettingsComponent } from 'src/app/components/user/profile-settin
 import { SettingsComponent } from 'src/app/components/user/settings/settings.component';
 import { EditorPreferencesComponent } from 'src/app/components/user/editor-preferences/editor-preferences.component';
 import { AccountSettingsComponent } from 'src/app/components/user/account-settings/account-settings.component';
+import { SettingsService } from 'src/app/services/settings.service';
 
 const userProfileRoutes: Routes = [
   {
@@ -113,6 +115,7 @@ const userProfileRoutes: Routes = [
     UserService,
     MainService,
     SocialService,
+    SettingsService
   ],
 })
 export class UserProfileModule {}

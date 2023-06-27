@@ -2,8 +2,8 @@ import {
   Component,
   ElementRef,
   OnDestroy,
+  OnInit,
   ViewChild,
-  isDevMode,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -13,13 +13,14 @@ import { USerData } from 'src/app/types/UserData';
 import { SettingsService } from 'src/app/services/settings.service';
 import Swal from 'sweetalert2';
 import { domain } from 'src/app/services/shared-values.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-profile-settings',
   templateUrl: './profile-settings.component.html',
   styleUrls: ['./profile-settings.component.css'],
 })
-export class ProfileSettingsComponent implements OnDestroy {
+export class ProfileSettingsComponent implements OnInit, OnDestroy {
   subs_param: Subscription;
   subs_userdata!: Subscription;
   userName!: string;
@@ -49,7 +50,6 @@ export class ProfileSettingsComponent implements OnDestroy {
                     this.userName = dataWithId.full_name;
                     this.userId = dataWithId._id;
                     if (dataWithId.avatar) {
-                      console.log('avatar: ',dataWithId.avatar);
                       this.profilePath = `${domain}/${dataWithId.avatar}`;
                     } else {
                       this.profilePath =
@@ -74,14 +74,13 @@ export class ProfileSettingsComponent implements OnDestroy {
   }
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-
+  // profile image updation
   subs_profileUpdate!: Subscription;
   handleFileSelect(event: any) {
     this.subs_profileUpdate = this._settingsService
       .profileUpdate(event.target.files[0])
       .subscribe(
         (res: any) => {
-          console.log(res);
           if (res.data) {
             this.profilePath = `${domain}/${res.data.fileName}`;
           }
@@ -129,6 +128,38 @@ export class ProfileSettingsComponent implements OnDestroy {
 
   openFilePicker() {
     this.fileInput.nativeElement.click();
+  }
+
+  ngOnInit(): void {}
+  error!: string | null;
+
+  submitAboutForm(aboutForm: NgForm): void {
+    const name: any = aboutForm.controls['displayName'];
+    let displayName: string = name.value;
+    displayName = displayName.trim();
+    if (aboutForm.invalid) {
+      if (name.errors.required) {
+        this.error = 'Name is required!';
+      } else if (displayName) {
+        displayName = displayName.trim();
+        // console.log('empty ', displayName);
+      }
+    } else {
+      const aboutData = aboutForm.value;
+      console.log('empty:', displayName.replaceAll('  ', ''));
+      console.log('about data: ', aboutData);
+    }
+  }
+
+  submitSocialForm(socialMedia: NgForm): void {
+    if (!this.error) {
+      const socialMediaData = socialMedia.value;
+      console.log('social media urls: ', socialMediaData);
+    }
+  }
+
+  clearError() {
+    this.error = null;
   }
 
   ngOnDestroy(): void {
