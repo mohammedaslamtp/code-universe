@@ -71,12 +71,6 @@ const userProfileRoutes: Routes = [
         canActivate: [UserHomeGuard, BlockUserGuard],
       },
       {
-        path: 'profile',
-        component: ProfileSettingsComponent,
-        canActivate: [UserHomeGuard, BlockUserGuard],
-        
-      },
-      {
         path: 'editor-preference',
         component: EditorPreferencesComponent,
         canActivate: [UserHomeGuard, BlockUserGuard],

@@ -1,6 +1,7 @@
 export interface USerData {
   _id: string;
   full_name: string;
+  display_name: string;
   email: string;
   password: string;
   phone: number;
@@ -11,7 +12,7 @@ export interface USerData {
   is_disabled: boolean;
   otp_verified: boolean;
   createdAt: string;
-  avatar: string;
+  avatar: string | null;
   bio: string;
   location: string;
   updatedAt: string;

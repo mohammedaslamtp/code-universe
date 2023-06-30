@@ -1,10 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MainService } from 'src/app/services/main.service';
@@ -14,13 +8,16 @@ import { SettingsService } from 'src/app/services/settings.service';
 import Swal from 'sweetalert2';
 import { domain } from 'src/app/services/shared-values.service';
 import { NgForm } from '@angular/forms';
+import { socialMedia } from 'src/app/types/profileForms';
+import { aboutData } from 'src/app/types/profileForms';
+import { apiRes } from 'src/app/types/defulatApiRes';
 
 @Component({
   selector: 'app-profile-settings',
   templateUrl: './profile-settings.component.html',
   styleUrls: ['./profile-settings.component.css'],
 })
-export class ProfileSettingsComponent implements OnInit, OnDestroy {
+export class ProfileSettingsComponent implements OnDestroy {
   subs_param: Subscription;
   subs_userdata!: Subscription;
   userName!: string;
@@ -28,6 +25,7 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
   userData!: USerData;
   profilePath!: string;
   subs_ownerData!: Subscription;
+  isProfileImage: boolean = false;
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -49,9 +47,11 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
                   if (dataWithId._id === dataWithName._id) {
                     this.userName = dataWithId.full_name;
                     this.userId = dataWithId._id;
-                    if (dataWithId.avatar) {
+                    if (dataWithId.avatar != null) {
                       this.profilePath = `${domain}/${dataWithId.avatar}`;
+                      this.isProfileImage = true;
                     } else {
+                      this.isProfileImage = false;
                       this.profilePath =
                         '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png';
                     }
@@ -83,12 +83,13 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
         (res: any) => {
           if (res.data) {
             this.profilePath = `${domain}/${res.data.fileName}`;
+            this.isProfileImage = true;
           }
           const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
-            timer: 3000,
+            timer: 2000,
             showCloseButton: true,
             timerProgressBar: true,
             didOpen: (toast) => {
@@ -102,7 +103,6 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
           });
         },
         (err) => {
-          console.log('profile upload error ', err);
           if (err) {
             const Toast = Swal.mixin({
               toast: true,
@@ -130,31 +130,185 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
     this.fileInput.nativeElement.click();
   }
 
-  ngOnInit(): void {}
-  error!: string | null;
+  // profile img remove option
+  subs_removeProfileimg!: Subscription;
+  removeImgLoading: boolean = false;
+  removeProfile() {
+    Swal.fire({
+      imageUrl: this.profilePath,
+      imageWidth: '150px',
+      title: 'Do you want to remove this?',
+      showCancelButton: true,
+      confirmButtonText: 'Remove',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.removeImgLoading = true;
+        this.subs_removeProfileimg = this._settingsService
+          .removeProfileImage()
+          .subscribe(
+            (res) => {
+              this.userData = res.data;
+              this.isProfileImage = false;
+              this.removeImgLoading = false;
+              this.profilePath =
+                '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png';
+              const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.addEventListener('mouseenter', Swal.stopTimer);
+                  toast.addEventListener('mouseleave', Swal.resumeTimer);
+                },
+              });
+              Toast.fire({
+                icon: 'success',
+                title: `${res.message}`,
+              });
+            },
+            (err) => {
+              if (err) {
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 4000,
+                  showCloseButton: true,
+                  timerProgressBar: true,
+                  didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                  },
+                });
 
-  submitAboutForm(aboutForm: NgForm): void {
-    const name: any = aboutForm.controls['displayName'];
-    let displayName: string = name.value;
-    displayName = displayName.trim();
-    if (aboutForm.invalid) {
-      if (name.errors.required) {
-        this.error = 'Name is required!';
-      } else if (displayName) {
-        displayName = displayName.trim();
-        // console.log('empty ', displayName);
+                Toast.fire({
+                  icon: err.status > 400 ? 'error' : 'warning',
+                  title: `${err.message}`,
+                });
+              }
+            }
+          );
       }
-    } else {
-      const aboutData = aboutForm.value;
-      console.log('empty:', displayName.replaceAll('  ', ''));
-      console.log('about data: ', aboutData);
+    });
+  }
+
+  // both forms data update
+  subs_userAboutData!: Subscription;
+  urlFormData!: socialMedia;
+  aboutFormData!: aboutData;
+  profileDataLoading: boolean = false;
+  formData(urlForm: socialMedia | null, aboutForm: aboutData | null) {
+    if (urlForm) this.urlFormData = urlForm;
+    if (aboutForm) this.aboutFormData = aboutForm;
+    if (this.urlFormData && this.aboutFormData) {
+      this.profileDataLoading = true;
+      this.subs_userAboutData = this._settingsService
+        .updateUserData(this.urlFormData, this.aboutFormData)
+        .subscribe(
+          (res: apiRes) => {
+            console.log(res);
+            this.profileDataLoading = false;
+            console.log('isLoading ',this.profileDataLoading)
+            this.userData = res.data;
+            // success alert
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+              showCloseButton:true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+              },
+            });
+            Toast.fire({
+              icon: 'success',
+              title: `${res.message}`,
+            });
+          },
+          (err) => {
+            this.profileDataLoading = false;
+            const Toast = Swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 4000,
+              showCloseButton: true,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+              },
+            });
+
+            Toast.fire({
+              icon: err.status > 400 ? 'error' : 'warning',
+              title: `${err.message}`,
+            });
+          }
+        );
     }
   }
 
+  // updating about form
+  error!: string | null;
+  submitAboutForm(aboutForm: NgForm): void {
+    const name: any = aboutForm.controls['displayName'];
+    let displayName: string = name.value;
+    displayName = displayName.replace(/\s+/g, ' ').trim();
+    if (aboutForm.invalid) {
+      if (name.errors.required) {
+        this.error = 'Name is required!';
+      } else if (name.errors.minlength) {
+        this.error = 'Name should have a minimum length of 4 characters!';
+      }
+    } else {
+      if (displayName.length <= 3) {
+        if (displayName.length == 0) {
+          this.error = 'Name is required!';
+        } else {
+          this.error = 'Name should have a minimum length of 4 characters!';
+        }
+      } else {
+        this.error = null;
+        aboutForm.value.displayName = displayName;
+        const aboutData = aboutForm.value;
+        if (aboutData.location == undefined) {
+          aboutData.location = '';
+        }
+        if (aboutData.bio == undefined) {
+          aboutData.bio = '';
+        }
+        aboutData.location = aboutData.location.replace(/\s+/g, ' ').trim();
+        aboutData.bio = aboutData.bio.replace(/\s+/g, ' ').trim();
+        this.formData(null, aboutData);
+      }
+    }
+  }
+
+  // updating form form
   submitSocialForm(socialMedia: NgForm): void {
     if (!this.error) {
       const socialMediaData = socialMedia.value;
-      console.log('social media urls: ', socialMediaData);
+      if (socialMedia.value.linkedInUrl === undefined) {
+        socialMedia.value.linkedInUrl = '';
+      }
+      if (socialMedia.value.twitterUrl === undefined) {
+        socialMedia.value.twitterUrl = '';
+      }
+      socialMediaData.linkedInUrl = socialMediaData.linkedInUrl.replace(
+        /\s/g,
+        ''
+      );
+      socialMediaData.twitterUrl = socialMediaData.twitterUrl.replace(
+        /\s/g,
+        ''
+      );
+      this.formData(socialMediaData, null);
     }
   }
 
@@ -167,5 +321,7 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
     this.subs_ownerData?.unsubscribe();
     this.subs_userdata?.unsubscribe();
     this.subs_profileUpdate?.unsubscribe();
+    this.subs_removeProfileimg?.unsubscribe();
+    this.subs_userAboutData?.unsubscribe();
   }
 }

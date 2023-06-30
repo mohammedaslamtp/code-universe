@@ -32,6 +32,7 @@ export class UserProfileComponent implements OnDestroy {
   accountOwnerData!: USerData;
   userData!: USerData;
   userName!: string;
+  displayName!: string;
   userId!: string;
   profilePath!: string;
   isAccountOwner: boolean = true;
@@ -83,6 +84,7 @@ export class UserProfileComponent implements OnDestroy {
             Name.subscribe((val: any) => (this.userName = val));
             if (username == this.accountOwnerData.full_name) {
               this.userName = this.accountOwnerData.full_name;
+              this.displayName = this.accountOwnerData.display_name
               this.isAccountOwner = true;
               userProfile.next(true);
             } else {

@@ -11,13 +11,7 @@
         >
           <li>
             <a
-              [routerLink]="
-                '/userProfile/' +
-                userName +
-                '/settings/' +
-                userId +
-                '/profile'
-              "
+              [routerLink]="'/userProfile/' + userName + '/settings/' + userId"
               class="block py-2 pl-3 pr-3 mr-3 rounded hover:text-gray-400"
               >Profile</a
             >
@@ -25,11 +19,7 @@
           <li>
             <a
               [routerLink]="
-                '/userProfile/' +
-                userName +
-                '/settings/' +
-                userId +
-                '/account'
+                '/userProfile/' + userName + '/settings/' + userId + '/account'
               "
               class="block py-2 pl-3 pr-3 mr-3 rounded hover:text-gray-400"
               >Account</a
