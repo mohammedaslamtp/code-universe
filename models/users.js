@@ -5,7 +5,12 @@ const user = new mongoose.Schema(
     full_name: {
       type: String,
       required: [true, "User name is required"],
-      unique:true,
+      unique: true,
+    },
+
+    display_name: {
+      type: String,
+      required: [true, "Display name is required"],
     },
 
     email: {
@@ -41,6 +46,7 @@ const user = new mongoose.Schema(
 
     avatar: {
       type: String,
+      defulat: null,
     },
 
     bio: {
@@ -61,10 +67,6 @@ const user = new mongoose.Schema(
       default: false,
     },
 
-    github_link: {
-      type: String,
-    },
-
     linkedin_link: {
       type: String,
     },
@@ -77,6 +79,7 @@ const user = new mongoose.Schema(
       type: Boolean,
       defualt: false,
     },
+
     user_otp: {
       otp: {
         type: Number,

@@ -39,5 +39,17 @@ route
     auth_token.authenticate,
     upload(),
     settings_controller.updateProfile
+  )
+  .patch(
+    "/removeProfile",
+    auth_token.authenticate,
+
+    settings_controller.removeProfileImage
+  )
+  .patch(
+    "/updateAbout",
+    auth_token.authenticate,
+
+    settings_controller.updateAbout
   );
 module.exports = route;

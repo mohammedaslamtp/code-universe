@@ -19,6 +19,7 @@ module.exports = {
         } else {
           User.create({
             full_name: data.fullName,
+            display_name: data.fullName,
             email: data.email,
             phone: Number(data.phone),
             password: hash_password,
