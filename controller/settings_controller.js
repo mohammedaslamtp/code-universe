@@ -68,27 +68,73 @@ module.exports = {
 
   // to update user profile data
   updateAbout: (req, res) => {
+    console.log('data for update: ',req.body)
     const urlData = req.body.urlData;
     const aboutData = req.body.aboutData;
-
-    User.findByIdAndUpdate(req.user._id, {
-      display_name: aboutData.displayName,
-      location: aboutData.location,
-      bio: aboutData.bio,
-      linkedin_link: urlData.linkedInUrl,
-      twitter_link: urlData.twitterUrl,
-    },{new:true})
+   
+    User.findByIdAndUpdate(
+      req.user._id,
+      {
+        display_name: aboutData.displayName,
+        location: aboutData.location,
+        bio: aboutData.bio,
+        linkedin_link: urlData.linkedInUrl,
+        twitter_link: urlData.twitterUrl,
+      },
+      { new: true }
+    )
       .then((data) => {
         apiRes.status = 200;
         apiRes.data = data;
-        apiRes.message = "Updated successfully"
-        res.status(200).json(apiRes)
+        apiRes.message = "Updated successfully";
+        res.status(200).json(apiRes);
       })
       .catch((err) => {
         apiRes.status = 404;
         apiRes.data = null;
-        apiRes.message = "Oops! Something went wrong!"
-        res.status(404).json(apiRes)
+        apiRes.message = "Oops! Something went wrong!";
+        res.status(404).json(apiRes);
+      });
+  },
+
+  // checking is username unique or not
+  isUsernameUnique: (req, res) => {
+    const username = req.query.username;
+    User.findOne({ full_name: username })
+      .then((user) => {
+        apiRes.status = 200;
+        if (user != null || user != undefined) {
+          apiRes.message = "This username is unavailable!";
+          apiRes.data = { unique: false };
+        } else {
+          apiRes.message = "username is unique";
+          apiRes.data = { unique: true };
+        }
+        res.status(200).json(apiRes);
+      })
+      .catch((err) => {
+        apiRes.status = 404;
+        apiRes.message = "Oops! Something went wrong!";
+        apiRes.data = null;
+        res.status(404).json(apiRes);
+      });
+  },
+
+  // change username
+  changeUsername: (req, res) => {
+    const username = req.query.username;
+    User.findByIdAndUpdate(req.user._id, { full_name: username }, { new: true })
+      .then((user) => {
+        apiRes.status = 200;
+        apiRes.message = "updated successfully";
+        apiRes.data = { username: user.full_name };
+        res.status(200).json(apiRes);
+      })
+      .catch((err) => {
+        apiRes.status = 404;
+        apiRes.message = "Oops! Something went wrong!";
+        apiRes.data = null;
+        res.status(404).json(apiRes);
       });
   },
 };

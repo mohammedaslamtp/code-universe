@@ -51,5 +51,15 @@ route
     auth_token.authenticate,
 
     settings_controller.updateAbout
+  )
+  .get(
+    "/isUsernameUnique",
+    auth_token.authenticate,
+    settings_controller.isUsernameUnique
+  )
+  .patch(
+    "/changeUsername",
+    auth_token.authenticate,
+    settings_controller.changeUsername
   );
 module.exports = route;
