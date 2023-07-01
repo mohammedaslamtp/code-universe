@@ -184,8 +184,8 @@ export class ProfileSettingsComponent implements OnDestroy {
                 });
 
                 Toast.fire({
-                  icon: err.status > 400 ? 'error' : 'warning',
-                  title: `${err.message}`,
+                  icon: err.error.status > 400 ? 'error' : 'warning',
+                  title: `${err.error.message}`,
                 });
               }
             }
@@ -208,9 +208,7 @@ export class ProfileSettingsComponent implements OnDestroy {
         .updateUserData(this.urlFormData, this.aboutFormData)
         .subscribe(
           (res: apiRes) => {
-            console.log(res);
             this.profileDataLoading = false;
-            console.log('isLoading ',this.profileDataLoading)
             this.userData = res.data;
             // success alert
             const Toast = Swal.mixin({
@@ -219,7 +217,7 @@ export class ProfileSettingsComponent implements OnDestroy {
               showConfirmButton: false,
               timer: 2000,
               timerProgressBar: true,
-              showCloseButton:true,
+              showCloseButton: true,
               didOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer);
                 toast.addEventListener('mouseleave', Swal.resumeTimer);
@@ -246,8 +244,8 @@ export class ProfileSettingsComponent implements OnDestroy {
             });
 
             Toast.fire({
-              icon: err.status > 400 ? 'error' : 'warning',
-              title: `${err.message}`,
+              icon: err.error.status > 400 ? 'error' : 'warning',
+              title: `${err.error.message}`,
             });
           }
         );
@@ -278,10 +276,10 @@ export class ProfileSettingsComponent implements OnDestroy {
         aboutForm.value.displayName = displayName;
         const aboutData = aboutForm.value;
         if (aboutData.location == undefined) {
-          aboutData.location = '';
+          aboutData.location = null;
         }
         if (aboutData.bio == undefined) {
-          aboutData.bio = '';
+          aboutData.bio = null;
         }
         aboutData.location = aboutData.location.replace(/\s+/g, ' ').trim();
         aboutData.bio = aboutData.bio.replace(/\s+/g, ' ').trim();
@@ -295,10 +293,10 @@ export class ProfileSettingsComponent implements OnDestroy {
     if (!this.error) {
       const socialMediaData = socialMedia.value;
       if (socialMedia.value.linkedInUrl === undefined) {
-        socialMedia.value.linkedInUrl = '';
+        socialMedia.value.linkedInUrl = null;
       }
       if (socialMedia.value.twitterUrl === undefined) {
-        socialMedia.value.twitterUrl = '';
+        socialMedia.value.twitterUrl = null;
       }
       socialMediaData.linkedInUrl = socialMediaData.linkedInUrl.replace(
         /\s/g,

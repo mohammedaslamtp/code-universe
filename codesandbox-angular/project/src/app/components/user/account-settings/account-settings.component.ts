@@ -1,63 +1,151 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { MainService } from 'src/app/services/main.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
+import { NgForm } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-account-settings',
   templateUrl: './account-settings.component.html',
-  styleUrls: ['./account-settings.component.css']
+  styleUrls: ['./account-settings.component.css'],
 })
-export class AccountSettingsComponent {
-  subs_param: Subscription;
-  subs_userdata!: Subscription;
-  userName!: string;
-  userId!: string;
+export class AccountSettingsComponent implements OnDestroy {
   userData!: USerData;
-  subs_ownerData!: Subscription;
+  subs_userData: Subscription;
+  usernameError: string | null = null;
 
   constructor(
-    private _activatedRoute: ActivatedRoute,
     private _userService: UserService,
-    private _mainService: MainService,
     private _settingsService: SettingsService,
     private _router: Router
   ) {
-    console.log('working..')
-    this.subs_param = this._activatedRoute.params.subscribe((param) => {
-      console.log(param)
-      if (param['id'] && param['username']) {
-        const username = param['username'];
-        const userId = param['id'];
-        // this.subs_userdata = this._userService.getUserData(username).subscribe(
-        //   (dataWithName) => {
-        //     this.subs_ownerData = this._mainService
-        //       .getUserData(userId)
-        //       .subscribe(
-        //         (dataWithId) => {
-        //           if (dataWithId._id === dataWithName._id) {
-        //             this.userName = dataWithId.full_name;
-        //             this.userId = dataWithId._id;
-        //             this.userData = dataWithId;
-        //           } else {
-        //             this._router.navigate(['**']);
-        //           }
-        //         },
-        //         (err) => {
-        //           this._router.navigate(['**']);
-        //         }
-        //       );
-        //   },
-        //   (err) => {
-        //     this._router.navigate(['**']);
-        //   }
-        // );
-        console.log('username: ',username)
-        console.log('id ',userId)
+    this.subs_userData = this._userService.getUserData().subscribe(
+      (data) => {
+        this.userData = data;
+      },
+      (err) => {
+        this._router.navigate(['**']);
       }
+    );
+  }
+
+  @ViewChild('usernameField') usernameField!: ElementRef;
+  // validating username
+  subs_usernameUniqueness!: Subscription;
+  validateUsername(usernameForm: NgForm) {
+    const username: any = usernameForm.controls['username'];
+    if (usernameForm.invalid) {
+      if (username.errors.required) {
+        this.usernameError = 'Username is required!';
+        this.usernameField.nativeElement.focus();
+      } else if (username.errors.minlength) {
+        this.usernameError = `Username should have a minimum length of ${username.errors.minlength.requiredLength} characters!`;
+        this.usernameField.nativeElement.focus();
+      } else if (username.errors.pattern) {
+        this.usernameError = 'Username should not contain spaces!';
+        this.usernameField.nativeElement.focus();
+      }
+    } else {
+      this.subs_usernameUniqueness = this._settingsService
+        .isUsernameUnique(usernameForm.value.username)
+        .subscribe(
+          (val) => {
+            if (val.data.unique == false) {
+              this.usernameError = val.message;
+            } else {
+              this.usernameError = null;
+            }
+          },
+          (e) => this.errorSwal(e.error.status, e.error.message)
+        );
+    }
+  }
+
+  // changing username
+  changeUsernameLoading: boolean = false;
+  subs_changeUsername!: Subscription;
+  changeUsername(usernameForm: NgForm) {
+    this.changeUsernameLoading = true;
+    this.subs_usernameUniqueness = this._settingsService
+      .isUsernameUnique(usernameForm.value.username)
+      .subscribe(
+        (val) => {
+          if (val.data.unique == false) {
+            this.changeUsernameLoading = false;
+            this.usernameError = val.message;
+          } else {
+            this.changeUsernameLoading = false;
+            this.usernameError = null;
+            this.subs_changeUsername = this._settingsService
+              .changeUsername(usernameForm.value.username)
+              .subscribe(
+                (val) => {
+                  if (val.data.username) {
+                    this.userData.full_name = val.data.username;
+                    this.successSwal(val.message);
+                  }
+                },
+                (err) => this.errorSwal(err.error.status, err.error.message)
+              );
+          }
+        },
+        (e) => this.errorSwal(e.error.status, e.error.message)
+      );
+  }
+
+  // clear username error messages
+  clearUsernameError = () => (this.usernameError = null);
+
+  changeEmailLoading: boolean = false;
+  changePaswordLoading: boolean = false;
+
+  // success swal alert
+  successSwal(message: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      showCloseButton: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
     });
+    Toast.fire({
+      icon: 'success',
+      title: `${message}`,
+    });
+  }
+
+  // error swal alert
+  errorSwal(status: number, message: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 4000,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
+    });
+
+    Toast.fire({
+      icon: status > 400 ? 'error' : 'warning',
+      title: `${message}`,
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.subs_userData?.unsubscribe();
+    this.subs_usernameUniqueness?.unsubscribe();
+    this.subs_changeUsername?.unsubscribe();
   }
 }

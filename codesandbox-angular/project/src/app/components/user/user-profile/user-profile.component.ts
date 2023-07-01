@@ -38,6 +38,8 @@ export class UserProfileComponent implements OnDestroy {
   isAccountOwner: boolean = true;
   followersCount!: number;
   followingCount!: number;
+  location: string | null = null;
+  bio: string | null = null;
   isFollowing: boolean = false;
   constructor(
     private _userService: UserService,
@@ -68,6 +70,12 @@ export class UserProfileComponent implements OnDestroy {
                   this.followingCount = data.following.length;
                   this.userData = data;
                   this.userId = data._id;
+                  if (data.location !== null || data.location !== '') {
+                    this.location = data.location;
+                  }
+                  if (data.bio !== null || data.bio !== '') {
+                    this.bio = data.bio;
+                  }
                   if (data.avatar) {
                     this.profilePath = `${domain}/${data.avatar}`;
                   } else {
@@ -84,7 +92,7 @@ export class UserProfileComponent implements OnDestroy {
             Name.subscribe((val: any) => (this.userName = val));
             if (username == this.accountOwnerData.full_name) {
               this.userName = this.accountOwnerData.full_name;
-              this.displayName = this.accountOwnerData.display_name
+              this.displayName = this.accountOwnerData.display_name;
               this.isAccountOwner = true;
               userProfile.next(true);
             } else {

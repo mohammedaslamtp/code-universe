@@ -42,4 +42,16 @@ export class SettingsService {
       httpOptions
     );
   }
+
+  // checking username uniqueness
+  isUsernameUnique(username: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/isUsernameUnique?username=${username}`;
+    return this._http.get<apiRes>(url, httpOptions);
+  }
+ 
+  // change username 
+  changeUsername(username: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/changeUsername?username=${username}`;
+    return this._http.patch<apiRes>(url, httpOptions);
+  }
 }
