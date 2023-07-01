@@ -53,20 +53,6 @@ export class HomeComponent implements OnDestroy {
       });
   }
 
-  toggleGenrateOtp() {
-    generateOtpToggle.next(true);
-    generateOtpToggle.subscribe((val) => {
-      if (val == true) {
-        this.otpToggle = true;
-        console.log('otpToggle: ', this.otpToggle);
-      } else if (val == false) {
-        this.otpToggle = false;
-      } else {
-        this.otpToggle = false;
-      }
-    });
-  }
-
   ngOnDestroy() {
     this.UserData_collector.unsubscribe();
   }

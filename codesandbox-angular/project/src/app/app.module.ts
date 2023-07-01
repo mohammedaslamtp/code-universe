@@ -58,7 +58,6 @@ import { SettingsComponent } from './components/user/settings/settings.component
     SignupComponent,
     HomeComponent,
     GuestHomeComponent,
-
     OtpComponent,
     UserHeaderComponent,
     NotFoundComponent,

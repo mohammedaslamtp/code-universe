@@ -48,10 +48,23 @@ export class SettingsService {
     const url = `${this._apiUrl}/isUsernameUnique?username=${username}`;
     return this._http.get<apiRes>(url, httpOptions);
   }
- 
-  // change username 
+
+  // change username
   changeUsername(username: string): Observable<apiRes> {
     const url = `${this._apiUrl}/changeUsername?username=${username}`;
     return this._http.patch<apiRes>(url, httpOptions);
+  }
+
+  // change password
+  changePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Observable<apiRes> {
+    const url = `${this._apiUrl}/changePassword`;
+    return this._http.patch<apiRes>(
+      url,
+      { cPassword: currentPassword, nPassword: newPassword },
+      httpOptions
+    );
   }
 }

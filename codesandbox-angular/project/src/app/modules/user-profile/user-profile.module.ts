@@ -82,7 +82,7 @@ const userProfileRoutes: Routes = [
       },
     ],
   },
-  
+
   { path: '404', component: NotFoundComponent },
   { path: '**', redirectTo: '/404' },
 ];
@@ -98,11 +98,6 @@ const userProfileRoutes: Routes = [
     EditorPreferencesComponent,
     AccountSettingsComponent,
   ],
-  imports: [
-    CoreModule,
-    CodemirrorModule,
-    RouterModule.forChild(userProfileRoutes),
-  ],
   exports: [CoreModule],
   providers: [
     UserHomeGuard,
@@ -110,7 +105,12 @@ const userProfileRoutes: Routes = [
     UserService,
     MainService,
     SocialService,
-    SettingsService
+    SettingsService,
+  ],
+  imports: [
+    CoreModule,
+    CodemirrorModule,
+    RouterModule.forChild(userProfileRoutes),
   ],
 })
 export class UserProfileModule {}

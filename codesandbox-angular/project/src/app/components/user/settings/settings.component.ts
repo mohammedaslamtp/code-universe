@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { MainService } from 'src/app/services/main.service';
 import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
-
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -17,6 +16,7 @@ export class SettingsComponent implements OnDestroy {
   userName!: string;
   userId!: string;
   userData!: USerData;
+ 
 
   constructor(
     private _activatedRoute: ActivatedRoute,

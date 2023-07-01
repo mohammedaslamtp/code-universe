@@ -96,11 +96,58 @@ export class AccountSettingsComponent implements OnDestroy {
       );
   }
 
-  // clear username error messages
+  // clear error messages
   clearUsernameError = () => (this.usernameError = null);
+  clearCurrPasswordError = () => (this.currentPasswordError = null);
+  clearNewPasswordError = () => (this.newPasswordError = null);
 
-  changeEmailLoading: boolean = false;
+  // change password
   changePaswordLoading: boolean = false;
+  currentPasswordError: string | null = null;
+  newPasswordError: string | null = null;
+  subs_changePassword!: Subscription;
+  changePassword(passwrordForm: NgForm) {
+    this.changePaswordLoading = true;
+    const current_password: any = passwrordForm.controls['currentPassword'];
+    const new_password: any = passwrordForm.controls['newPassword'];
+    if (passwrordForm.invalid) {
+      if (current_password.errors && current_password.errors.required) {
+        this.changePaswordLoading = false;
+        this.currentPasswordError = 'Current password is required';
+      }
+      if (new_password.errors && new_password.errors.required) {
+        this.changePaswordLoading = false;
+        this.newPasswordError = 'New password is required!';
+      } else if (new_password.errors && new_password.errors?.minlength) {
+        this.changePaswordLoading = false;
+        this.newPasswordError = `New password should have a minimum length of ${new_password.errors.minlength.requiredLength} characters!`;
+      }
+    } else {
+      this.subs_changePassword = this._settingsService
+        .changePassword(
+          passwrordForm.value.currentPassword,
+          passwrordForm.value.newPassword
+        )
+        .subscribe(
+          (val) => {
+            console.log(val)
+            if (val.data.isCorrect) {
+              this.changePaswordLoading = false;
+              this.clearCurrPasswordError();
+              this.clearNewPasswordError();
+              this.successSwal(val.message);
+            } else {
+              this.changePaswordLoading = false;
+              this.currentPasswordError = val.message;
+            }
+          },
+          (err) => {
+            this.changePaswordLoading = false;
+            this.errorSwal(err.error.status, err.error.message);
+          }
+        );
+    }
+  }
 
   // success swal alert
   successSwal(message: string) {
@@ -147,5 +194,10 @@ export class AccountSettingsComponent implements OnDestroy {
     this.subs_userData?.unsubscribe();
     this.subs_usernameUniqueness?.unsubscribe();
     this.subs_changeUsername?.unsubscribe();
+    this.subs_changePassword?.unsubscribe();
+
+    this.clearUsernameError();
+    this.clearCurrPasswordError();
+    this.clearNewPasswordError();
   }
 }

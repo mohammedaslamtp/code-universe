@@ -90,11 +90,8 @@
     </form>
     <!-- /username form -->
 
-    <!-- email form -->
-    <form
-      #email="ngForm"
-      class="flex flex-col mb-5 flex-wrap w-5/6 p-5 bg-zinc-800 rounded-md"
-    >
+    <!-- email details -->
+    <div class="flex flex-col mb-5 flex-wrap w-5/6 p-5 bg-zinc-800 rounded-md">
       <!-- loading -->
       <div class="flex w-full justify-center" *ngIf="!userData">
         <div class="flex md:w-full items-center justify-center">
@@ -119,44 +116,22 @@
             <div class="w-full">
               <input
                 type="email"
-                name="email"
-                autocomplete="off"
-                [(ngModel)]="userData.email"
-                required
-                pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-                placeholder="example@example.com"
-                class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 focus:ring-2 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                title="Email should be unique"
+                [value]="userData.email"
+                class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 outline-0 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                title="Email can't change"
+                readonly="true"
               />
             </div>
           </div>
         </div>
-        <div class="block sm:flex w-full mt-4">
-          <div style="flex: 1" class="h-0 w-0 hidden sm:flex"></div>
-          <div style="flex: 1">
-            <button
-              type="submit"
-              title="Change email"
-              class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
-            >
-              <div *ngIf="changeEmailLoading">
-                <i class="animate-spin fa-solid px-2 fa-spinner"></i>
-              </div>
-              <span
-                class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
-              >
-                Change
-              </span>
-            </button>
-          </div>
-        </div>
       </div>
-    </form>
-    <!-- /email form -->
+    </div>
+    <!-- /email details -->
 
     <!-- change password form -->
     <form
-      #email="ngForm"
+      #passwordForm="ngForm"
+      (ngSubmit)="changePassword(passwordForm)"
       class="flex flex-col mb-5 flex-wrap w-5/6 p-5 bg-zinc-800 rounded-md"
     >
       <!-- loading -->
@@ -183,13 +158,18 @@
             <div class="w-full">
               <input
                 type="password"
-                name="current_password"
+                name="currentPassword"
                 placeholder="Current password"
+                ngModel
                 class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 focus:ring-2 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 autocomplete="off"
-                minlength="8"
+                required
                 title="Enter your current password"
+                (change)="clearCurrPasswordError()"
               />
+              <div class="mt-1" *ngIf="currentPasswordError">
+                <small class="text-red-800">{{ currentPasswordError }}</small>
+              </div>
             </div>
           </div>
         </div>
@@ -198,13 +178,19 @@
           <div style="flex: 1">
             <input
               type="password"
-              name="new_password"
+              name="newPassword"
               placeholder="New password"
+              ngModel
               class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 focus:ring-2 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
               autocomplete="off"
               minlength="8"
+              required
               title="Enter your new password"
+              (change)="clearNewPasswordError()"
             />
+            <div class="mt-1" *ngIf="newPasswordError">
+              <small class="text-red-800">{{ newPasswordError }}</small>
+            </div>
           </div>
         </div>
         <div class="block sm:flex w-full mt-4">

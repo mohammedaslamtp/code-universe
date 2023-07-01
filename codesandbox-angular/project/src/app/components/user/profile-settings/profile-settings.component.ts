@@ -11,6 +11,9 @@ import { NgForm } from '@angular/forms';
 import { socialMedia } from 'src/app/types/profileForms';
 import { aboutData } from 'src/app/types/profileForms';
 import { apiRes } from 'src/app/types/defulatApiRes';
+import {
+  generateOtpToggle,
+} from '../generate-otp/generate-otp.component';
 
 @Component({
   selector: 'app-profile-settings',
@@ -47,6 +50,15 @@ export class ProfileSettingsComponent implements OnDestroy {
                   if (dataWithId._id === dataWithName._id) {
                     this.userName = dataWithId.full_name;
                     this.userId = dataWithId._id;
+                    generateOtpToggle.subscribe((val) => {
+                      if (val == false) {
+                        this.otpToggle = false;
+                      } else if (val == true) {
+                        this.otpToggle = true;
+                      } else {
+                        this.otpToggle = false;
+                      }
+                    });
                     if (dataWithId.avatar != null) {
                       this.profilePath = `${domain}/${dataWithId.avatar}`;
                       this.isProfileImage = true;
@@ -313,6 +325,9 @@ export class ProfileSettingsComponent implements OnDestroy {
   clearError() {
     this.error = null;
   }
+
+  // otp toggle
+  otpToggle: boolean = false;
 
   ngOnDestroy(): void {
     this.subs_param?.unsubscribe();
