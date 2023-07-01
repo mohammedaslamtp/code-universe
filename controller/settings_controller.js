@@ -1,5 +1,6 @@
 const multer = require("multer");
 const User = require("../models/users");
+const bcrypt = require("bcrypt");
 
 const apiRes = {
   message: "Authentication success",
@@ -68,10 +69,9 @@ module.exports = {
 
   // to update user profile data
   updateAbout: (req, res) => {
-    console.log('data for update: ',req.body)
     const urlData = req.body.urlData;
     const aboutData = req.body.aboutData;
-   
+
     User.findByIdAndUpdate(
       req.user._id,
       {
@@ -129,6 +129,55 @@ module.exports = {
         apiRes.message = "updated successfully";
         apiRes.data = { username: user.full_name };
         res.status(200).json(apiRes);
+      })
+      .catch((err) => {
+        apiRes.status = 404;
+        apiRes.message = "Oops! Something went wrong!";
+        apiRes.data = null;
+        res.status(404).json(apiRes);
+      });
+  },
+
+  // change password from old password
+  changePassword: (req, res) => {
+    const currentPassword = req.body.cPassword;
+    const newPassword = req.body.nPassword;
+    const salt = bcrypt.genSaltSync(10);
+    User.findById(req.user._id)
+      .then((user) => {
+        bcrypt
+          .compare(currentPassword, user.password)
+          .then(async (isCorrect) => {
+            apiRes.status = 200;
+            apiRes.data = { isCorrect: isCorrect };
+            if (isCorrect == true) {
+              const hashPass = await bcrypt.hashSync(newPassword, salt);
+
+              user.password = hashPass;
+              user
+              .save()
+              .then((data) => {
+                  apiRes.message = "Password changed";
+                  res.status(200).json(apiRes);
+                })
+                .catch((err) => {
+                  apiRes.status = 404;
+                  apiRes.message = "Oops! Something went wrong!";
+                  apiRes.data = null;
+                  res.status(404).json(apiRes);
+                });
+              } else {
+                apiRes.message = "Incorrect password!";
+                res.status(200).json(apiRes);
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            apiRes.status = 404;
+            apiRes.message = "Oops! Something went wrong!";
+            apiRes.data = null;
+            res.status(404).json(apiRes);
+          });
       })
       .catch((err) => {
         apiRes.status = 404;

@@ -61,5 +61,10 @@ route
     "/changeUsername",
     auth_token.authenticate,
     settings_controller.changeUsername
+  )
+  .patch(
+    "/changePassword",
+    auth_token.authenticate,
+    settings_controller.changePassword
   );
 module.exports = route;
