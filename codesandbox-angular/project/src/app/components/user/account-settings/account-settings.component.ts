@@ -130,7 +130,6 @@ export class AccountSettingsComponent implements OnDestroy {
         )
         .subscribe(
           (val) => {
-            console.log(val)
             if (val.data.isCorrect) {
               this.changePaswordLoading = false;
               this.clearCurrPasswordError();

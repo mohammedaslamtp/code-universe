@@ -1,6 +1,7 @@
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
@@ -77,6 +78,7 @@ import { SettingsComponent } from './components/user/settings/settings.component
     CoreModule,
     BrowserAnimationsModule,
     SharedModule,
+    CodemirrorModule,
     StoreModule.forRoot({}, {}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     EffectsModule.forRoot([]),

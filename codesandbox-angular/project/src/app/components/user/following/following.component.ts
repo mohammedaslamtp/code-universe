@@ -1,5 +1,4 @@
-import { Component, Renderer2 } from '@angular/core';
-// import '';
+import { Component } from '@angular/core';
 import 'codemirror/addon/hint/html-hint';
 
 @Component({
@@ -10,7 +9,7 @@ import 'codemirror/addon/hint/html-hint';
 export class FollowingComponent {
   data: string = '';
 
-  constructor(private _renderer: Renderer2) {
+  constructor() {
     
     const cdn1 = document.createElement('script');
     cdn1.src =

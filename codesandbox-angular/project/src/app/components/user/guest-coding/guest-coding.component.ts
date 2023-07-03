@@ -5,21 +5,13 @@ import {
   ViewChild,
   HostListener,
   OnDestroy,
-  AfterViewInit,
 } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
-import {
-  html_editor,
-  css_editor,
-  js_editor,
-  updateFormatedCode,
-} from 'src/assets/code_line_number';
 import Swal from 'sweetalert2';
 import * as prettier from 'prettier';
 import * as htmlParser from 'prettier/parser-html';
 import * as jsParser from 'prettier/parser-babel';
 import * as cssParser from 'prettier/parser-postcss';
-import { Renderer2 } from '@angular/core';
 import * as JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
@@ -35,12 +27,15 @@ import {
 import { appStateInterface } from 'src/app/types/appState';
 import { CodesForDownload } from 'src/app/types/downloadCode';
 
+// import 'codemirror/addon/hint/html-hint';
+import 'codemirror/mode/htmlmixed/htmlmixed';
+
 @Component({
   selector: 'app-guest-coding',
   templateUrl: './guest-coding.component.html',
   styleUrls: ['./guest-coding.component.css'],
 })
-export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
+export class GuestCodingComponent implements OnInit, OnDestroy {
   // confirmation for reaload
   @HostListener('window:beforeunload', ['$event'])
   confirmExit(event: BeforeUnloadEvent): void {
@@ -50,9 +45,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('result', { static: true })
   iFrame!: ElementRef<HTMLIFrameElement>;
-  html?: string | null;
-  css?: string | null;
-  js?: string | null;
+
   isLoading: boolean = true;
   isLoggedIn!: boolean;
   toggle: boolean = false;
@@ -67,8 +60,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   setLogModTrue(bool: boolean) {
     logModToggle.next(bool);
   }
-  scriptCode!: any;
-  divData!: any;
   scriptInserted: boolean = false;
   intervelIdLoading!: any;
   intervelIdResult!: any;
@@ -76,7 +67,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private _userService: UserService,
-    private _renderer: Renderer2,
     private _store: Store<appStateInterface>
   ) {
     if (this._userService.loggedIn()) {
@@ -107,49 +97,62 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((error) => {
         this.downloadCodeError$ = error;
       });
+
+    // html hint cdn
+    const cdn1 = document.createElement('script');
+    cdn1.src =
+      'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/javascript-hint.min.js';
+    document.head.appendChild(cdn1);
   }
 
-  private html_CodeMirror: any;
-  private css_CodeMirror: any;
-  private js_CodeMirror: any;
+  // codemirror options
+  // html
+  htmlOptions = {
+    lineNumbers: true,
+    autofocus: true,
+    theme: 'ayu-mirage',
+    mode: 'htmlmixed',
+    showCursorWhenSelecting: true,
+    lineWiseCopyCut: true,
+    autoCloseBrackets: true,
+  };
+  // css
+  cssOptions = {
+    lineNumbers: true,
+    theme: 'ayu-mirage',
+    mode: 'css',
+    showCursorWhenSelecting: true,
+    lineWiseCopyCut: true,
+    autoCloseBrackets: true,
+  };
+  // js
+  jsOptions = {
+    lineNumbers: true,
+    autofocus: true,
+    theme: 'ayu-mirage',
+    mode: 'javascript',
+    extraKeys: { 'Ctrl-Space': 'autocomplete' },
+    showCursorWhenSelecting: true,
+    lineWiseCopyCut: true,
+    autoCloseBrackets: true,
+  };
+
+  htmlCode: string = '<!-- write your html code here -->';
+  htmlChange(code: Event): void {
+    this.htmlCode = code + '';
+  }
+
+  cssCode: string = '/* write your css code here */';
+  cssChange(code: Event): void {
+    this.cssCode = code + '';
+  }
+
+  jsCode: string = '// write your js code here';
+  jsChange(code: Event): void {
+    this.jsCode = code + '';
+  }
 
   ngOnInit(): void {
-    if (!this.scriptInserted) {
-      this.scriptCode = `
-     this.html_CodeMirror = CodeMirror(document.getElementById("html"), {
-      lineNumbers: true,
-      value: "<!-- write your HTML code here.. -->",
-      theme: "ayu-mirage",
-      mode: "text/html",
-    });
-    this.css_CodeMirror = CodeMirror(document.getElementById("css"), {
-      lineNumbers: true,
-      value: "/* write your CSS code here.. */",
-      theme: "ayu-mirage",
-      mode: "css",
-    });
-    this.js_CodeMirror = CodeMirror(document.getElementById("js"), {
-      lineNumbers: true,
-      value: "//write your JS code here..",
-      theme: "ayu-mirage",
-      mode: "javascript",
-    });
-  `;
-      const script = this._renderer.createElement('script');
-      this._renderer.setAttribute(script, 'id', 'codeMirror_script');
-      script.textContent = this.scriptCode;
-
-      const targetElement = document.getElementById('data');
-      const existingScriptElement =
-        document.getElementById('codeMirror_script');
-
-      if (existingScriptElement) {
-        existingScriptElement.textContent = '';
-      } else {
-        this._renderer.appendChild(targetElement, script);
-      }
-      this.scriptInserted = true;
-    }
     coding.next(true);
     window.addEventListener('message', this.receiveMessage.bind(this));
 
@@ -192,18 +195,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    html_editor((data: string | null) => {
-      this.html = data;
-    });
-    css_editor((data: string | null) => {
-      this.css = data;
-    });
-    js_editor((data: string | null) => {
-      this.js = data;
-    });
-  }
-
   // javascirpt errors for console
   receiveMessage(event: MessageEvent) {
     if (event.data.type == 'framError') {
@@ -216,7 +207,13 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   codeRun() {
     const title = document.getElementById('editable');
     this._userService
-      .runCode(this.html, this.css, this.js, title?.innerText, this.random)
+      .runCode(
+        this.htmlCode,
+        this.cssCode,
+        this.jsCode,
+        title?.innerText,
+        this.random
+      )
       .subscribe(
         (data) => {
           this.random = data.template_id;
@@ -264,7 +261,13 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
     // running code before saving
     const title = document.getElementById('editable');
     this._userService
-      .runCode(this.html, this.css, this.js, title?.innerText, this.random)
+      .runCode(
+        this.htmlCode,
+        this.cssCode,
+        this.jsCode,
+        title?.innerText,
+        this.random
+      )
       .subscribe(
         (data) => {
           this.codeRun();
@@ -273,9 +276,9 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
           this._userService
             .saveCode(
               title?.innerText,
-              this.html,
-              this.css,
-              this.js,
+              this.htmlCode,
+              this.cssCode,
+              this.jsCode,
               this.random
             )
             .subscribe(
@@ -325,41 +328,33 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // to format html codes
-  htmlCodeForFormat!: string;
   formatHTMLCode(): void {
-    this.htmlCodeForFormat = this.html + '';
-    if (this.html !== undefined) {
-      const formattedCode = prettier.format(this.htmlCodeForFormat, {
+    if (this.htmlCode) {
+      const formattedCode = prettier.format(this.htmlCode, {
         parser: `html`,
         plugins: [htmlParser],
         htmlWhitespaceSensitivity: 'strict',
       });
-      this.html = formattedCode;
-      updateFormatedCode('html', formattedCode);
+      this.htmlCode = formattedCode;
     }
   }
 
   // to format css codes
-  cssCodeForFormat!: string;
   formatCSSCode(): void {
-    this.cssCodeForFormat = this.css + '';
-    if (this.css !== undefined) {
-      const formattedCode = prettier.format(this.cssCodeForFormat, {
+    if (this.cssCode) {
+      const formattedCode = prettier.format(this.cssCode, {
         parser: `css`,
         plugins: [cssParser],
         htmlWhitespaceSensitivity: 'strict',
       });
-      this.css = formattedCode;
-      updateFormatedCode('css', formattedCode);
+      this.cssCode = formattedCode;
     }
   }
 
   // to format js codes
-  jsCodeForFormat!: string;
   formatJSCode() {
-    this.jsCodeForFormat = this.js + '';
-    if (this.js !== undefined) {
-      const formattedCode = prettier.format(this.jsCodeForFormat, {
+    if (this.jsCode) {
+      const formattedCode = prettier.format(this.jsCode, {
         singleQuote: true,
         trailingComma: 'es5',
         tabWidth: 2,
@@ -367,8 +362,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
         plugins: [jsParser],
         htmlWhitespaceSensitivity: 'strict',
       });
-      this.js = formattedCode;
-      updateFormatedCode('js', formattedCode);
+      this.jsCode = formattedCode;
     }
   }
 
@@ -377,14 +371,10 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     this.pressedKeys.add(event.key);
-    if (
-      this.pressedKeys.has('Control') &&
-      this.pressedKeys.has('Enter')
-    ) {
+    if (this.pressedKeys.has('Control') && this.pressedKeys.has('Enter')) {
       this.codeRun();
     }
   }
-
   @HostListener('document:keyup', ['$event'])
   onDocumentKeyUp(event: KeyboardEvent) {
     if (event.key) {
@@ -470,24 +460,11 @@ export class GuestCodingComponent implements OnInit, OnDestroy, AfterViewInit {
     this.signup = true;
   }
 
-  // removing exist codeMirror instance
-  removeScriptCode() {
-    const element = document.getElementById('codeMirror_script');
-    if (element && element.parentNode) {
-      this._renderer.removeChild(element.parentNode, element);
-      element.textContent = null;
-      element.parentNode.removeChild(element);
-      this.scriptCode = null;
-    }
-  }
-
   ngOnDestroy(): void {
-    this.removeScriptCode();
     coding.next(false);
     if ((!this.isLoggedIn && this.random) || !this.saved) {
       this._userService.removeCode(this.random);
     }
-
     this.subs_downloadDataLoading?.unsubscribe();
     this.subs_downloadDataSuccess?.unsubscribe();
     this.subs_downloadDataError?.unsubscribe();

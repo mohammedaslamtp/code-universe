@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 #html {
   width: 23em;
   height: 4em;
@@ -41,10 +40,10 @@
 }
 
 /* code box's style */
-.code-sizing {
+/* .code-sizing {
   background-position: center;
   background-size: 75vh !important;
-}
+} */
 
 #editable {
   font-size: 1.5em;

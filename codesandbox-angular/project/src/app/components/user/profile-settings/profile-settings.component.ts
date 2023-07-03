@@ -11,9 +11,6 @@ import { NgForm } from '@angular/forms';
 import { socialMedia } from 'src/app/types/profileForms';
 import { aboutData } from 'src/app/types/profileForms';
 import { apiRes } from 'src/app/types/defulatApiRes';
-import {
-  generateOtpToggle,
-} from '../generate-otp/generate-otp.component';
 
 @Component({
   selector: 'app-profile-settings',
@@ -50,15 +47,6 @@ export class ProfileSettingsComponent implements OnDestroy {
                   if (dataWithId._id === dataWithName._id) {
                     this.userName = dataWithId.full_name;
                     this.userId = dataWithId._id;
-                    generateOtpToggle.subscribe((val) => {
-                      if (val == false) {
-                        this.otpToggle = false;
-                      } else if (val == true) {
-                        this.otpToggle = true;
-                      } else {
-                        this.otpToggle = false;
-                      }
-                    });
                     if (dataWithId.avatar != null) {
                       this.profilePath = `${domain}/${dataWithId.avatar}`;
                       this.isProfileImage = true;
@@ -92,47 +80,16 @@ export class ProfileSettingsComponent implements OnDestroy {
     this.subs_profileUpdate = this._settingsService
       .profileUpdate(event.target.files[0])
       .subscribe(
-        (res: any) => {
+        (res: apiRes) => {
           if (res.data) {
             this.profilePath = `${domain}/${res.data.fileName}`;
             this.isProfileImage = true;
           }
-          const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2000,
-            showCloseButton: true,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-              toast.addEventListener('mouseenter', Swal.stopTimer);
-              toast.addEventListener('mouseleave', Swal.resumeTimer);
-            },
-          });
-          Toast.fire({
-            icon: 'success',
-            title: `${res.message}`,
-          });
+          this.successSwal(res.message);
         },
         (err) => {
           if (err) {
-            const Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 4000,
-              showCloseButton: true,
-              timerProgressBar: true,
-              didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer);
-                toast.addEventListener('mouseleave', Swal.resumeTimer);
-              },
-            });
-
-            Toast.fire({
-              icon: err.error.status > 400 ? 'error' : 'warning',
-              title: `${err.error.message}`,
-            });
+            this.errorSwal(err.error.status, err.error.message);
           }
         }
       );
@@ -164,41 +121,11 @@ export class ProfileSettingsComponent implements OnDestroy {
               this.removeImgLoading = false;
               this.profilePath =
                 '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png';
-              const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                  toast.addEventListener('mouseenter', Swal.stopTimer);
-                  toast.addEventListener('mouseleave', Swal.resumeTimer);
-                },
-              });
-              Toast.fire({
-                icon: 'success',
-                title: `${res.message}`,
-              });
+              this.successSwal(res.message);
             },
             (err) => {
               if (err) {
-                const Toast = Swal.mixin({
-                  toast: true,
-                  position: 'top-end',
-                  showConfirmButton: false,
-                  timer: 4000,
-                  showCloseButton: true,
-                  timerProgressBar: true,
-                  didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer);
-                    toast.addEventListener('mouseleave', Swal.resumeTimer);
-                  },
-                });
-
-                Toast.fire({
-                  icon: err.error.status > 400 ? 'error' : 'warning',
-                  title: `${err.error.message}`,
-                });
+                this.errorSwal(err.error.status, err.error.message);
               }
             }
           );
@@ -222,43 +149,11 @@ export class ProfileSettingsComponent implements OnDestroy {
           (res: apiRes) => {
             this.profileDataLoading = false;
             this.userData = res.data;
-            // success alert
-            const Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 2000,
-              timerProgressBar: true,
-              showCloseButton: true,
-              didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer);
-                toast.addEventListener('mouseleave', Swal.resumeTimer);
-              },
-            });
-            Toast.fire({
-              icon: 'success',
-              title: `${res.message}`,
-            });
+            this.successSwal(res.message);
           },
           (err) => {
             this.profileDataLoading = false;
-            const Toast = Swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 4000,
-              showCloseButton: true,
-              timerProgressBar: true,
-              didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer);
-                toast.addEventListener('mouseleave', Swal.resumeTimer);
-              },
-            });
-
-            Toast.fire({
-              icon: err.error.status > 400 ? 'error' : 'warning',
-              title: `${err.error.message}`,
-            });
+            this.errorSwal(err.error.status, err.error.message);
           }
         );
     }
@@ -322,12 +217,48 @@ export class ProfileSettingsComponent implements OnDestroy {
     }
   }
 
-  clearError() {
-    this.error = null;
+  clearError = () => (this.error = null);
+
+  // success swal alert
+  successSwal(message: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      showCloseButton: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
+    });
+    Toast.fire({
+      icon: 'success',
+      title: `${message}`,
+    });
   }
 
-  // otp toggle
-  otpToggle: boolean = false;
+  // error swal
+  errorSwal = (status: number, message: string) => {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 4000,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
+    });
+
+    Toast.fire({
+      icon: status > 400 ? 'error' : 'warning',
+      title: `${message}`,
+    });
+  };
 
   ngOnDestroy(): void {
     this.subs_param?.unsubscribe();

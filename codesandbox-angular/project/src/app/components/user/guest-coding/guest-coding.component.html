@@ -1,10 +1,17 @@
 <link
   rel="stylesheet"
-  href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css"
+  href="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/theme/ayu-mirage.css"
 />
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/theme/ayu-mirage.css"
+  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css"
+  integrity="sha512-OmcLQEy8iGiD7PSm85s06dnR7G7C9C0VqahIPAj/KHk5RpOCmnC6R2ob1oK4/uwYhWa9BF1GC6tzxsC8TIx7Jg=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
 />
 
 <main class="h-screen" id="coding_component">
@@ -20,10 +27,10 @@
         </div>
         <div style="flex: 1" class="flex justify-end">
           <button
-          *ngIf="saved"
+            *ngIf="saved"
             type="button"
             title="save changes"
-            class="relative inline-flex mr-8 fle items-center justify-center p-0.5  overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+            class="relative inline-flex mr-8 fle items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
             (click)="getCodes()"
           >
             <div *ngIf="downloadLoading$">
@@ -71,12 +78,14 @@
             *ngIf="isLoggedIn == true"
             routerLink="/home"
             class="py-2 text-gray-400 text-lg hover:text-white ml-3 mt-1.5"
-            ><i class="fa-solid fa-house-chimney"></i></a>
+            ><i class="fa-solid fa-house-chimney"></i
+          ></a>
           <a
             *ngIf="isLoggedIn == false"
             routerLink="/"
             class="py-2 text-gray-400 text-lg hover:text-white ml-3"
-            ><i class="fa-solid fa-house-chimney"></i></a>
+            ><i class="fa-solid fa-house-chimney"></i
+          ></a>
         </div>
       </div>
     </div>
@@ -104,7 +113,15 @@
           Format
         </button>
       </div>
-      <div class="code-sizing overflow-hidden" id="html"></div>
+      <ngx-codemirror
+        id="html"
+        class="overflow-hidden"
+        [(ngModel)]="htmlCode"
+        [options]="htmlOptions"
+        [autoFocus]="true"
+        (ngModelChange)="htmlChange($event)"
+      ></ngx-codemirror>
+
       <div
         class="flex justify-between items-center"
         style="width: 23em; height: 2em; background-color: rgb(203, 203, 203)"
@@ -124,7 +141,13 @@
           Format
         </button>
       </div>
-      <div class="code-sizing overflow-hidden" id="css"></div>
+      <ngx-codemirror
+        id="css"
+        class="overflow-hidden"
+        [(ngModel)]="cssCode"
+        [options]="cssOptions"
+        (ngModelChange)="cssChange($event)"
+      ></ngx-codemirror>
       <div
         class="flex justify-between items-center"
         style="width: 23em; height: 2em; background-color: rgb(203, 203, 203)"
@@ -144,7 +167,13 @@
           Format
         </button>
       </div>
-      <div class="code-sizing overflow-hidden" id="js"></div>
+      <ngx-codemirror
+        id="js"
+        class="overflow-hidden"
+        [(ngModel)]="jsCode"
+        [options]="jsOptions"
+        (ngModelChange)="jsChange($event)"
+      ></ngx-codemirror>
     </section>
     <div class="w-3 bg-gray-900" style="cursor: col-resize" id="resizer"></div>
     <div

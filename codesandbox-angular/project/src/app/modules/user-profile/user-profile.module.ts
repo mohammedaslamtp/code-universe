@@ -14,7 +14,7 @@ import { BlockUserGuard } from 'src/app/guard/block-user.guard';
 import { UserHomeGuard } from 'src/app/guard/user-home.guard';
 import { MainService } from 'src/app/services/main.service';
 import { SocialService } from 'src/app/services/soical.service';
-import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror'; 
 import { ProfileSettingsComponent } from 'src/app/components/user/profile-settings/profile-settings.component';
 import { SettingsComponent } from 'src/app/components/user/settings/settings.component';
 import { EditorPreferencesComponent } from 'src/app/components/user/editor-preferences/editor-preferences.component';
