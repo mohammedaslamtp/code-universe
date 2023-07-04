@@ -14,23 +14,19 @@ import { AdLoginComponent } from 'src/app/components/admin/ad-login/ad-login.com
 import { DashboardComponent } from 'src/app/components/admin/dashboard/dashboard.component';
 import { UsersComponent } from 'src/app/components/admin/users/users.component';
 import { HeaderComponent } from 'src/app/components/admin/header/header.component';
+import { AdminService } from 'src/app/services/admin.service';
 
 const admin_routes: Routes = [
-
   { path: 'login', component: AdLoginComponent, canActivate: [AuthAdminGuard] },
   { path: '', component: DashboardComponent, canActivate: [VerifyAdminGuard] },
   { path: 'users', component: UsersComponent, canActivate: [VerifyAdminGuard] },
-  { path: '404', component: NotFoundComponent },
-  { path: '**', redirectTo: '/404' },
 
-
-  
   { path: '404', component: NotFoundComponent },
   { path: '**', redirectTo: '/404' },
 ];
 
 @NgModule({
-  declarations:[
+  declarations: [
     AdLoginComponent,
     DashboardComponent,
     HeaderComponent,
@@ -43,8 +39,12 @@ const admin_routes: Routes = [
     StoreModule.forFeature('admin', adminLoginReducer),
   ],
   exports: [CoreModule],
-  providers: [UserHomeGuard, BlockUserGuard],
+  providers: [
+    AdminService,
+    UserHomeGuard,
+    BlockUserGuard,
+    AuthAdminGuard,
+    VerifyAdminGuard,
+  ],
 })
 export class AdminModule {}
-
-

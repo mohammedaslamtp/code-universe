@@ -8,9 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class CodingGuard implements CanDeactivate<unknown> {
   canDeactivate(
     component: unknown,

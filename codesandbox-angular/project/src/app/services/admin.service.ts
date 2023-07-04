@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ad_login } from '../components/admin/ad-login/adminLogin';
 import { Router } from '@angular/router';
+import { domain } from './shared-values.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -12,7 +13,7 @@ const httpOptions = {
 
 @Injectable()
 export class AdminService {
-  private api_url = 'http://localhost:3000/admin';
+  private api_url = `${domain}/admin`;
 
   constructor(private http: HttpClient, private route: Router) {}
 

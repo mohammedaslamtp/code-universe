@@ -27,7 +27,6 @@ import {
 import { appStateInterface } from 'src/app/types/appState';
 import { CodesForDownload } from 'src/app/types/downloadCode';
 
-// import 'codemirror/addon/hint/html-hint';
 import 'codemirror/mode/htmlmixed/htmlmixed';
 
 @Component({
@@ -465,6 +464,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     if ((!this.isLoggedIn && this.random) || !this.saved) {
       this._userService.removeCode(this.random);
     }
+
     this.subs_downloadDataLoading?.unsubscribe();
     this.subs_downloadDataSuccess?.unsubscribe();
     this.subs_downloadDataError?.unsubscribe();

@@ -1,11 +1,10 @@
 import { Injectable, OnInit } from '@angular/core';
 import { io } from 'socket.io-client';
+import { domain } from './shared-values.service';
 
-const socket = io('http://localhost:3000');
+const socket = io(domain);
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class SocketService implements OnInit {
   constructor() {}
   ngOnInit(): void {}

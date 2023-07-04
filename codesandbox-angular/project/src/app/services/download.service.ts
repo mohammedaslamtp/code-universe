@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CodesForDownload } from '../types/downloadCode';
+import { domain } from './shared-values.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -12,7 +13,7 @@ const httpOptions = {
 
 @Injectable()
 export class DownloadService {
-  private _apiUrl = 'http://localhost:3000';
+  private _apiUrl = domain;
   constructor(private _http: HttpClient) {}
   getCodes(templateId: string): Observable<CodesForDownload> {
     const url = `${this._apiUrl}/codeForDownload?templateId=${templateId}`;

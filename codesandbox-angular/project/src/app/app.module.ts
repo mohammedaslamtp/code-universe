@@ -51,6 +51,7 @@ import { SocialService } from './services/soical.service';
 import { DownloadService } from './services/download.service';
 import { CoreModule } from './modules/core/core.module';
 import { SettingsComponent } from './components/user/settings/settings.component';
+import { SharedValuesService } from './services/shared-values.service';
 
 @NgModule({
   declarations: [
@@ -94,6 +95,7 @@ import { SettingsComponent } from './components/user/settings/settings.component
     SocketService,
     MainService,
     DownloadService,
+    SharedValuesService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

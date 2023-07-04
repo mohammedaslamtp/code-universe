@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Store, select } from '@ngrx/store';
 import { ad_LoginData } from 'admin_store/actions/admin_login';
@@ -12,15 +12,13 @@ import Swal from 'sweetalert2';
   templateUrl: './ad-login.component.html',
   styleUrls: ['./ad-login.component.css'],
 })
-export class AdLoginComponent implements OnInit {
+export class AdLoginComponent {
   error$?: Observable<string> | string;
   constructor(private store: Store<adminAppState>) {
     this.store.pipe(select(adminLoginError)).subscribe((err: any) => {
       this.error$ = err;
-      console.log(err);
     });
   }
-  ngOnInit(): void {}
 
   ad_login = new FormGroup({
     email: new FormControl(null),
@@ -28,7 +26,6 @@ export class AdLoginComponent implements OnInit {
   });
 
   onSubmit() {
-    console.log(this.ad_login.value);
     this.store.dispatch(ad_LoginData({ admin_login: this.ad_login.value }));
   }
 

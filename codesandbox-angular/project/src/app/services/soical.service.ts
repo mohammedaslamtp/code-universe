@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { USerData } from '../types/UserData';
+import { domain } from './shared-values.service';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -11,7 +12,7 @@ const httpOptions = {
 
 @Injectable()
 export class SocialService {
-  api_url: string = 'http://localhost:3000';
+  api_url: string = domain;
 
   constructor(private _http: HttpClient) {}
 

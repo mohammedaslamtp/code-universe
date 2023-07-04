@@ -1,10 +1,3 @@
-<!-- tailwind css -->
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css"
-/>
-
-<!-- codemirror css -->
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/theme/ayu-mirage.css"
@@ -16,9 +9,13 @@
     <div class="mx-auto px-4">
       <div class="flex justify-between h-16 items-center">
         <div class="flex space-x-4 items-center text-white">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+          </span>
           <h1 class="m-0">Live Coding</h1>
         </div>
-        <div>
+        <div class="flex">
           <button
             type="submit"
             class="text-gray-400 text-lg hover:text-white mr-8 py-2 px-4 rounded cursor-pointer"
@@ -30,7 +27,7 @@
           <a
             routerLink="/home"
             class="py-2 text-gray-400 text-lg hover:text-white ml-3"
-            ><i class="fa-solid fa-house"></i
+            ><i class="mt-1.5 fa-solid fa-house"></i
           ></a>
         </div>
       </div>
@@ -49,23 +46,48 @@
         "
         id="html-header"
       >
-        <p class="text-right p-2" style="background: yellow">HTML</p>
+        <p class="text-right p-2" style="background-color: rgb(203, 203, 203)">
+          HTML
+        </p>
       </div>
-      <div class="code-sizing overflow-hidden" id="html"></div>
+      <ngx-codemirror
+        id="html"
+        class="overflow-hidden"
+        [(ngModel)]="htmlCode"
+        [options]="htmlOptions"
+        [autoFocus]="true"
+        (ngModelChange)="htmlChange($event)"
+      ></ngx-codemirror>
       <div
         style="flex: 1; background-color: gray; border-bottom: 5px solid"
         id="css-header"
       >
-        <p class="text-right p-2" style="background: yellow">CSS</p>
+        <p class="text-right p-2" style="background-color: rgb(203, 203, 203)">
+          CSS
+        </p>
       </div>
-      <div class="code-sizing overflow-hidden" id="css"></div>
+      <ngx-codemirror
+        id="css"
+        class="overflow-hidden"
+        [(ngModel)]="cssCode"
+        [options]="cssOptions"
+        (ngModelChange)="cssChange($event)"
+      ></ngx-codemirror>
       <div
         style="flex: 1; height: 2em; background-color: darkolivegreen"
         id="js-header"
       >
-        <p class="text-right p-2" style="background: yellow">JS</p>
+        <p class="text-right p-2" style="background-color: rgb(203, 203, 203)">
+          JS
+        </p>
       </div>
-      <div class="code-sizing overflow-hidden" id="js"></div>
+      <ngx-codemirror
+        id="js"
+        class="overflow-hidden"
+        [(ngModel)]="jsCode"
+        [options]="jsOptions"
+        (ngModelChange)="jsChange($event)"
+      ></ngx-codemirror>
     </section>
     <div class="w-3 bg-gray-900" style="cursor: col-resize" id="resizer"></div>
     <div
@@ -82,12 +104,3 @@
     </div>
   </div>
 </main>
-
-<!-- quill api  -->
-<!-- [quillConfig]="quillConfig" -->
-
-<quill-editor
-[(ngModel)]="content"
-></quill-editor>
-
-<!-- /quill api -->
