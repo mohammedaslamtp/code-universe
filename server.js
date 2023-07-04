@@ -16,7 +16,7 @@ const corsOptions = {
 };
 
 app.use(morgan("dev"));
-app.use(bodyParser.json({limit:'15mb'}));
+app.use(bodyParser.json({ limit: "15mb" }));
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(
@@ -51,7 +51,7 @@ const socket = require("socket.io");
 const { instrument } = require("@socket.io/admin-ui");
 const io = socket(server, {
   cors: {
-    origin: ["https://admin.socket.io", "http://localhost:4200"],
+    origin: ["https://admin.socket.io", process.env.URL],
     credentials: true,
   },
 });
@@ -60,7 +60,7 @@ instrument(io, {
 });
 
 // socket connection
-const socketControll = require("./controller/socket");
+const socketControl = require("./controller/socket");
 io.on("connection", (client) => {
-  socketControll.socketIo(io, client);
+  socketControl.socketIo(io, client);
 });

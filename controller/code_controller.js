@@ -1,5 +1,4 @@
 const Code = require("../models/code");
-const User = require("../models/users");
 const crypto = require("crypto");
 
 module.exports = {
@@ -11,7 +10,8 @@ module.exports = {
       const html = template.html;
       const css = template.css;
       const js = template.js;
-      res.render("index", { html, css, js });
+      const title = template.title;
+      res.render("index", { html, css, js, title });
     } catch (error) {
       console.log("code page render error: ", error);
     }
@@ -199,6 +199,6 @@ module.exports = {
         });
     } catch (error) {
       console.log(error);
-    } 
+    }
   },
 };
