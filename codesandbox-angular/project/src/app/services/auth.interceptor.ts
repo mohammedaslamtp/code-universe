@@ -9,13 +9,10 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { UserService } from './user.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private _router: Router, private _userService: UserService) {}
+  constructor(private _router: Router) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -38,8 +35,6 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((e: HttpErrorResponse) => {
         console.log('interceptor error: ', e);
         if (e.status == 401) {
-          console.log();
-          // this._userService.logout();
           localStorage.removeItem('token');
           localStorage.removeItem('refresh_token');
           this._router.navigate(['/']);

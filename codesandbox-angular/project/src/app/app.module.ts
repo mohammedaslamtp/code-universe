@@ -52,6 +52,9 @@ import { DownloadService } from './services/download.service';
 import { CoreModule } from './modules/core/core.module';
 import { SettingsComponent } from './components/user/settings/settings.component';
 import { SharedValuesService } from './services/shared-values.service';
+import { CreateLiveComponent } from './components/user/create-live/create-live.component';
+// import { CanDeactivateGuard, LiveCodingGuard } from './guard/live-coding.guard';
+import { LiveCodingGuard } from './guard/live-coding.guard';
 
 @NgModule({
   declarations: [
@@ -72,6 +75,7 @@ import { SharedValuesService } from './services/shared-values.service';
     UserProfileComponent,
     SearchResultComponent,
     SettingsComponent,
+    CreateLiveComponent,
   ],
   imports: [
     BrowserModule,
@@ -106,6 +110,8 @@ import { SharedValuesService } from './services/shared-values.service';
     UserHomeGuard,
     CodingGuard,
     BlockUserGuard,
+    // CanDeactivateGuard
+    LiveCodingGuard,
   ],
   bootstrap: [AppComponent],
 })

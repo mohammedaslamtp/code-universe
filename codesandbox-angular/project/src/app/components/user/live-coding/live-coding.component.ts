@@ -1,8 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import {
+  client,
+  socketConnected,
+} from 'src/app/services/shared-values.service';
 import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
+import { Title } from '@angular/platform-browser';
+import { AngularFaviconService } from 'angular-favicon';
+// import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-live-coding',
@@ -10,36 +18,88 @@ import { USerData } from 'src/app/types/UserData';
   styleUrls: ['./live-coding.component.css'],
 })
 export class LiveCodingComponent implements OnInit, OnDestroy {
+  isToggledUsers: boolean = false;
   connectedUsers!: [USerData];
   owner!: USerData;
-  roomId!: string;
+  isCreator: boolean = false;
+  room!: string;
+
   subs_owner!: Subscription;
+  subs_isConnected!: Subscription;
+
+  // blocking reaload
+  @HostListener('window:beforeunload', ['$event'])
+  handleBeforeUnload(event: BeforeUnloadEvent) {
+    // Show confirmation dialog
+    event.returnValue = 'Are you sure you want to leave this page?';
+  }
+
   constructor(
     private _socketService: SocketService,
-    private _userService: UserService
-  ) {}
+    private _userService: UserService,
+    private _activatedRoute: ActivatedRoute,
+    private _titleService: Title,
+    private _ngxFavIcon: AngularFaviconService
+  ) {
+    this.subs_isConnected = socketConnected.subscribe((val) => {
+      if (val !== 'empty' && val === 'creator') {
+        this.isCreator = true;
+      } else if (val !== 'empty' && val === 'member') {
+        this.isCreator = false;
+      } else {
+        this.isCreator = false;
+      }
+    });
+    this.room = this._activatedRoute.snapshot.paramMap.get('room') + '';
+  }
+
   ngOnInit() {
+    this._titleService.setTitle('CODEBOX LIVE');
     // socket connection:
-    this._socketService.connect();
     this.subs_owner = this._userService.getUserData().subscribe((data) => {
       this.owner = data;
-      this.joinToLive(data._id);
-    });
-
-    // socket data passing:
-    this._socketService.emit('event', 'Hello world!');
-    // socket response receiving:
-    this._socketService.on('roomId', (roomId) => {
-      this.roomId = roomId;
+      if (this.room) {
+        console.log(this.room);
+        this.joinToLive(data._id, this.room, this.isCreator);
+        this._ngxFavIcon.setFavicon(
+          `${client}/assets/images/liveStroke2/favicon.ico`
+        );
+        this.toggleFavicon();
+      }
     });
   }
 
+  // Toggle the favicon
+  iconInterval!: any;
+  toggleFavicon(): void {
+    const ico = document.getElementById('favicon') as HTMLLinkElement;
+    const favicon1 = `${client}/assets/images/liveStroke1/favicon.ico`;
+    const favicon2 = `${client}/assets/images/liveStroke2/favicon.ico`;
+
+    this.iconInterval = setInterval(() => {
+      if (ico.href == favicon1) {
+        this._ngxFavIcon.setFavicon(favicon2);
+      } else if (ico.href == favicon2) {
+        this._ngxFavIcon.setFavicon(favicon1);
+      }
+    }, 1000);
+  }
+
   // join to room
-  joinToLive(clientId: string) {
-    this._socketService.emit('client', clientId);
-    this._socketService.on('connectedClients', (data) => {
-      this.connectedUsers = data;
-      console.log('users: ', this.connectedUsers);
+  joinToLive(userId: string, roomId: string, isCreator: boolean) {
+    this._socketService.emit('joinRoom', {
+      userId: userId,
+      roomId: roomId,
+      isCreator: isCreator,
+    });
+  }
+
+  // leave from room
+  leaveFromLive(userId: string, roomId: string, isCreator: boolean) {
+    this._socketService.emit('leaveRoom', {
+      userId: userId,
+      roomId: roomId,
+      isCreator: isCreator,
     });
   }
 
@@ -87,9 +147,30 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     this.jsCode = code + '';
   }
 
+  // toggle dropdown
+  toggleDropdownUsers() {
+    if (this.isToggledUsers == false) {
+      this.isToggledUsers = true;
+    } else {
+      this.isToggledUsers = false;
+    }
+  }
+
+  // close dropdown
+  closeDropDown() {
+    if (this.isToggledUsers == true) {
+      this.isToggledUsers = false;
+    }
+  }
+
   ngOnDestroy(): void {
-    // socket disconnecting:
+    this._titleService.setTitle('CODEBOX');
+    this.leaveFromLive(this.owner._id, this.room, this.isCreator);
     this._socketService.disconnect();
+    clearInterval(this.iconInterval);
+    this._ngxFavIcon.setFavicon('favicon.ico');
+    this.closeDropDown();
     this.subs_owner?.unsubscribe();
+    this.subs_isConnected?.unsubscribe();
   }
 }

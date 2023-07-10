@@ -14,7 +14,7 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class MainService {
-  private _apiUrl = domain;
+  private readonly _apiUrl = domain;
   constructor(private _http: HttpClient) {}
 
   // searching codes

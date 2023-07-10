@@ -13,7 +13,7 @@ const httpOptions = {
 
 @Injectable()
 export class AdminService {
-  private api_url = `${domain}/admin`;
+  private readonly api_url = `${domain}/admin`;
 
   constructor(private http: HttpClient, private route: Router) {}
 

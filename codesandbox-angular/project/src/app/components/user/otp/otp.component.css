@@ -16,7 +16,7 @@ section {
   color: #58151c;
   border: #f1aeb5;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   background: #f8d7da;
   border-radius: 7px;
   width: 25%;

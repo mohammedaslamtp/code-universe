@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
@@ -31,7 +31,7 @@ export class SearchResultComponent implements OnDestroy {
   constructor(
     private _routerActive: ActivatedRoute,
     private _store: Store<appStateInterface>,
-    private _userService:UserService
+    private _userService: UserService
   ) {
     // search request
     this.subs_query = this._routerActive.params.subscribe((param) => {
@@ -90,6 +90,11 @@ export class SearchResultComponent implements OnDestroy {
         console.log(err);
       }
     );
+  }
+
+  like(id: string) {
+    const audio = new Audio('assets/sounds/click-like.mp3');
+    audio.play();
   }
 
   ngOnDestroy() {

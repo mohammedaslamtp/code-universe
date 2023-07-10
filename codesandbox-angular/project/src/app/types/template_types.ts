@@ -46,6 +46,8 @@ export interface Code {
   css: string;
   js: string;
   isGuest: boolean;
+  like: [string];
+  views: [string];
   isPrivate: boolean;
   __v: number;
   user: string;

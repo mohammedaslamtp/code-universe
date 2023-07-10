@@ -13,7 +13,7 @@ const httpOptions = {
 
 @Injectable()
 export class DownloadService {
-  private _apiUrl = domain;
+  private readonly _apiUrl = domain;
   constructor(private _http: HttpClient) {}
   getCodes(templateId: string): Observable<CodesForDownload> {
     const url = `${this._apiUrl}/codeForDownload?templateId=${templateId}`;

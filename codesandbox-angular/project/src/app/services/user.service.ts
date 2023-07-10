@@ -4,10 +4,9 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LOGIN } from '../components/user/login/userLogin';
 import { Router } from '@angular/router';
-import { coding, popupLog } from './shared-values.service';
+import { coding, domain, popupLog } from './shared-values.service';
 import { Templates } from '../types/template_types';
 import { USerData } from '../types/UserData';
-import { environment } from 'src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -17,7 +16,7 @@ const httpOptions = {
 
 @Injectable()
 export class UserService {
-  private api_url = environment.apiUrl;
+  private readonly api_url = domain;
   intervalId: any;
 
   constructor(private _http: HttpClient, private _route: Router) {}

@@ -55,14 +55,16 @@
       <button
         *ngIf="isProfile == false"
         (click)="profile()"
+        title="Your profile"
         class="items-center px-3 py-2 text-sm mr-0 font-medium text-center text-gray-600 rounded-lg md:mb-0 dark:hover:text-gray-300"
         type="button"
-      >
+        >
         <i class="fa-solid fa-user cursor-pointer"></i>
       </button>
       <button
-        *ngIf="isProfile"
-        (click)="dropDown()"
+      *ngIf="isProfile"
+      (click)="dropDown()"
+      title="menu"
         class="items-center px-3 py-2 text-sm mr-0 font-medium text-center text-gray-600 rounded-lg md:mb-0 dark:hover:text-gray-300"
         type="button"
       >
@@ -172,7 +174,7 @@
           </li>
           <li>
             <a
-              routerLink="/liveCoding"
+              routerLink="/createLive"
               class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
             >
               <svg

@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Injectable()
-export class CodingGuard implements CanDeactivate<unknown> {
+export class LiveCodingGuard implements CanDeactivate<unknown> {
   canDeactivate(
     component: unknown,
     currentRoute: ActivatedRouteSnapshot,
@@ -21,13 +21,12 @@ export class CodingGuard implements CanDeactivate<unknown> {
     | boolean
     | UrlTree {
     return Swal.fire({
-      title: 'Unsaved Changes!',
-      text: 'Are you sure?',
+      title: 'Are you sure?',
+      text: 'Do you want to leave from this live?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'discard',
+      confirmButtonText: 'Leave!',
+      cancelButtonText: 'Cancel',
     }).then((result) => {
       return result.isConfirmed;
     });

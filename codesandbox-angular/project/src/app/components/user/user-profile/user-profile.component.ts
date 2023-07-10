@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { SocialService } from 'src/app/services/soical.service';
@@ -7,6 +7,7 @@ import { USerData } from 'src/app/types/UserData';
 import Swal from 'sweetalert2';
 import { userProfile } from '../user-header/user-header.component';
 import { domain } from 'src/app/services/shared-values.service';
+import { Title } from '@angular/platform-browser';
 
 export const allCodesPage = new BehaviorSubject<boolean>(false);
 export const publicPage = new BehaviorSubject<boolean>(false);
@@ -40,12 +41,15 @@ export class UserProfileComponent implements OnDestroy {
   followingCount!: number;
   location: string | null = null;
   bio: string | null = null;
+  twitter: string = 'https://twitter.com';
+  linkedIn: string = 'https://in.linkedin.com';
   isFollowing: boolean = false;
   constructor(
     private _userService: UserService,
     private _socialService: SocialService,
     private _router: Router,
-    private _activatedRoute: ActivatedRoute
+    private _activatedRoute: ActivatedRoute,
+    private _titleService: Title
   ) {
     // for representing child routes
     allCodesPage.subscribe((val) => (this._allCodes = val));
@@ -82,6 +86,13 @@ export class UserProfileComponent implements OnDestroy {
                     this.profilePath =
                       '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png';
                   }
+                  if (data.twitter_link) {
+                    this.twitter = data.twitter_link;
+                  }
+                  if (data.linkedin_link) {
+                    this.linkedIn = data.linkedin_link;
+                  }
+
                   Name.next(data.full_name);
                   this.checkingIsFollowed();
                 },
@@ -93,6 +104,7 @@ export class UserProfileComponent implements OnDestroy {
             if (username == this.accountOwnerData.full_name) {
               this.userName = this.accountOwnerData.full_name;
               this.displayName = this.accountOwnerData.display_name;
+              this._titleService.setTitle(this.accountOwnerData.display_name);
               this.isAccountOwner = true;
               userProfile.next(true);
             } else {
@@ -193,7 +205,8 @@ export class UserProfileComponent implements OnDestroy {
   ngOnDestroy(): void {
     userProfile.next(false);
     this.isAccountOwner = false;
-    this.subs_owner.unsubscribe();
+    this.subs_owner?.unsubscribe();
+    this._titleService.setTitle('CODEBOX');
     this.subs_param?.unsubscribe();
     this.subs_userid?.unsubscribe();
     this.subs_follow?.unsubscribe();

@@ -12,19 +12,19 @@ const httpOptions = {
 
 @Injectable()
 export class SocialService {
-  api_url: string = domain;
+  private readonly _apiUrl: string = domain;
 
   constructor(private _http: HttpClient) {}
 
   // for follow user
   follow(id: string): Observable<USerData> {
-    const url = `${this.api_url}/following?id=${id}`;
+    const url = `${this._apiUrl}/following?id=${id}`;
     return this._http.patch<USerData>(url, httpOptions);
   }
 
   // for unfollow user
   unFollow(id: string): Observable<USerData> {
-    const url = `${this.api_url}/unFollowing?id=${id}`;
+    const url = `${this._apiUrl}/unFollowing?id=${id}`;
     return this._http.patch<USerData>(url, httpOptions);
   }
 }

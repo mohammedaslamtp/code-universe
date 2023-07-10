@@ -97,106 +97,63 @@
           <h2 class="text-2xl text-white">No Data found for "{{ searchQ }}"</h2>
         </div>
         <!-- /data not found -->
+      </section>
 
-        <!-- <article
-          class="card animate-pulse border border-zinc-300"
-          style="height: 21em; width: 20em; margin-bottom: 2.6em"
-        >
-          <iframe
-            src="http://null//null"
-            width="320"
-            height="200"
-            frameborder="0"
-          ></iframe>
-          <div class="card__info-hover"></div>
-
-         
-          <div class="card__info mt-5">
-            <h3
-              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
-              style="background-color: rgb(212, 211, 211); margin-bottom: 1em"
-            ></h3>
-            <h3
-              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full mt-4"
-              style="background-color: rgb(212, 211, 211); margin-bottom: 1.5em"
-            ></h3>
-
-            <div class="flex justify-around mt-3 items-center">
-              <div class="action">
-                <small class="flex"
-                  ><i class="fa-solid fa-heart" style="color: rgb(0, 0, 0)"></i
-                  >&nbsp;...</small
-                >
-              </div>
-              <div class="action">
-                <small class="flex"
-                  ><i
-                    class="fa-solid fa-comment"
-                    style="color: rgb(0, 0, 0)"
-                  ></i
-                  >&nbsp;...</small
-                >
-              </div>
-              <div class="action">
-                <small class="flex"
-                  ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i
-                  >&nbsp;...</small
-                >
-              </div>
-            </div>
-          </div>
-        </article> -->
-
-        <!-- real card here -->
+      <!-- real data -->
+      <section class="cards" *ngIf="searchResult$ && !searchLoading$">
         <article
-          class="card border border-zinc-300"
-          style="height: 22em; width: 20em; margin-bottom: 2.6em"
           *ngFor="let el of searchResult$"
+          class="card border border-zinc-200"
+          style="height: 17.3em; width: 20em; margin-bottom: 1.5em"
         >
           <iframe
-            width="320"
-            height="200"
-            frameborder="0"
+            id="{{ el.template_id }}"
+            style="width: 100%"
             class="www"
-            id="{{el.template_id}}"
+            scrolling="no"
           ></iframe>
-          <div class="card__info-hover"></div>
-          <div class="card__info mt-5">
-            <h3 class="card__title flex-1 space-y-6 py-1 p-3">
-              {{ el.title }}
-            </h3>
+
+          <div
+            class="card__info mt-2"
+            style="border-top: 0.5px solid rgb(210, 222, 233)"
+          >
+            <h3 class="card__title">{{ el.title }}</h3>
             <span class="card__by">
-              <a class="card__author" title="{{ el.userData[0].full_name }}">{{
-                el.userData[0].full_name
-              }}</a></span
+              <a
+                class="card__author"
+                [routerLink]="'/userProfile/' + el.userData[0].full_name"
+                title="{{ el.userData[0].full_name }}"
+                >{{ el.userData[0].full_name }}</a
+              ></span
             >
-            <div class="flex justify-around my-3 items-center">
-              <div class="action">
-                <small class="flex"
-                  ><i class="fa-solid fa-heart" style="color: rgb(0, 0, 0)"></i
-                  >&nbsp;...</small
+            <div class="flex justify-start mt-3 items-center">
+              <div class="action mr-2">
+                <small (click)="like(el._id)" class="flex"
+                  ><i
+                    class="fa-solid fa-heart"
+                    style="color: rgb(175, 0, 0)"
+                  ></i
+                  >&nbsp;{{ el.like.length }}</small
                 >
               </div>
-              <div class="action">
+              <div class="action mr-2">
                 <small class="flex"
                   ><i
                     class="fa-solid fa-comment"
                     style="color: rgb(0, 0, 0)"
                   ></i
-                  >&nbsp;...</small
+                  >&nbsp;25</small
                 >
               </div>
               <div class="action">
                 <small class="flex"
                   ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i
-                  >&nbsp;...</small
+                  >&nbsp;{{ el.views.length }}</small
                 >
               </div>
             </div>
           </div>
         </article>
-
-        <!-- /real card here -->
       </section>
     </div>
   </div>

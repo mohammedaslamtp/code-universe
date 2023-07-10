@@ -13,7 +13,7 @@ const httpOptions = {
 
 @Injectable()
 export class SettingsService {
-  private _apiUrl: string = domain;
+  private readonly _apiUrl: string = domain;
   constructor(private _http: HttpClient) {}
 
   // profile image updation

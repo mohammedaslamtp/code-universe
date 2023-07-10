@@ -4,10 +4,9 @@ import { Subscription } from 'rxjs';
 import { MainService } from 'src/app/services/main.service';
 import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
-import { Template, Templates } from 'src/app/types/template_types';
+import { Templates } from 'src/app/types/template_types';
 import Swal from 'sweetalert2';
 import { publicPage } from '../user-profile/user-profile.component';
-import { CoreModule } from 'src/app/modules/core/core.module';
 
 @Component({
   selector: 'app-public-codes',
@@ -165,23 +164,6 @@ export class PublicCodesComponent implements OnDestroy {
     }
   }
 
-  // quick view
-  quiqkView(el: Template) {
-    Swal.fire({
-      html: `
-    <p style="padding:0.4em;">Lorem ipsum <b>sit</b> amet consectetur, adipisicing elit. Sint temporibus, rerum unde excepturi doloremque totam accusamus esse impedit cupiditate, incidunt eaque vel ipsum fuga deserunt eum quisquam maiores soluta quasi!
-      Recusandae maiores fugit eveniet, sit eos excepturi nihil impedit perferendis, magni facilis saepe ipsa voluptas veritatis harum, accusantium sed iusto illo ex! Commodi voluptates adipisci soluta nulla numquam error facilis!
-      Repellendus voluptates maxime error aliquam quod, laudantium commodi dolorum veniam dolor nulla laborum animi eligendi autem corporis quas, nemo iusto. Voluptas nostrum assumenda, perferendis repudiandae voluptate eum consequatur velit saepe?
-      Sint, dolorem aspernatur laborum assumenda laboriosam reprehenderit, natus nostrum voluptatum atque, dolores dicta. Possimus quaerat architecto eligendi, incidunt veniam iusto, ad sit a, ullam voluptatum quam quia! Obcaecati, velit aliquam.
-      Neque sed ratione doloribus voluptatibus rerum voluptatem! Animi excepturi cum quae odit voluptatem libero omnis neque fuga quas facere. Beatae tempore ratione, optio similique quas dolorem deleniti at vel cupiditate.
-      Est, animi voluptas ipsum cupiditate aspernatur iusto, ipsa ex mollitia architecto a eligendi neque dolores sunt, dolorum obcaecati reiciendis eveniet aut asperiores consequatur excepturi! Adipisci nostrum natus voluptatibus eveniet dolorum.</p>
-    `,
-      showConfirmButton: false,
-      showCloseButton: true,
-      width: '900px',
-    });
-  }
-
   // to delete the code
   deleteLoading: boolean = false;
   deleteCode(id: string, name: string) {
@@ -218,7 +200,7 @@ export class PublicCodesComponent implements OnDestroy {
                 icon: 'success',
                 title: 'Deleted succesfully',
               });
-            } 
+            }
           },
           (err) => {
             this.deleteLoading = false;
@@ -244,7 +226,7 @@ export class PublicCodesComponent implements OnDestroy {
   }
 
   // preview of code
-  subs_codePreview!:Subscription
+  subs_codePreview!: Subscription;
   previewOfCode(id: string) {
     const iframes: NodeListOf<HTMLIFrameElement> =
       document.querySelectorAll('.www');
@@ -266,7 +248,7 @@ export class PublicCodesComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    publicPage.next(false)
+    publicPage.next(false);
     this.subs_OwnerData.unsubscribe();
     this.subs_userData?.unsubscribe();
     this.subs_publicCodes?.unsubscribe();
