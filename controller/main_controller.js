@@ -49,7 +49,7 @@ module.exports = {
         },
       ])
         .then((data) => {
-          console.log(data);
+          console.log('search result ***********',data);
           res.status(200).json(data);
         })
         .catch((err) => {

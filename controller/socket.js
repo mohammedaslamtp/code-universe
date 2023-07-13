@@ -2,32 +2,49 @@ const LiveCode = require("../models/live_code");
 const Users = require("../models/users");
 
 module.exports = {
-  socketIo: (io, client) => {
+  socketIo: (io) => {
     let connectedClients = [];
+    let creator = {};
     try {
       //socket connecting
-      client.on("event", (data) => {
-        console.log("socket room id: ", client.id);
-        console.log("recived ", data);
-        client.emit("roomId", client.id);
-      });
+      io.on("connection", (client) => {
+        console.log("connected****** ", client.id);
+        client.emit("roomId", client.id);``
 
-      // joining to room
-      client.on("client", (clientId) => {
-        Users.findById(clientId)
-          .then((userData) => {
-            connectedClients.push(userData);
-            client.emit("connectedClients", connectedClients);
-            console.log("connectedClients: ", connectedClients);
-          })
-          .catch((e) => {
-            console.log("user not valid error: ", e);
+        // Join the specified room
+        client.on("joinRoom", (join) => {
+          client.join(join.roomId);
+          client.room = "room*1";
+          Users.findById(join.userId).then((user) => {
+            if (join.isCreator) {
+              creator = user;
+            } else {
+              console.log("users ", connectedClients);
+              connectedClients.push(user);
+            }
           });
-      });
+          console.log(`User joined in room: ${join.roomId}`);
+          const roomUsers = io.sockets.adapter.rooms.get(join.roomId);
+          console.log("Joined users****:", roomUsers);
+        });
 
-      //socket disconnecting
-      client.on("disconnect", () => {
-        console.log("socket disconnected");
+        // Leave the specified room
+        client.on("leaveRoom", (leave) => {
+          client.leave(leave.roomId);
+          console.log(`User left room ${leave.roomId}`);
+          if (leave.isCreator) {
+            connectedClients = [];
+          } else {
+            connectedClients = connectedClients.filter(
+              (el) => el.id !== leave.userId
+            );
+          }
+        });
+
+        //socket disconnecting
+        client.on("disconnect", () => {
+          console.log("socket disconnected");
+        });
       });
     } catch (error) {
       console.log("socket error: ", error);
