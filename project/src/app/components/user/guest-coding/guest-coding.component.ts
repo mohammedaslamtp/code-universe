@@ -15,7 +15,11 @@ import * as cssParser from 'prettier/parser-postcss';
 import * as JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
-import { coding, logModToggle } from 'src/app/services/shared-values.service';
+import {
+  coding,
+  logModToggle,
+  templateListing,
+} from 'src/app/services/shared-values.service';
 import { Subscription } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { codesDownload } from 'src/app/stores/actions/downloadCodes';
@@ -26,7 +30,8 @@ import {
 } from 'src/app/stores/selector';
 import { appStateInterface } from 'src/app/types/appState';
 import { CodesForDownload } from 'src/app/types/downloadCode';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { MainService } from 'src/app/services/main.service';
 
 @Component({
   selector: 'app-guest-coding',
@@ -62,9 +67,15 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   intervelIdLoading!: any;
   intervelIdResult!: any;
   intervelIdError!: any;
+  param!: string;
+  subs_param: Subscription;
+  subs_TemplateDetail!: Subscription;
 
   constructor(
     private _userService: UserService,
+    private _mainService: MainService,
+    private _activatedRoute: ActivatedRoute,
+    private _router: Router,
     private _store: Store<appStateInterface>
   ) {
     if (this._userService.loggedIn()) {
@@ -72,6 +83,31 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     } else {
       this.isLoggedIn = false;
     }
+
+    this.subs_param = this._activatedRoute.params.subscribe((param) => {
+      this.param = param['id'];
+      if (this.param !== 'new') {
+        templateListing.next(true);
+        this.subs_TemplateDetail = this._mainService
+          .getTemplateDetail(this.param)
+          .subscribe(
+            (res) => {
+              this.htmlCode = res.data.html;
+              this.cssCode = res.data.css;
+              this.jsCode = res.data.js;
+              setTimeout(() => {
+                this.formatHTMLCode();
+                this.formatCSSCode();
+                this.formatJSCode();
+                this.codeRun();
+              }, 200);
+            },
+            (err) => {
+              this._router.navigate(['**']);
+            }
+          );
+      }
+    });
 
     // updating download loading from state
     this.subs_downloadDataLoading = this._store
@@ -237,20 +273,25 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   editable!: any;
   toggleEdit() {
     this.editable = document.getElementById('editable');
-    if (this.editable.contentEditable == 'true') {
-      // disable editing
+    if (this.param === 'new') {
+      if (this.editable.contentEditable == 'true') {
+        // disable editing
+        this.editable.contentEditable = 'false';
+        this.editable.style.backgroundColor = '';
+      } else {
+        // enable editing
+        this.editable.contentEditable = 'true';
+        this.editable.style.backgroundColor = '';
+        this.editable.focus();
+        let selection = window.getSelection();
+        let range = document.createRange();
+        range.selectNodeContents(this.editable);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+    } else {
       this.editable.contentEditable = 'false';
       this.editable.style.backgroundColor = '';
-    } else {
-      // enable editing
-      this.editable.contentEditable = 'true';
-      this.editable.style.backgroundColor = '';
-      this.editable.focus();
-      let selection = window.getSelection();
-      let range = document.createRange();
-      range.selectNodeContents(this.editable);
-      selection?.removeAllRanges();
-      selection?.addRange(range);
     }
   }
 
@@ -463,7 +504,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     if ((!this.isLoggedIn && this.random) || !this.saved) {
       this._userService.removeCode(this.random);
     }
-
+    templateListing.next(false);
     this.subs_downloadDataLoading?.unsubscribe();
     this.subs_downloadDataSuccess?.unsubscribe();
     this.subs_downloadDataError?.unsubscribe();

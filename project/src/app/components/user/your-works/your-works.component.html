@@ -21,7 +21,7 @@
       class="card__info mt-2"
       style="border-top: 0.5px solid rgb(210, 222, 233)"
     >
-      <h3 class="card__title">{{ el.title }}</h3>
+      <h3 routerLink="/coding/{{el._id}}" class="card__title">{{ el.title }}</h3>
       <span class="card__by">
         <a class="card__author" title="{{ el.user.full_name }}">
           {{ el.user.full_name }}</a

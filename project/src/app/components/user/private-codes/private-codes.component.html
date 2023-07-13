@@ -96,7 +96,7 @@
       style="border-top: 0.5px solid rgb(210, 222, 233)"
     >
       <div class="flex justify-between">
-        <h3 class="card__title" title="{{ el.title }}">{{ el.title }}</h3>
+        <h3 routerLink="/coding/{{el._id}}" class="card__title" title="{{ el.title }}">{{ el.title }}</h3>
         <button
           id="{{ 'dropdownLeftButton-' + el._id }}"
           data-dropdown-placement="top"
@@ -189,7 +189,7 @@
   *ngIf="empty"
 >
   <h2 class="text-2xl text-white">You haven't any private codes yet.</h2>
-  <a routerLink="/coding" class="text-sky-400 mt-4">Go build One!</a>
+  <a routerLink="/coding/new" class="text-sky-400 mt-4">Go build One!</a>
 </div>
 <!-- /empty case -->
 

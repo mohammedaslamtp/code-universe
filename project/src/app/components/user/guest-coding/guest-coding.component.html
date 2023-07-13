@@ -45,7 +45,7 @@
             Run
           </button>
           <button
-            *ngIf="!isLoggedIn"
+            *ngIf="!isLoggedIn && param === 'new'"
             class="py-2 text-gray-400 text-lg hover:text-white mr-4"
             type="button"
             style="background: none"
@@ -54,7 +54,7 @@
             <i class="fa-regular fa-floppy-disk text-2xl"></i>
           </button>
           <button
-            *ngIf="isLoggedIn"
+            *ngIf="isLoggedIn && param === 'new'"
             class="py-2 text-gray-400 text-lg hover:text-white mr-4"
             type="submit"
             title="save code"

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-// import '@codemirror/lang-html'
 
 
 @Component({
@@ -21,7 +20,7 @@ export class FollowingComponent {
 
     const cdn3 = document.createElement('script');
     cdn3.src =
-      'https://cdn.jsdelivr.net/npm/codemirror@6.65.7/addon/edit/closebrackets.js';
+      'https://cdn.jsdelivr.net/npm/codemirror@5.65.3/addon/edit/closebrackets.js';
 
     document.head.appendChild(cdn1);
     document.head.appendChild(cdn2);
@@ -33,7 +32,7 @@ export class FollowingComponent {
     lineNumbers: true,
     autofocus: true,
     theme: 'material',
-    mode: 'htmlmixed',
+    mode: 'javascript',
     extraKeys: { 'Ctrl-Space': 'autocomplete' },
     showCursorWhenSelecting: true,
     lineWiseCopyCut: true,

@@ -29,7 +29,7 @@ const routes: Routes = [
     canActivate: [UserHomeGuard, BlockUserGuard],
   },
   {
-    path: 'coding',
+    path: 'coding/:id',
     component: GuestCodingComponent,
     canDeactivate: [CodingGuard],
   },

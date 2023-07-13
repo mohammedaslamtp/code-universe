@@ -4,6 +4,7 @@ import { Template } from '../types/template_types';
 import { Observable } from 'rxjs';
 import { USerData } from '../types/UserData';
 import { domain } from './shared-values.service';
+import { apiRes } from '../types/defulatApiRes';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -29,5 +30,11 @@ export class MainService {
       url = `${this._apiUrl}/getUserData?id=${id}`;
     }
     return this._http.get<USerData>(url, httpOptions);
+  }
+
+  getTemplateDetail(id: string): Observable<apiRes> {
+    let url = `${this._apiUrl}/getUserData`;
+    url = `${this._apiUrl}/getTemplateDetail?id=${id}`;
+    return this._http.get<apiRes>(url, httpOptions);
   }
 }

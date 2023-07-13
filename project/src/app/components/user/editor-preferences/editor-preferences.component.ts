@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
+import 'codemirror/mode/htmlmixed/htmlmixed'
 
 
 @Component({
@@ -64,7 +65,7 @@ export class EditorPreferencesComponent implements OnInit {
     extraKeys: { 'Ctrl-Space': 'autocomplete' },
     showCursorWhenSelecting: true,
     lineWiseCopyCut: true,
-    autoCloseBrackets: true,
+    linerWrapping: true,
     
   };
 
