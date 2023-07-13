@@ -66,5 +66,9 @@ route
     "/changePassword",
     auth_token.authenticate,
     settings_controller.changePassword
-  );
+  )
+  .get(
+    "/getTemplateDetail",
+    mainController.getTemplateDetail
+  )
 module.exports = route;

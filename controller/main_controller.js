@@ -1,5 +1,12 @@
 const Codes = require("../models/code");
 
+const apiRes = {
+  message: "Authentication success",
+  authorization: true,
+  status: 401,
+  data: {},
+};
+
 module.exports = {
   // to get all templates
   getTemplates: async (req, res) => {
@@ -15,7 +22,6 @@ module.exports = {
   searching: (req, res) => {
     try {
       const query = req.query.q;
-      console.log("q: ", query);
       Codes.aggregate([
         {
           $lookup: {
@@ -49,7 +55,6 @@ module.exports = {
         },
       ])
         .then((data) => {
-          console.log('search result ***********',data);
           res.status(200).json(data);
         })
         .catch((err) => {
@@ -58,5 +63,26 @@ module.exports = {
     } catch (error) {
       console.log("error while searching data: ", error);
     }
+  },
+  // to get get template detail
+  getTemplateDetail: (req, res) => {
+    const tempId = req.query.id;
+    Codes.findById(tempId)
+      .then((data) => {
+        console.log(data);
+        apiRes.status = 200;
+        apiRes.authorization = "null";
+        apiRes.message = "data found";
+        apiRes.data = data;
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        console.log("error while fetching template detail");
+        apiRes.status = 404;
+        apiRes.authorization = "null";
+        apiRes.message = "data not found!";
+        apiRes.data = null;
+        res.status(404).json(apiRes);
+      });
   },
 };
