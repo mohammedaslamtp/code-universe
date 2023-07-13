@@ -1,0 +1,198 @@
+<section
+  class="w-full h-32 rounded-lg flex flex-col items-center justify-center"
+  *ngIf="isLoading"
+>
+  <!-- for loading -->
+  <div class="w-64 h-16 rounded-lg flex items-center justify-center">
+    <div class="loader loader--style6" title="loading">
+      <svg
+        version="1.1"
+        id="Layer_1"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        x="0px"
+        y="0px"
+        width="24px"
+        height="30px"
+        viewBox="0 0 24 30"
+        style="enable-background: new 0 0 50 50"
+        xml:space="preserve"
+      >
+        <rect x="0" y="13" width="4" height="5" fill="#333">
+          <animate
+            attributeName="height"
+            attributeType="XML"
+            values="5;21;5"
+            begin="0s"
+            dur="0.6s"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="y"
+            attributeType="XML"
+            values="13; 5; 13"
+            begin="0s"
+            dur="0.6s"
+            repeatCount="indefinite"
+          />
+        </rect>
+        <rect x="10" y="13" width="4" height="5" fill="#333">
+          <animate
+            attributeName="height"
+            attributeType="XML"
+            values="5;21;5"
+            begin="0.15s"
+            dur="0.6s"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="y"
+            attributeType="XML"
+            values="13; 5; 13"
+            begin="0.15s"
+            dur="0.6s"
+            repeatCount="indefinite"
+          />
+        </rect>
+        <rect x="20" y="13" width="4" height="5" fill="#333">
+          <animate
+            attributeName="height"
+            attributeType="XML"
+            values="5;21;5"
+            begin="0.3s"
+            dur="0.6s"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="y"
+            attributeType="XML"
+            values="13; 5; 13"
+            begin="0.3s"
+            dur="0.6s"
+            repeatCount="indefinite"
+          />
+        </rect>
+      </svg>
+    </div>
+  </div>
+  <!-- /for loading -->
+</section>
+
+<section class="flex flex-wrap">
+  <!-- card -->
+  <article
+    class="card border border-zinc-200"
+    style="height: 18.3em; width: 20em; margin-bottom: 1.5em"
+    *ngFor="let el of publicCodes; index as i"
+  >
+    <iframe
+      id="{{ el.template_id }}"
+      style="width: 100%"
+      class="www"
+      scrolling="no"
+    ></iframe>
+    <div
+      class="card__info mt-2"
+      style="border-top: 0.5px solid rgb(210, 222, 233)"
+    >
+      <div class="flex justify-between">
+        <h3 class="card__title" title="{{ el.title }}">{{ el.title }}</h3>
+        <button
+          id="{{ 'dropdownLeftButton-' + el._id }}"
+          (click)="toggleDropdown(el._id)"
+          data-dropdown-placement="top"
+          class="p-2"
+          type="button"
+          role="button"
+        >
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+
+        <!-- Dropdown menu -->
+        <div
+          role="menu"
+          [id]="el._id"
+          [ngClass]="{
+            hidden: !dropdownOpen[el._id],
+            'bg-white': true,
+            'divide-y': true,
+            'divide-gray-100': true,
+            'rounded-lg': true,
+            shadow: true,
+            'w-44': true,
+            'dark:bg-gray-700': true,
+            absolute: true
+          }"
+          style="right: 3.4em"
+        >
+          <ul
+            class="py-2 text-sm text-gray-700 dark:text-gray-200"
+            [attr.aria-labelledby]="'dropdownLeftButton-' + el._id"
+          >
+            <li>
+              <a
+                class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                ><i class="fa-solid fa-thumbtack"></i>&nbsp;&nbsp;&nbsp;Add to
+                Pin</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                (click)="makePrivate(el._id)"
+              >
+                <i class="fa-solid fa-lock"></i>
+                &nbsp;&nbsp;&nbsp;Make it private</a
+              >
+            </li>
+            <li>
+              <a
+                (click)="deleteCode(el._id, el.title)"
+                class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                ><i class="fa-solid fa-delete-left"></i>&nbsp; Delete</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="card__by">
+        <a
+          class="card__author"
+          [routerLink]="'/userProfile/' + el.user.full_name"
+          title="{{ el.user.full_name }}"
+          >{{ el.user.full_name }}</a
+        >
+      </div>
+      <div class="flex mt-3 items-center">
+        <div class="action mr-1">
+          <small class="flex items-center"
+            ><i class="fa-solid fa-heart" style="color: rgb(175, 0, 0)"></i
+            >&nbsp;{{ el.like.length }}</small
+          >
+        </div>
+        <div class="action mr-1">
+          <small class="flex items-center"
+            ><i class="fa-solid fa-comment"></i>&nbsp;32</small
+          >
+        </div>
+        <div class="action">
+          <small class="flex items-center"
+            ><i class="fa-solid fa-eye"></i>&nbsp;{{ el.views.length }}</small
+          >
+        </div>
+      </div>
+    </div>
+  </article>
+  <!-- /card -->
+</section>
+
+<!-- empty case -->
+<div
+  class="w-full h-32 rounded-lg flex flex-col items-center justify-center"
+  style="background-color: #1f2937"
+  *ngIf="empty"
+>
+  <h2 class="text-2xl text-white">You haven't any private codes yet.</h2>
+  <a routerLink="/coding" class="text-sky-400 mt-4">Go build One!</a>
+</div>
+

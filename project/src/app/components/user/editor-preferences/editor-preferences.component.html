@@ -1,0 +1,541 @@
+<!-- dark themes:- -->
+<!-- ayu-mirage -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/ayu-mirage.css"
+/>
+
+<!-- darcula -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/darcula.css"
+/>
+
+<!-- dracula -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/dracula.css"
+/>
+<!-- twilight -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/twilight.css"
+/>
+<!-- monokai -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/monokai.css"
+/>
+<!-- night -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/3024-night.css"
+/>
+<!-- blackboard -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/blackboard.css"
+/>
+<!-- hopscotch -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/hopscotch.css"
+/>
+<!-- meterial -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/material.css"
+/>
+
+<!-- light themes:- -->
+<!-- eclipse -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/eclipse.css"
+/>
+
+<!-- panda -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/panda-syntax.css"
+/>
+
+<!-- day -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/3024-day.css"
+/>
+<!-- base16-light -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/base16-light.css"
+/>
+<!-- duotone-light -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/duotone-light.css"
+/>
+<!-- elegant -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/elegant.css"
+/>
+<!-- idea -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/idea.css"
+/>
+<!-- paraiso-light -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/paraiso-light.css"
+/>
+<!-- tomorrow-night-bright -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/tomorrow-night-bright.css"
+/>
+<!-- juejin -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/juejin.css"
+/>
+<!-- yeti-->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/yeti.css"
+/>
+
+<main class="w-full h-full text-gray-400 flex justify-center container mx-auto">
+  <div class="flex flex-col w-full items-center" style="width: 95%">
+    <!-- Editor preview -->
+
+    <div
+      class="flex flex-col mb-5 flex-wrap w-5/6 sticky"
+      style="top: 4.2em; z-index: 10"
+    >
+      <!-- loading -->
+      <!-- <div class="flex w-full justify-center">
+        <div class="flex w-full items-center justify-center">
+          <i class="animate-spin fa-solid fa-spinner"></i>
+        </div>
+      </div> -->
+      <div class="flex mb-2">
+        <div>
+          <button class="bg-gray-50 p-1 px-2"><small>HTML</small></button>
+        </div>
+        <div>
+          <button
+            class="bg-gray-50 p-1 px-2"
+            style="border-right: 1px solid; border-left: 1px solid"
+          >
+            <small>CSS</small>
+          </button>
+        </div>
+        <div>
+          <button class="bg-gray-50 p-1 px-2"><small>JS</small></button>
+        </div>
+      </div>
+      <div class="ngx-codemirror" style="width: 100%">
+        <ngx-codemirror
+          [ngModel]="exampleHtml"
+          [options]="options"
+        ></ngx-codemirror>
+      </div>
+    </div>
+    <!-- editor preview -->
+
+    <!-- themes form -->
+    <div class="flex flex-col mb-5 flex-wrap w-5/6 p-5 bg-zinc-800 rounded-md">
+      <!-- loading -->
+      <!-- <div class="flex w-full justify-center">
+        <div class="flex md:w-full items-center justify-center">
+          <i class="animate-spin fa-solid fa-spinner"></i>
+        </div>
+      </div> -->
+      <div class="block sm:flex flex-col w-full justify-between flex-wrap">
+        <div class="flex w-full items-center mb-4">
+          <div class="w-full sm:pb-5 md:pb-0 lg:pb-0">
+            <label
+              class="flex justify-center w-full pb-3 sm:pb-0 text-gray-500 font-bold text-center md:text-right md:mb-0"
+            >
+              <i class="fa-solid fa-palette"></i>&nbsp; All Themes
+            </label>
+          </div>
+        </div>
+        <div class="flex w-full">
+          <form
+            class="w-full block sm:flex items-center"
+            #themeForm="ngForm"
+            (ngSubmit)="themeChange(themeForm)"
+          >
+            <div class="w-6/12 sm:mb-0 mb-3">
+              <h1 class="text-lg font-bold mb-2">Dark Themes</h1>
+              <div class="flex items-center mb-4">
+                <input
+                  id="ayu-mirage"
+                  type="radio"
+                  value="ayu-mirage"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                  ngModel
+                  (change)="themeChange(themeForm)"
+                />
+                <label for="ayu-mirage" class="ml-2 text-sm font-medium"
+                  >ayu-mirage</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="darcula"
+                  type="radio"
+                  value="darcula"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                  ngModel
+                  (change)="themeChange(themeForm)"
+                />
+                <label for="darcula" class="ml-2 text-sm font-medium"
+                  >darcula</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="dracula"
+                  type="radio"
+                  value="dracula"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="dracula" class="ml-2 text-sm font-medium"
+                  >dracula</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="twilight"
+                  type="radio"
+                  value="twilight"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="twilight" class="ml-2 text-sm font-medium"
+                  >twilight</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="monokai"
+                  type="radio"
+                  value="monokai"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="monokai" class="ml-2 text-sm font-medium"
+                  >monokai</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="3024-night"
+                  type="radio"
+                  value="3024-night"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="3024-night" class="ml-2 text-sm font-medium"
+                  >night</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="blackboard"
+                  type="radio"
+                  value="blackboard"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="blackboard" class="ml-2 text-sm font-medium"
+                  >blackboard</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="hopscotch"
+                  type="radio"
+                  value="hopscotch"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="hopscotch" class="ml-2 text-sm font-medium"
+                  >hopscotch</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="meterial"
+                  type="radio"
+                  value="meterial"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="meterial" class="ml-2 text-sm font-medium"
+                  >meterial</label
+                >
+              </div>
+              <div class="flex items-center">
+                <input
+                  id="tomorrow-night-bright"
+                  type="radio"
+                  value="tomorrow-night-bright"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label
+                  for="tomorrow-night-bright"
+                  class="ml-2 text-sm font-medium"
+                  >tomorrow-night-bright</label
+                >
+              </div>
+            </div>
+            <div class="w-6/12">
+              <h1 class="text-lg font-bold mb-2">Light Themes</h1>
+              <div class="flex items-center mb-4">
+                <input
+                  id="eclipse"
+                  type="radio"
+                  value="eclipse"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="eclipse" class="ml-2 text-sm font-medium"
+                  >eclipse</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="panda-syntax"
+                  type="radio"
+                  value="panda-syntax"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="panda-syntax" class="ml-2 text-sm font-medium"
+                  >panda</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="3024-day"
+                  type="radio"
+                  value="3024-day"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="3024-day" class="ml-2 text-sm font-medium"
+                  >day</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="base16-light"
+                  type="radio"
+                  value="base16-light"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="base16-light" class="ml-2 text-sm font-medium"
+                  >base16-light</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="duotone-light"
+                  type="radio"
+                  value="duotone-light"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="duotone-light" class="ml-2 text-sm font-medium"
+                  >duotone-light</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="elegant"
+                  type="radio"
+                  value="elegant"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="elegant" class="ml-2 text-sm font-medium"
+                  >elegant</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="idea"
+                  type="radio"
+                  value="idea"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="idea" class="ml-2 text-sm font-medium">idea</label>
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="paraiso-light"
+                  type="radio"
+                  value="paraiso-light"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="paraiso-light" class="ml-2 text-sm font-medium"
+                  >paraiso-light</label
+                >
+              </div>
+              <div class="flex items-center mb-4">
+                <input
+                  id="juejin"
+                  type="radio"
+                  value="juejin"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="juejin" class="ml-2 text-sm font-medium"
+                  >juejin</label
+                >
+              </div>
+              <div class="flex items-center">
+                <input
+                  id="yeti"
+                  type="radio"
+                  value="yeti"
+                  name="theme"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                />
+                <label for="yeti" class="ml-2 text-sm font-medium">yeti</label>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- /themes form -->
+    <div class="flex flex-col mb-5 flex-wrap w-5/6 p-5 bg-zinc-800 rounded-md">
+      <!-- loading -->
+      <div class="flex w-full justify-center">
+        <div class="flex md:w-full items-center justify-center">
+          <i class="animate-spin fa-solid fa-spinner"></i>
+        </div>
+      </div>
+      <div class="block sm:flex w-full justify-between flex-wrap">
+        <div class="flex md:w-1/2 items-center justify-start">
+          <div class="w-full sm:pb-5 md:pb-0 lg:pb-0">
+            <label
+              class="flex w-full pb-5 sm:pb-0 text-gray-500 font-bold text-start md:text-right md:mb-0"
+            >
+              <i class="fa-solid fa-envelope"></i>&nbsp; Email:
+            </label>
+          </div>
+        </div>
+        <div class="flex md:w-1/2 justify-start">
+          <div class="w-full flex items-center flex-wrap justify-center">
+            <div class="w-full">
+              <input
+                type="email"
+                [value]="'example@example.com'"
+                class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 outline-0 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                title="Email can't change"
+                readonly="true"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /email details -->
+
+    <!-- change password form -->
+    <form
+      #passwordForm="ngForm"
+      class="flex flex-col mb-5 flex-wrap w-5/6 p-5 bg-zinc-800 rounded-md"
+    >
+      <!-- loading -->
+      <div class="flex w-full justify-center">
+        <div class="flex md:w-full items-center justify-center">
+          <i class="animate-spin fa-solid fa-spinner"></i>
+        </div>
+      </div>
+      <div class="block sm:flex w-full justify-between flex-wrap">
+        <div class="flex md:w-1/2 items-center justify-start">
+          <div class="w-full sm:pb-5 md:pb-0 lg:pb-0">
+            <label
+              class="flex w-full pb-5 sm:pb-0 text-gray-500 font-bold text-start md:text-right md:mb-0"
+            >
+              <i class="fa-solid fa-key"></i>&nbsp; Change Password:
+            </label>
+          </div>
+        </div>
+        <div class="flex md:w-1/2 justify-start">
+          <div class="w-full flex items-center flex-wrap justify-center">
+            <div class="w-full">
+              <input
+                type="password"
+                name="currentPassword"
+                placeholder="Current password"
+                ngModel
+                class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 focus:ring-2 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                autocomplete="off"
+                required
+                title="Enter your current password"
+              />
+              <div class="mt-1">
+                <small class="text-red-800">Error</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="block sm:flex w-full mt-4">
+          <div style="flex: 1" class="h-0 w-0 hidden sm:flex"></div>
+          <div style="flex: 1">
+            <input
+              type="password"
+              name="newPassword"
+              placeholder="New password"
+              ngModel
+              class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 focus:ring-2 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              autocomplete="off"
+              minlength="8"
+              required
+              title="Enter your new password"
+            />
+            <div class="mt-1">
+              <small class="text-red-800">error</small>
+            </div>
+          </div>
+        </div>
+        <div class="block sm:flex w-full mt-4">
+          <div style="flex: 1" class="h-0 w-0 hidden sm:flex"></div>
+          <div style="flex: 1">
+            <button
+              type="submit"
+              title="Change password"
+              class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+            >
+              <div>
+                <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+              </div>
+              <span
+                class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+              >
+                Change Password
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- /change passwordform -->
+  </div>
+</main>

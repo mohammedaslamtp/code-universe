@@ -1,0 +1,15 @@
+
+.popup {
+  position: absolute !important;
+  margin: 0 !important;
+  background-color: red;
+  color: white;
+  width: 100% !important;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+dialog [data-model]::backdrop {
+  background-color: rgba(0, 0, 0, 0.9); /* Increase opacity to 0.5 */
+}
