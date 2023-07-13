@@ -21,10 +21,8 @@
             "assets": ["src/favicon.ico", "src/assets"],
 
             "scripts": [
-              "node_modules/materialize-css/dist/js/materialize.min.js"
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ]
           },
@@ -87,7 +85,7 @@
             "assets": ["src/favicon.ico", "src/assets"],
 
             "scripts": [],
-            "styles": ["@angular/material/prebuilt-themes/indigo-pink.css"]
+            "styles": []
           }
         }
       }

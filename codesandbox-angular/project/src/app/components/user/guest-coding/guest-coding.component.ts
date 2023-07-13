@@ -27,7 +27,6 @@ import {
 import { appStateInterface } from 'src/app/types/appState';
 import { CodesForDownload } from 'src/app/types/downloadCode';
 
-import 'codemirror/mode/htmlmixed/htmlmixed';
 
 @Component({
   selector: 'app-guest-coding',

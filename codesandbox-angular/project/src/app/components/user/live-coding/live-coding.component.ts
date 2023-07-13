@@ -10,7 +10,6 @@ import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
 import { Title } from '@angular/platform-browser';
 import { AngularFaviconService } from 'angular-favicon';
-// import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-live-coding',
@@ -31,7 +30,8 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: BeforeUnloadEvent) {
     // Show confirmation dialog
-    event.returnValue = 'Are you sure you want to leave this page?';
+    // event.returnValue = 'Are you sure you want to leave this page?';
+    
   }
 
   constructor(
