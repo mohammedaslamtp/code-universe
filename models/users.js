@@ -25,10 +25,6 @@ const user = new mongoose.Schema(
       minlength: 8,
     },
 
-    phone: {
-      type: Number,
-    },
-
     pinned_items: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "templates",

@@ -7,6 +7,7 @@ const auth_token = require("../middlewares/token");
 const code_controller = require("../controller/code_controller");
 const social_controller = require("../controller/social_controller");
 const settings_controller = require("../controller/settings_controller");
+const editor_controller = require("../controller/editor_controller");
 const upload = require("../middlewares/multer");
 
 route
@@ -67,8 +68,21 @@ route
     auth_token.authenticate,
     settings_controller.changePassword
   )
-  .get(
-    "/getTemplateDetail",
-    mainController.getTemplateDetail
+  .get("/getTemplateDetail", mainController.getTemplateDetail)
+  .get("/getEditorOptions", editor_controller.getEditorDetails)
+  .patch(
+    "/changeEditorTheme",
+    auth_token.authenticate,
+    editor_controller.changeTheme
+  )
+  .patch(
+    "/changeFontSize",
+    auth_token.authenticate,
+    editor_controller.changeFontSize
+  )
+  .patch(
+    "/changeTabSize",
+    auth_token.authenticate,
+    editor_controller.changetabSize
   )
 module.exports = route;

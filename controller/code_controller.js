@@ -190,8 +190,10 @@ module.exports = {
   downloadCode: (req, res) => {
     try {
       const templateId = req.query.templateId;
+      console.log('query ',templateId);
       Code.findOne({ template_id: templateId })
         .then((data) => {
+          console.log('code found ',data);
           res.status(200).json({ html: data.html, css: data.css, js: data.js });
         })
         .catch((error) => {

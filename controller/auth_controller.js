@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
+const editor = require("../models/editor");
 
 module.exports = {
   // new user registering
@@ -21,12 +22,13 @@ module.exports = {
             full_name: data.fullName,
             display_name: data.fullName,
             email: data.email,
-            phone: Number(data.phone),
             password: hash_password,
             otp_verified: false,
           })
             .then((doc) => {
-              console.log("Registered successfully.");
+              if (doc) {
+                editorPreference(doc._id);
+              }
               let accessToken = jwt.sign(
                 data,
                 process.env.ACCESS_SECRET_TOKEN,
@@ -42,18 +44,16 @@ module.exports = {
                   expiresIn: "14d",
                 }
               );
+
               response.accessToken = accessToken;
               response.refreshToken = refreshToken;
               response.otp_verified = false;
-              console.log("response ", response);
               res.status(200).json(response);
             })
             .catch((err) => {
               if (err.code === 11000) {
-                console.log("dupe error ", err);
                 let exist = Object.keys(err.keyValue)[0];
                 if (exist == "full_name") exist = "Full Name";
-                console.log("exist: ", exist);
                 res.status(404).json(`${exist} already exist!`);
               } else {
                 res.status(404).json({ error: err });
@@ -63,8 +63,6 @@ module.exports = {
       });
     } catch (err) {
       console.log("signup error!", err);
-      if (error instanceof MongoServerError && error.code === 11000) {
-      }
     }
   },
 
@@ -144,16 +142,13 @@ module.exports = {
       if (req.query.name) {
         result = await User.findOne({ full_name: queryName }).exec();
       }
-
       const qId = req.query.id;
       if (req.query.id) {
         result = await User.findById(qId).exec();
       }
-
       if (queryName == undefined && qId == undefined) {
         result = req.user;
       }
-
       if (result) {
         res.status(200).json(result);
       } else {
@@ -190,7 +185,6 @@ module.exports = {
         length: 6,
         charset: "numeric",
       });
-      console.log("OTP: ", OTP);
 
       // Create Nodemailer transporter
       const transporter = nodemailer.createTransport({
@@ -226,9 +220,7 @@ module.exports = {
           const retryDelay = 4000;
           setTimeout(() => {
             transporter.sendMail(message, (retryErr, retryInfo) => {
-              console.log("retry sending..");
               if (retryErr) {
-                console.log("Retry error: ", retryErr);
                 res.status(404).json({ error: "Failed to send OTP email" });
               } else {
                 emailSent(retryInfo, res, email, OTP);
@@ -247,40 +239,27 @@ module.exports = {
   // otp verification:
   verifyOtp: async (req, res) => {
     try {
-      console.log("req.body: ", req.body);
-      console.log("req.user: ", req.user);
       let email = req.user.email;
       let otp = req.body.otp;
-      console.log("otp: ", otp);
       let user = await User.findOne({ email: email });
-      console.log("user: ", user);
       if (user.user_otp.otp == otp) {
-        console.log("otp correct");
         let expireDate = user.user_otp.expiresIn;
         let nowDate = new Date();
-        console.log("expire date: ", expireDate);
-        console.log("today date: ", nowDate);
         if (nowDate < expireDate) {
           user
             .updateOne({ $set: { otp_verified: true } })
             .then((data) => {
-              console.log("Otp verified successfully ", data);
               res.status(200).json({ valid: true, expired: false });
             })
-            .catch((err) => {
-              console.log("Otp verified failed! ", err);
-            });
+            .catch((err) => {});
         } else {
           res.status(200).json({ valid: false, expired: true });
-          console.log("otp expired");
         }
       } else {
         res.status(200).json({ valid: false });
-        console.log("Otp verification failed!");
       }
     } catch (error) {
       res.status(404).json({ valid: false });
-      console.log("error verifyOtp!! ", error);
     }
   },
 };
@@ -290,9 +269,6 @@ const emailSent = async (emailInfo, res, email, OTP) => {
   try {
     let beginTime = new Date();
     let expiresIn = new Date(beginTime.getTime() + 3 * 60000);
-    // expiresIn.setMinutes(expiresIn.getMinutes() + 3);
-    console.log("beginTime: ", beginTime);
-    console.log("expiresIn: ", expiresIn);
     let userData = await User.findOneAndUpdate(
       { email: email },
       {
@@ -306,9 +282,7 @@ const emailSent = async (emailInfo, res, email, OTP) => {
       { new: true }
     );
     if (userData) {
-      console.log("success response from database: ", userData);
       let otpData = userData.user_otp;
-      console.log("otp data: ", otpData);
       res.status(200).json({
         beginTime: otpData.beginsIn,
         expiresIn: otpData.expiresIn,
@@ -316,7 +290,17 @@ const emailSent = async (emailInfo, res, email, OTP) => {
       });
     }
   } catch (error) {
-    console.log(error);
     res.status(404).json({ error: error.message });
   }
 };
+
+function editorPreference(id) {
+  editor
+    .create({ user: id })
+    .then((val) => {
+      console.log("editor updated");
+    })
+    .catch((e) => {
+      console.log("editor error!");
+    });
+}
