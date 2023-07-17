@@ -15,6 +15,7 @@ export class YourWorksComponent implements OnDestroy, AfterViewInit {
   UserData!: USerData;
   yourWorks!: Templates;
   subs_templates_array: Subscription;
+  empty: boolean = false;
   constructor(private _userService: UserService) {
     YourWorks.next(true);
     this.subs_UserData_collector = this._userService
@@ -28,10 +29,13 @@ export class YourWorksComponent implements OnDestroy, AfterViewInit {
     this.subs_templates_array = this._userService.getTemplates().subscribe(
       (templates: any) => {
         this.yourWorks = templates.all_templates;
-
         this.yourWorks = this.yourWorks?.filter(
           (val) => val.isPrivate == false && val.user._id == this.UserData._id
         );
+        if (this.yourWorks.length == 0) {
+          this.empty = true;
+        }
+        console.log(this.yourWorks);
       },
       (err) => {
         console.log('template data error: ', err);

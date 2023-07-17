@@ -12,15 +12,20 @@ import { Trending } from '../home/home.component';
 export class TrendingComponent implements OnDestroy, OnInit {
   trendingTemplates!: Templates;
   subs_templates_array: Subscription;
+  empty: boolean = false;
 
   constructor(private _userService: UserService) {
     this.subs_templates_array = this._userService.getTemplates().subscribe(
       (templates: any) => {
-        this.trendingTemplates = templates.all_templates;
-
-        this.trendingTemplates = this.trendingTemplates?.filter(
-          (val) => val.isPrivate == false
-        );
+        if (templates.all_templates.length !== 0) {
+          this.empty = false;
+          this.trendingTemplates = templates.all_templates;
+          this.trendingTemplates = this.trendingTemplates?.filter(
+            (val) => val.isPrivate == false
+          );
+        } else {
+          this.empty = true;
+        }
       },
       (err) => {
         console.log('template data error: ', err);

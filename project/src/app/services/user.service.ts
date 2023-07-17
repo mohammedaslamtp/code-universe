@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { coding, domain, popupLog } from './shared-values.service';
 import { Templates } from '../types/template_types';
 import { USerData } from '../types/UserData';
+import { apiRes } from '../types/defulatApiRes';
 
 const httpOptions = {
   headers: new HttpHeaders({

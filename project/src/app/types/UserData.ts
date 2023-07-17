@@ -4,7 +4,6 @@ export interface USerData {
   display_name: string;
   email: string;
   password: string;
-  phone: number;
   pinned_items: any[];
   followers: any[];
   following: any[];

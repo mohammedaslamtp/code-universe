@@ -1,6 +1,6 @@
 
 <!-- for loading -->
-<section class="cards" *ngIf="!trendingTemplates">
+<section class="cards" *ngIf="!trendingTemplates && !empty">
   <article class="card animate-pulse" style="height: 21em; width: 20em">
     <iframe
       src="http://127.0.0.1:5500/zzzzzz/"
@@ -75,6 +75,7 @@
       <div class="flex justify-start mt-3 items-center">
         <div class="action mr-2">
           <small
+          class="flex items-center"
           (click)="like(el._id)"
             ><i class="fa-solid fa-heart" style="color: rgb(175, 0, 0)"></i
             >&nbsp;{{ el.like.length }}</small
@@ -82,12 +83,14 @@
         </div>
         <div class="action mr-2">
           <small
+          class="flex items-center"
             ><i class="fa-solid fa-comment" style="color: rgb(0, 0, 0)"></i
             >&nbsp;25</small
           >
         </div>
         <div class="action">
           <small
+          class="flex items-center"
             ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i>&nbsp;{{
               el.views.length
             }}</small
@@ -98,4 +101,16 @@
   </article>
 </section>
 <!-- /Trending card -->
+
+
+<!-- empty case -->
+<div
+  class="w-full h-32 rounded-lg flex flex-col items-center justify-center"
+  style="background-color: #1f2937"
+  *ngIf="empty"
+>
+  <h2 class="text-2xl text-white">No codes yet.</h2>
+  <a routerLink="/coding/new" class="text-sky-400 mt-4">Go build One!</a>
+</div>
+<!-- /empty case -->
 

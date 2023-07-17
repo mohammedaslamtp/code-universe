@@ -16,6 +16,7 @@ export class DownloadService {
   private readonly _apiUrl = domain;
   constructor(private _http: HttpClient) {}
   getCodes(templateId: string): Observable<CodesForDownload> {
+    console.log('template id: ',templateId)
     const url = `${this._apiUrl}/codeForDownload?templateId=${templateId}`;
     return this._http.get<CodesForDownload>(url, httpOptions);
   }

@@ -25,7 +25,6 @@ export class SignupComponent {
   signup = new FormGroup({
     fullName: new FormControl(null),
     email: new FormControl(null),
-    phone: new FormControl(null),
     new_password: new FormControl(null),
     c_password: new FormControl(null),
   });
@@ -38,9 +37,7 @@ export class SignupComponent {
       this.userData.fullName = fullName;
       if (fullName != '') {
         this.store.dispatch(Registration({ register: this.userData }));
-        console.log(fullName);
       } else {
-        console.log(fullName);
         this.error_reason$ = 'Full Name must be charecters!';
       }
     }

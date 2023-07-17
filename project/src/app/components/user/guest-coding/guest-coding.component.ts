@@ -32,6 +32,7 @@ import { appStateInterface } from 'src/app/types/appState';
 import { CodesForDownload } from 'src/app/types/downloadCode';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MainService } from 'src/app/services/main.service';
+import { USerData } from 'src/app/types/UserData';
 
 @Component({
   selector: 'app-guest-coding',
@@ -48,11 +49,12 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
 
   @ViewChild('result', { static: true })
   iFrame!: ElementRef<HTMLIFrameElement>;
-
   isLoading: boolean = true;
   isLoggedIn!: boolean;
+  subs_userData?: Subscription;
   toggle: boolean = false;
   saved: boolean = false;
+  editorDetails?: any;
   templateId!: string;
   subs_downloadDataLoading!: Subscription;
   subs_downloadDataSuccess!: Subscription;
@@ -69,7 +71,13 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   intervelIdError!: any;
   param!: string;
   subs_param: Subscription;
+  userData!: USerData;
+  isOwner: boolean = false;
   subs_TemplateDetail!: Subscription;
+  subs_option!: Subscription;
+  htmlOptions: any;
+  cssOptions: any;
+  jsOptions: any;
 
   constructor(
     private _userService: UserService,
@@ -80,6 +88,49 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   ) {
     if (this._userService.loggedIn()) {
       this.isLoggedIn = true;
+      this.subs_userData = this._userService.getUserData().subscribe((res) => {
+        this.userData = res;
+
+        this.subs_option = this._mainService
+          .getEditorDetail(res._id)
+          .subscribe((val: any) => {
+            this.editorDetails = val.data;
+            // codemirror options
+            // html
+            this.htmlOptions = {
+              lineNumbers: val.data.lineNumbers ? true : false,
+              autofocus: true,
+              theme: val.data.theme,
+              mode: 'html',
+              showCursorWhenSelecting: true,
+              lineWiseCopyCut: true,
+              linerWrapping: val.data.linerWrapping ? true : false,
+              tabSize: val.data.tabSize,
+            };
+            // css
+            this.cssOptions = {
+              lineNumbers: val.data.lineNumbers ? true : false,
+              theme: val.data.theme,
+              mode: 'css',
+              showCursorWhenSelecting: true,
+              lineWiseCopyCut: true,
+              linerWrapping: val.data.linerWrapping ? true : false,
+              tabSize: val.data.tabSize,
+            };
+            // js
+            this.jsOptions = {
+              lineNumbers: val.data.lineNumbers ? true : false,
+              theme: val.data.theme,
+              mode: 'javascript',
+              extraKeys: { 'Ctrl-Space': 'autocomplete' },
+              showCursorWhenSelecting: true,
+              lineWiseCopyCut: true,
+              autoCloseBrackets: true,
+              linerWrapping: val.data.linerWrapping ? true : false,
+              tabSize: val.data.tabSize,
+            };
+          });
+      });
     } else {
       this.isLoggedIn = false;
     }
@@ -92,6 +143,16 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
           .getTemplateDetail(this.param)
           .subscribe(
             (res) => {
+              this.saved = true;
+              this.htmlCode = res.data.html;
+              this.cssCode = res.data.css;
+              this.jsCode = res.data.js;
+              this.templateId = res.data.template_id;
+              if (res.data.user == this.userData._id) {
+                this.isOwner = true;
+                templateListing.next(false);
+                this.random = res.data.template_id;
+              }
               this.htmlCode = res.data.html;
               this.cssCode = res.data.css;
               this.jsCode = res.data.js;
@@ -131,45 +192,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
       .subscribe((error) => {
         this.downloadCodeError$ = error;
       });
-
-    // html hint cdn
-    const cdn1 = document.createElement('script');
-    cdn1.src =
-      'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/javascript-hint.min.js';
-    document.head.appendChild(cdn1);
   }
-
-  // codemirror options
-  // html
-  htmlOptions = {
-    lineNumbers: true,
-    autofocus: true,
-    theme: 'ayu-mirage',
-    mode: 'htmlmixed',
-    showCursorWhenSelecting: true,
-    lineWiseCopyCut: true,
-    autoCloseBrackets: true,
-  };
-  // css
-  cssOptions = {
-    lineNumbers: true,
-    theme: 'ayu-mirage',
-    mode: 'css',
-    showCursorWhenSelecting: true,
-    lineWiseCopyCut: true,
-    autoCloseBrackets: true,
-  };
-  // js
-  jsOptions = {
-    lineNumbers: true,
-    autofocus: true,
-    theme: 'ayu-mirage',
-    mode: 'javascript',
-    extraKeys: { 'Ctrl-Space': 'autocomplete' },
-    showCursorWhenSelecting: true,
-    lineWiseCopyCut: true,
-    autoCloseBrackets: true,
-  };
 
   htmlCode: string = '<!-- write your html code here -->';
   htmlChange(code: Event): void {
@@ -273,7 +296,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   editable!: any;
   toggleEdit() {
     this.editable = document.getElementById('editable');
-    if (this.param === 'new') {
+    if (this.param === 'new' || this.isOwner) {
       if (this.editable.contentEditable == 'true') {
         // disable editing
         this.editable.contentEditable = 'false';
@@ -465,6 +488,8 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
 
   // get codes for download data
   getCodes() {
+    console.log('id: ', this.templateId);
+
     this._store.dispatch(codesDownload({ id: this.templateId }));
     this.intervelIdLoading = setInterval(() => {
       if (this.downloadLoading$) {
@@ -508,5 +533,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     this.subs_downloadDataLoading?.unsubscribe();
     this.subs_downloadDataSuccess?.unsubscribe();
     this.subs_downloadDataError?.unsubscribe();
+    this.subs_userData?.unsubscribe();
+    this.subs_option?.unsubscribe();
   }
 }

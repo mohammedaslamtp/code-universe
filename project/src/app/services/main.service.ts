@@ -37,4 +37,10 @@ export class MainService {
     url = `${this._apiUrl}/getTemplateDetail?id=${id}`;
     return this._http.get<apiRes>(url, httpOptions);
   }
+
+  getEditorDetail(id: string): Observable<apiRes> {
+    let url = `${this._apiUrl}/getUserData`;
+    url = `${this._apiUrl}/getEditorOptions?id=${id}`;
+    return this._http.get<apiRes>(url, httpOptions);
+  }
 }

@@ -54,29 +54,6 @@
       </div>
 
       <div
-        *ngIf="signup.get('phone')?.invalid && signup.get('phone')?.touched"
-        class="alert-msg"
-      >
-        <small *ngIf="signup.get('phone')?.hasError('minlength')"
-          >Minimum 10 digit</small
-        ><small *ngIf="signup.get('phone')?.hasError('required')"
-          >Phone number is required</small
-        ><small *ngIf="signup.get('phone')?.hasError('pattern')"
-          >Invalid phone number</small
-        >
-      </div>
-      <div class="user-box">
-        <input
-          type="tel"
-          formControlName="phone"
-          minlength="10"
-          pattern="^[0-9]{3}[0-9]{3}[0-9]{4}$"
-          required
-        />
-        <label>Phone</label>
-      </div>
-
-      <div
         *ngIf="
           signup.get('new_password')?.invalid &&
           signup.get('new_password')?.touched

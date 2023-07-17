@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { effects } from 'src/app/stores/effects';
 
 import { NotFoundComponent } from 'src/app/components/user/not-found/not-found.component';
 import { CoreModule } from '../core/core.module';
@@ -14,12 +17,15 @@ import { BlockUserGuard } from 'src/app/guard/block-user.guard';
 import { UserHomeGuard } from 'src/app/guard/user-home.guard';
 import { MainService } from 'src/app/services/main.service';
 import { SocialService } from 'src/app/services/soical.service';
-import { CodemirrorModule } from '@ctrl/ngx-codemirror'; 
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { ProfileSettingsComponent } from 'src/app/components/user/profile-settings/profile-settings.component';
 import { SettingsComponent } from 'src/app/components/user/settings/settings.component';
 import { EditorPreferencesComponent } from 'src/app/components/user/editor-preferences/editor-preferences.component';
 import { AccountSettingsComponent } from 'src/app/components/user/account-settings/account-settings.component';
-import { SettingsService } from 'src/app/services/settings.service';
+import {
+  changeFontSizeReducer,
+  changeTabSizeReducer,
+} from 'src/app/stores/reducer';
 
 const userProfileRoutes: Routes = [
   {
@@ -105,12 +111,14 @@ const userProfileRoutes: Routes = [
     UserService,
     MainService,
     SocialService,
-    SettingsService,
   ],
   imports: [
     CoreModule,
     CodemirrorModule,
     RouterModule.forChild(userProfileRoutes),
+    EffectsModule.forFeature(effects),
+    StoreModule.forFeature('fontSize', changeFontSizeReducer),
+    StoreModule.forFeature('tabSize', changeTabSizeReducer),
   ],
 })
 export class UserProfileModule {}

@@ -22,6 +22,8 @@ import { CodingGuard } from './guard/coding.guard';
 import { BlockUserGuard } from './guard/block-user.guard';
 
 import {
+  changeFontSizeReducer,
+  changeTabSizeReducer,
   downloadCodesReducer,
   loginReducer,
   registerReducer,
@@ -53,8 +55,8 @@ import { CoreModule } from './modules/core/core.module';
 import { SettingsComponent } from './components/user/settings/settings.component';
 import { SharedValuesService } from './services/shared-values.service';
 import { CreateLiveComponent } from './components/user/create-live/create-live.component';
-// import { CanDeactivateGuard, LiveCodingGuard } from './guard/live-coding.guard';
 import { LiveCodingGuard } from './guard/live-coding.guard';
+import { SettingsService } from './services/settings.service';
 
 @NgModule({
   declarations: [
@@ -92,6 +94,8 @@ import { LiveCodingGuard } from './guard/live-coding.guard';
     StoreModule.forFeature('registerData', registerReducer),
     StoreModule.forFeature('search', searchReducer),
     StoreModule.forFeature('downloadCode', downloadCodesReducer),
+    StoreModule.forFeature('fontSize', changeFontSizeReducer),
+    StoreModule.forFeature('tabSize', changeTabSizeReducer),
   ],
   providers: [
     UserService,
@@ -100,6 +104,7 @@ import { LiveCodingGuard } from './guard/live-coding.guard';
     MainService,
     DownloadService,
     SharedValuesService,
+    SettingsService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -110,7 +115,6 @@ import { LiveCodingGuard } from './guard/live-coding.guard';
     UserHomeGuard,
     CodingGuard,
     BlockUserGuard,
-    // CanDeactivateGuard
     LiveCodingGuard,
   ],
   bootstrap: [AppComponent],

@@ -67,4 +67,22 @@ export class SettingsService {
       httpOptions
     );
   }
+
+  // change editor theme
+  chageTheme(theme: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/changeEditorTheme`;
+    return this._http.patch<apiRes>(url, { theme: theme }, httpOptions);
+  }
+
+  // change font size
+  chageFontSize(fontSize: number): Observable<apiRes> {
+    const url = `${this._apiUrl}/changeFontSize`;
+    return this._http.patch<apiRes>(url, { fontSize: fontSize }, httpOptions);
+  }
+
+  // change tab size
+  chageTabSize(tabSize: number): Observable<apiRes> {
+    const url = `${this._apiUrl}/changeTabSize`;
+    return this._http.patch<apiRes>(url, { tabSize: tabSize }, httpOptions);
+  }
 }

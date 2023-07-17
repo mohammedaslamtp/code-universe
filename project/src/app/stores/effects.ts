@@ -9,11 +9,15 @@ import * as registerAction from './actions/signupAction';
 import * as otpRequestAction from './actions/generateOtp';
 import * as searchAction from './actions/search';
 import * as downloadAction from './actions/downloadCodes';
+import * as FontSizeAction from './actions/changeFontSize';
+import * as TabSizeAction from './actions/changeTabSize';
 import Swal from 'sweetalert2';
 import { otpSentLoad } from '../components/user/otp/otp.component';
 import { MainService } from '../services/main.service';
 import { DownloadService } from '../services/download.service';
 import { CodesForDownload } from '../types/downloadCode';
+import { SettingsService } from '../services/settings.service';
+import { apiRes } from '../types/defulatApiRes';
 
 @Injectable()
 export class effects {
@@ -22,6 +26,7 @@ export class effects {
     private _userService: UserService,
     private _mainService: MainService,
     private _downloadService: DownloadService,
+    private _settingsService: SettingsService,
     private _route: Router
   ) {}
 
@@ -158,6 +163,48 @@ export class effects {
           catchError((err) => {
             return of(
               downloadAction.downloadCodesFailure({ error: err.error })
+            );
+          })
+        );
+      })
+    )
+  );
+
+  // change font size:
+  changeFontSize$ = createEffect(() =>
+    this._actions$.pipe(
+      ofType(FontSizeAction.changeFontSize),
+      mergeMap((res) => {
+        return this._settingsService.chageFontSize(res.fontSize).pipe(
+          map((apiRes: apiRes) => {
+            return FontSizeAction.changeFontSizeSuccess({
+              response: apiRes,
+            });
+          }),
+          catchError((err: apiRes) => {
+            return of(
+              FontSizeAction.changeFontSizeFailure({ error: err.message })
+            );
+          })
+        );
+      })
+    )
+  );
+
+  // change tab size:
+  changeTabSize$ = createEffect(() =>
+    this._actions$.pipe(
+      ofType(TabSizeAction.changeTabSize),
+      mergeMap((res) => {
+        return this._settingsService.chageTabSize(res.TabSize).pipe(
+          map((apiRes: apiRes) => {
+            return TabSizeAction.changeTabSizeSuccess({
+              response: apiRes,
+            });
+          }),
+          catchError((err: apiRes) => {
+            return of(
+              TabSizeAction.changeTabSizeFailure({ error: err.message })
             );
           })
         );

@@ -5,6 +5,8 @@ import * as regAction from './actions/signupAction';
 import * as otpAction from './actions/generateOtp';
 import * as searchAction from './actions/search';
 import * as downloadAction from './actions/downloadCodes';
+import * as fontSizeAction from './actions/changeFontSize';
+import * as tabSizeAction from './actions/changeTabSize';
 
 // initial state:
 export const initialState: authState = {
@@ -116,6 +118,50 @@ export const downloadCodesReducer = createReducer(
     error: null,
   })),
   on(downloadAction.downloadCodesFailure, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: null,
+    error: action.error,
+  }))
+);
+
+// change font size
+export const changeFontSizeReducer = createReducer(
+  initialState,
+  on(fontSizeAction.changeFontSize, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  on(fontSizeAction.changeFontSizeSuccess, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: action.response,
+    error: null,
+  })),
+  on(fontSizeAction.changeFontSizeFailure, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: null,
+    error: action.error,
+  }))
+);
+
+// change tab size
+export const changeTabSizeReducer = createReducer(
+  initialState,
+  on(tabSizeAction.changeTabSize, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  on(tabSizeAction.changeTabSizeSuccess, (state, action) => ({
+    ...state,
+    isLoading: false,
+    data: action.response,
+    error: null,
+  })),
+  on(tabSizeAction.changeTabSizeFailure, (state, action) => ({
     ...state,
     isLoading: false,
     data: null,

@@ -1,6 +1,5 @@
 import { createSelector } from '@ngrx/store';
 import { appStateInterface } from '../types/appState';
-import { Templates } from '../types/template_types';
 
 // login selector:
 export let selectFeature = (state: appStateInterface) => state.loginData;
@@ -72,3 +71,32 @@ export const downloadCode_errorSelector = createSelector(
     return state?.error;
   }
 );
+
+// change font size selector:
+selectFeature = (state: appStateInterface) => state.fontSize;
+export const fontSize_selector = createSelector(
+  selectFeature,
+  (state) => state?.isLoading
+);
+export const fontSize_resultSelector = createSelector(
+  selectFeature,
+  (state) => {
+    return state?.data;
+  }
+);
+export const fontSize_errorSelector = createSelector(selectFeature, (state) => {
+  return state?.error;
+});
+
+// change font size selector:
+selectFeature = (state: appStateInterface) => state.tabSize;
+export const tabSize_selector = createSelector(
+  selectFeature,
+  (state) => state?.isLoading
+);
+export const tabSize_resultSelector = createSelector(selectFeature, (state) => {
+  return state?.data;
+});
+export const tabSize_errorSelector = createSelector(selectFeature, (state) => {
+  return state?.error;
+});

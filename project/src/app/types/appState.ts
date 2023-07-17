@@ -1,6 +1,6 @@
 import { authState } from './authState';
 import { Code } from './code';
-import { OTP } from './OTP';
+import { apiRes } from './defulatApiRes';
 
 export interface appStateInterface {
   loginData: authState;
@@ -9,4 +9,6 @@ export interface appStateInterface {
   otp:authState;
   search:authState;
   downloadCode:authState;
+  fontSize:authState;
+  tabSize:authState;
 }
