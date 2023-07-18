@@ -85,4 +85,24 @@ route
     auth_token.authenticate,
     editor_controller.changetabSize
   )
+  .patch(
+    "/adjustLineNumber",
+    auth_token.authenticate,
+    editor_controller.adjustLineNumber
+  )
+  .patch(
+    "/adjustLineWrapping",
+    auth_token.authenticate,
+    editor_controller.adjustLineWrapping
+  )
+  .patch(
+    "/editorSuggestions",
+    auth_token.authenticate,
+    editor_controller.editorSuggestions
+  )
+  .patch(
+    "/formatOnSave",
+    auth_token.authenticate,
+    editor_controller.formatOnSave
+  )
 module.exports = route;

@@ -90,4 +90,104 @@ module.exports = {
         res.status(apiRes.status).json(apiRes);
       });
   },
+
+  // to adjust line number option
+  adjustLineNumber: (req, res) => {
+    let lineNumber = req.body.lineNumber;
+
+    editor
+      .findOneAndUpdate(
+        { user: req.user._id },
+        { lineNumbers: lineNumber },
+        { new: true }
+      )
+      .then((data) => {
+        apiRes.status = 200;
+        apiRes.data = data;
+        apiRes.message = "Updated successfully";
+        res.status(apiRes.status).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.status = 404;
+        apiRes.message = "Something went wrong!";
+        apiRes.data = {};
+        res.status(apiRes.status).json(apiRes);
+      });
+  },
+
+  // to adjust line wrapping option
+  adjustLineWrapping: (req, res) => {
+    let linerWrapping = req.body.LineWrapping;
+    editor
+      .findOneAndUpdate(
+        { user: req.user._id },
+        { linerWrapping: linerWrapping },
+        { new: true }
+      )
+      .then((data) => {
+        console.log("res ", data);
+        apiRes.status = 200;
+        apiRes.data = data;
+        apiRes.message = "Updated successfully";
+        res.status(apiRes.status).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.status = 404;
+        apiRes.message = "Something went wrong!";
+        apiRes.data = {};
+        res.status(apiRes.status).json(apiRes);
+      });
+  },
+
+  // to adjust editor suggestions
+  editorSuggestions: (req, res) => {
+    let isSuggest = req.body.suggestion;
+    if (req.body.suggestion) {
+      isSuggest = { "Ctrl-Space": "autocomplete" };
+    } else {
+      isSuggest = false;
+    }
+
+    editor
+      .findOneAndUpdate(
+        { user: req.user._id },
+        { suggestion: isSuggest },
+        { new: true }
+      )
+      .then((data) => {
+        apiRes.status = 200;
+        apiRes.data = data;
+        apiRes.message = "Updated successfully";
+        res.status(apiRes.status).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.status = 404;
+        apiRes.message = "Something went wrong!";
+        apiRes.data = {};
+        res.status(apiRes.status).json(apiRes);
+      });
+  },
+
+  // to adjust format option on save
+  formatOnSave: (req, res) => {
+    let formatOnSave = req.body.formatOnSave;
+    editor
+      .findOneAndUpdate(
+        { user: req.user._id },
+        { formatOnSave: formatOnSave },
+        { new: true }
+      )
+      .then((data) => {
+        apiRes.status = 200;
+        apiRes.data = data;
+        apiRes.message = "Updated successfully";
+        res.status(apiRes.status).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.status = 404;
+        apiRes.message = "Something went wrong!";
+        apiRes.data = {};
+        res.status(apiRes.status).json(apiRes);
+      });
+  },
 };

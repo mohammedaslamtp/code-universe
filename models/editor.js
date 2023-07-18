@@ -5,7 +5,7 @@ const editor = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId || String,
       ref: "Users",
-      defulat:'guest'
+      defulat: "guest",
     },
     theme: {
       type: String,
@@ -23,9 +23,14 @@ const editor = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    suggestions: {
-      type: Boolean,
-      defualt: false,
+    suggestion: {
+      type: mongoose.Schema.Types.Mixed,
+      validate: {
+        validator: (value) =>
+          typeof value === "object" || typeof value === "boolean", // feild type should be a boolean or a object
+        message: "Field must be an object or a boolean", // passing msg if detected any other types
+      },
+      defualt: { "Ctrl-Space": "autocomplete" },
     },
     formatOnSave: {
       type: Boolean,
