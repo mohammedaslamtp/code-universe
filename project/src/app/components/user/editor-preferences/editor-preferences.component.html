@@ -587,11 +587,10 @@
           <div class="flex w-full justify-between flex-col gap-2">
             <div class="flex items-center">
               <input
-                (change)="optionsForm(editorOptions)"
                 id="default-checkbox"
                 type="checkbox"
-                [ngModelOptions]="{ standalone: true }"
-                ngModel
+                (change)="editLineNumberOption(editorOptions.value.lineNumbers)"
+                [(ngModel)]="lineNumbers"
                 name="lineNumbers"
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
               />
@@ -605,8 +604,10 @@
               <input
                 id="checked-checkbox"
                 type="checkbox"
-                ngModel
-                [ngModelOptions]="{ standalone: true }"
+                (change)="
+                  editLineWrapperOption(editorOptions.value.lineWrapping)
+                "
+                [(ngModel)]="lineWrapping"
                 name="lineWrapping"
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
               />
@@ -622,8 +623,8 @@
               <input
                 id="default-checkbox"
                 type="checkbox"
-                ngModel
-                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="suggestions"
+                (change)="adjustSuggestion(editorOptions.value.suggestions)"
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 name="suggestions"
               />
@@ -637,8 +638,8 @@
               <input
                 id="checked-checkbox"
                 type="checkbox"
-                ngModel
-                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="formatOnSave"
+                (change)="formatOnSaveOption(editorOptions.value.formatOnSave)"
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                 name="formatOnSave"
               />

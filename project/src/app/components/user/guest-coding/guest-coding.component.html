@@ -115,7 +115,14 @@
           <span style="background: none" (click)="toggleEdit()"
             ><i class="fa-solid fa-pen cursor-pointer"></i
           ></span>
-          <h1 class="m-0" id="editable" contenteditable="false">Untitled</h1>
+          <h1
+            class="m-0"
+            id="editable"
+            contenteditable="false"
+            #title
+          >
+            Untitled
+          </h1>
         </div>
         <div style="flex: 1" class="flex justify-end">
           <button

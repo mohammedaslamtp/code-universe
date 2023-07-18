@@ -85,4 +85,44 @@ export class SettingsService {
     const url = `${this._apiUrl}/changeTabSize`;
     return this._http.patch<apiRes>(url, { tabSize: tabSize }, httpOptions);
   }
+
+  // adjust line number option
+  lineNumber(lineNumber: boolean): Observable<apiRes> {
+    const url = `${this._apiUrl}/adjustLineNumber`;
+    return this._http.patch<apiRes>(
+      url,
+      { lineNumber: lineNumber },
+      httpOptions
+    );
+  }
+
+  // adjust line wrapping option
+  lineWrapping(LineWrapping: boolean): Observable<apiRes> {
+    const url = `${this._apiUrl}/adjustLineWrapping`;
+    return this._http.patch<apiRes>(
+      url,
+      { LineWrapping: LineWrapping },
+      httpOptions
+    );
+  }
+
+  // adjust editor suggestions
+  editorSuggestions(suggestion: boolean): Observable<apiRes> {
+    const url = `${this._apiUrl}/editorSuggestions`;
+    return this._http.patch<apiRes>(
+      url,
+      { suggestion: suggestion },
+      httpOptions
+    );
+  }
+
+  // adjust code formating when saving
+  formatOnSave(formatOnSave: boolean): Observable<apiRes> {
+    const url = `${this._apiUrl}/formatOnSave`;
+    return this._http.patch<apiRes>(
+      url,
+      { formatOnSave: formatOnSave },
+      httpOptions
+    );
+  }
 }

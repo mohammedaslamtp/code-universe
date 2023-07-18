@@ -42,7 +42,7 @@ export class EditorPreferencesComponent implements OnInit, OnDestroy {
   // form options
   lineNumbers: boolean = true;
   lineWrapping: boolean = true;
-  suggestions: boolean = true;
+  suggestions: boolean = false;
   formatOnSave: boolean = true;
 
   constructor(
@@ -51,9 +51,7 @@ export class EditorPreferencesComponent implements OnInit, OnDestroy {
     private _settingsService: SettingsService,
     private _router: Router,
     private store: Store<appStateInterface>
-  ) {
-    this.adjustMode();
-  }
+  ) {}
 
   adjustMode() {
     this.subs_userData = this._userService.getUserData().subscribe(
@@ -66,6 +64,9 @@ export class EditorPreferencesComponent implements OnInit, OnDestroy {
             this.tabSize = res.data.tabSize;
             this.theme = res.data.theme;
             this.lineNumbers = res.data.lineNumbers;
+            this.lineWrapping = res.data.linerWrapping;
+            this.formatOnSave = res.data.formatOnSave;
+            this.suggestions = res.data.suggestion;
             this.options = {
               lineNumbers: this.lineNumbers,
               autofocus: true,
@@ -104,6 +105,7 @@ export class EditorPreferencesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.changeSampleCode('css');
+    this.adjustMode();
 
     // font size updation success
     this.store.pipe(select(fontSize_resultSelector)).subscribe((doc: any) => {
@@ -213,11 +215,100 @@ export class EditorPreferencesComponent implements OnInit, OnDestroy {
     this.store.dispatch(changeTabSize({ TabSize: size }));
   }
 
-  // modify editor options
-  optionsForm(form: NgForm) {
-    console.log('options form: ', form.value);
+  // modify editor line number option
+  subs_lineNumber!: Subscription;
+  editLineNumberOption(lineNumber: boolean) {
+    console.log('lineNumber option: ', lineNumber);
+    let param = true;
+    if (lineNumber == true) {
+      param = true;
+    } else {
+      param = false;
+    }
+    this.subs_lineNumber = this._settingsService.lineNumber(param).subscribe(
+      (doc) => {
+        this.adjustMode();
+        this.swalAlert(doc.status, doc.message);
+      },
+      (err) => {
+        console.log(err);
+        this.swalAlert(err.status, err.message);
+      }
+    );
   }
 
+  // modify editor line wrapper option
+  subs_lineWrapper!: Subscription;
+  editLineWrapperOption(lineWrapper: boolean) {
+    console.log('lineWrapper option: ', lineWrapper);
+    let param = true;
+    if (lineWrapper == true) {
+      param = true;
+    } else {
+      param = false;
+    }
+    this.subs_lineWrapper = this._settingsService.lineWrapping(param).subscribe(
+      (doc) => {
+        this.adjustMode();
+        console.log(doc);
+        this.swalAlert(doc.status, doc.message);
+      },
+      (err) => {
+        console.log(err);
+        this.swalAlert(err.status, err.message);
+      }
+    );
+  }
+
+  // modify code suggestion option
+  subs_suggstion!: Subscription;
+  adjustSuggestion(suggstion: boolean) {
+    console.log('suggstion option: ', suggstion);
+    let param = true;
+    if (suggstion == true) {
+      param = true;
+    } else {
+      param = false;
+    }
+    this.subs_suggstion = this._settingsService
+      .editorSuggestions(param)
+      .subscribe(
+        (doc) => {
+          this.adjustMode();
+          this.swalAlert(doc.status, doc.message);
+        },
+        (err) => {
+          console.log(err);
+          this.swalAlert(err.status, err.message);
+        }
+      );
+  }
+
+  // adjust format on save option
+  subs_formatOnSave!: Subscription;
+  formatOnSaveOption(formatOnSave: boolean) {
+    console.log('formatOnSave option: ', formatOnSave);
+    let param = true;
+    if (formatOnSave == true) {
+      param = true;
+    } else {
+      param = false;
+    }
+    this.subs_formatOnSave = this._settingsService
+      .formatOnSave(param)
+      .subscribe(
+        (doc) => {
+          this.adjustMode();
+          this.swalAlert(doc.status, doc.message);
+        },
+        (err) => {
+          console.log(err);
+          this.swalAlert(err.status, err.message);
+        }
+      );
+  }
+
+  // sweet alert popup
   swalAlert(status: number, message: string) {
     const Toast = Swal.mixin({
       toast: true,
@@ -238,5 +329,9 @@ export class EditorPreferencesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subs_options?.unsubscribe();
+    this.subs_lineNumber?.unsubscribe();
+    this.subs_lineWrapper?.unsubscribe();
+    this.subs_suggstion?.unsubscribe();
+    this.subs_formatOnSave?.unsubscribe();
   }
 }

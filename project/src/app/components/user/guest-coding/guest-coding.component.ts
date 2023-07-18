@@ -49,12 +49,13 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
 
   @ViewChild('result', { static: true })
   iFrame!: ElementRef<HTMLIFrameElement>;
+  @ViewChild('title', { static: true })
+  titleHead!: ElementRef;
   isLoading: boolean = true;
   isLoggedIn!: boolean;
   subs_userData?: Subscription;
   toggle: boolean = false;
   saved: boolean = false;
-  editorDetails?: any;
   templateId!: string;
   subs_downloadDataLoading!: Subscription;
   subs_downloadDataSuccess!: Subscription;
@@ -70,7 +71,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   intervelIdResult!: any;
   intervelIdError!: any;
   param!: string;
-  subs_param: Subscription;
+  subs_param!: Subscription;
   userData!: USerData;
   isOwner: boolean = false;
   subs_TemplateDetail!: Subscription;
@@ -79,6 +80,8 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   cssOptions: any;
   jsOptions: any;
 
+  formatOnSave: boolean = true;
+
   constructor(
     private _userService: UserService,
     private _mainService: MainService,
@@ -86,90 +89,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _store: Store<appStateInterface>
   ) {
-    if (this._userService.loggedIn()) {
-      this.isLoggedIn = true;
-      this.subs_userData = this._userService.getUserData().subscribe((res) => {
-        this.userData = res;
-
-        this.subs_option = this._mainService
-          .getEditorDetail(res._id)
-          .subscribe((val: any) => {
-            this.editorDetails = val.data;
-            // codemirror options
-            // html
-            this.htmlOptions = {
-              lineNumbers: val.data.lineNumbers ? true : false,
-              autofocus: true,
-              theme: val.data.theme,
-              mode: 'html',
-              showCursorWhenSelecting: true,
-              lineWiseCopyCut: true,
-              linerWrapping: val.data.linerWrapping ? true : false,
-              tabSize: val.data.tabSize,
-            };
-            // css
-            this.cssOptions = {
-              lineNumbers: val.data.lineNumbers ? true : false,
-              theme: val.data.theme,
-              mode: 'css',
-              showCursorWhenSelecting: true,
-              lineWiseCopyCut: true,
-              linerWrapping: val.data.linerWrapping ? true : false,
-              tabSize: val.data.tabSize,
-            };
-            // js
-            this.jsOptions = {
-              lineNumbers: val.data.lineNumbers ? true : false,
-              theme: val.data.theme,
-              mode: 'javascript',
-              extraKeys: { 'Ctrl-Space': 'autocomplete' },
-              showCursorWhenSelecting: true,
-              lineWiseCopyCut: true,
-              autoCloseBrackets: true,
-              linerWrapping: val.data.linerWrapping ? true : false,
-              tabSize: val.data.tabSize,
-            };
-          });
-      });
-    } else {
-      this.isLoggedIn = false;
-    }
-
-    this.subs_param = this._activatedRoute.params.subscribe((param) => {
-      this.param = param['id'];
-      if (this.param !== 'new') {
-        templateListing.next(true);
-        this.subs_TemplateDetail = this._mainService
-          .getTemplateDetail(this.param)
-          .subscribe(
-            (res) => {
-              this.saved = true;
-              this.htmlCode = res.data.html;
-              this.cssCode = res.data.css;
-              this.jsCode = res.data.js;
-              this.templateId = res.data.template_id;
-              if (res.data.user == this.userData._id) {
-                this.isOwner = true;
-                templateListing.next(false);
-                this.random = res.data.template_id;
-              }
-              this.htmlCode = res.data.html;
-              this.cssCode = res.data.css;
-              this.jsCode = res.data.js;
-              setTimeout(() => {
-                this.formatHTMLCode();
-                this.formatCSSCode();
-                this.formatJSCode();
-                this.codeRun();
-              }, 200);
-            },
-            (err) => {
-              this._router.navigate(['**']);
-            }
-          );
-      }
-    });
-
     // updating download loading from state
     this.subs_downloadDataLoading = this._store
       .pipe(select(downloadCode_loadingSelector))
@@ -211,6 +130,126 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     coding.next(true);
+
+    if (this._userService.loggedIn()) {
+      this.isLoggedIn = true;
+      this.subs_userData = this._userService.getUserData().subscribe((res) => {
+        this.userData = res;
+        this.subs_option = this._mainService
+          .getEditorDetail(res._id)
+          .subscribe((val: any) => {
+            this.formatOnSave = val.data.formatOnSave;
+            // codemirror options
+            // html
+            this.htmlOptions = {
+              lineNumbers: val.data.lineNumbers ? true : false,
+              autofocus: true,
+              theme: val.data.theme,
+              mode: 'html',
+              showCursorWhenSelecting: true,
+              lineWiseCopyCut: true,
+              linerWrapping: val.data.linerWrapping ? true : false,
+              tabSize: val.data.tabSize,
+            };
+            // css
+            this.cssOptions = {
+              lineNumbers: val.data.lineNumbers ? true : false,
+              theme: val.data.theme,
+              mode: 'css',
+              showCursorWhenSelecting: true,
+              lineWiseCopyCut: true,
+              extraKeys: val.data.suggestion,
+              linerWrapping: val.data.linerWrapping ? true : false,
+              tabSize: val.data.tabSize,
+            };
+            // js
+            this.jsOptions = {
+              lineNumbers: val.data.lineNumbers ? true : false,
+              theme: val.data.theme,
+              mode: 'javascript',
+              extraKeys: val.data.suggestion,
+              showCursorWhenSelecting: true,
+              lineWiseCopyCut: true,
+              autoCloseBrackets: true,
+              linerWrapping: val.data.linerWrapping ? true : false,
+              tabSize: val.data.tabSize,
+            };
+          });
+      });
+    } else {
+      this.isLoggedIn = false;
+      // html
+      this.htmlOptions = {
+        lineNumbers: true,
+        autofocus: true,
+        theme: 'ayu-mirage',
+        mode: 'html',
+        showCursorWhenSelecting: true,
+        lineWiseCopyCut: true,
+        linerWrapping: true,
+        tabSize: 4,
+      };
+      // css
+      this.cssOptions = {
+        lineNumbers: true,
+        theme: 'ayu-mirage',
+        mode: 'css',
+        showCursorWhenSelecting: true,
+        lineWiseCopyCut: true,
+        extraKeys: { 'Ctrl-Space': 'autocomplete' },
+        linerWrapping: true,
+        tabSize: 4,
+      };
+      // js
+      this.jsOptions = {
+        lineNumbers: true,
+        theme: 'ayu-mirage',
+        mode: 'javascript',
+        showCursorWhenSelecting: true,
+        lineWiseCopyCut: true,
+        linerWrapping: true,
+        tabSize: 4,
+        extraKeys: { 'Ctrl-Space': 'autocomplete' },
+      };
+    }
+
+    this.subs_param = this._activatedRoute.params.subscribe((param) => {
+      this.param = param['id'];
+      if (this.param !== 'new') {
+        templateListing.next(true);
+        this.subs_TemplateDetail = this._mainService
+          .getTemplateDetail(this.param)
+          .subscribe(
+            (res) => {
+              this.saved = true;
+              this.title = res.data.title;
+              this.htmlCode = res.data.html;
+              this.cssCode = res.data.css;
+              this.jsCode = res.data.js;
+              this.templateId = res.data.template_id;
+              this.titleHead.nativeElement.textContent = this.title;
+              if (res.data.user == this.userData._id) {
+                this.isOwner = true;
+                templateListing.next(false);
+                this.random = res.data.template_id;
+              }
+              this.htmlCode = res.data.html;
+              this.cssCode = res.data.css;
+              this.jsCode = res.data.js;
+              setTimeout(() => {
+                this.formatHTMLCode();
+                this.formatCSSCode();
+                this.formatJSCode();
+                this.codeRun();
+              }, 200);
+            },
+            (err) => {
+              this._router.navigate(['**']);
+            }
+          );
+      }
+    });
+
     window.addEventListener('message', this.receiveMessage.bind(this));
 
     // resizing style
@@ -295,7 +334,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   // title editable
   editable!: any;
   toggleEdit() {
-    this.editable = document.getElementById('editable');
+    this.editable = document.querySelector('#editable');
     if (this.param === 'new' || this.isOwner) {
       if (this.editable.contentEditable == 'true') {
         // disable editing
@@ -318,16 +357,28 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     }
   }
 
+  title!: string;
+  getTitle(): void {
+    const title = document.querySelector('#editable')?.textContent;
+    this.title = String(title);
+  }
+
   // save code
+  subs_runCode!: Subscription;
   saveCode() {
     // running code before saving
-    const title = document.getElementById('editable');
-    this._userService
+    this.getTitle();
+    if (this.formatOnSave) {
+      this.formatHTMLCode();
+      this.formatCSSCode();
+      this.formatJSCode();
+    }
+    this.subs_runCode = this._userService
       .runCode(
         this.htmlCode,
         this.cssCode,
         this.jsCode,
-        title?.innerText,
+        this.title,
         this.random
       )
       .subscribe(
@@ -337,7 +388,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
           // saving code after end running code
           this._userService
             .saveCode(
-              title?.innerText,
+              this.title,
               this.htmlCode,
               this.cssCode,
               this.jsCode,
@@ -533,7 +584,10 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     this.subs_downloadDataLoading?.unsubscribe();
     this.subs_downloadDataSuccess?.unsubscribe();
     this.subs_downloadDataError?.unsubscribe();
+    this.subs_TemplateDetail?.unsubscribe();
     this.subs_userData?.unsubscribe();
+    this.subs_param?.unsubscribe();
     this.subs_option?.unsubscribe();
+    this.subs_runCode?.unsubscribe();
   }
 }
