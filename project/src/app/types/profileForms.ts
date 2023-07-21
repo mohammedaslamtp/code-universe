@@ -6,5 +6,5 @@ export interface aboutData {
 
 export interface socialMedia {
   linkedInUrl?: string | null;
-  twitterUrl?: string | null;
+  githubUrl?: string | null;
 }

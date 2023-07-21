@@ -1,3 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 section {
   margin: 0;
   padding: 0;
@@ -84,7 +89,7 @@ section {
   font-size: 12px;
 }
 
-.login-box form button {
+/* .login-box form button {
   border: none;
   background: none;
   position: relative;
@@ -98,20 +103,17 @@ section {
   transition: 0.5s;
   margin-top: 10px;
   letter-spacing: 4px;
-}
+} */
 
-.submit {
-  display: flex;
-  justify-content: center;
-}
 
-.login-box button:hover {
+
+/* .login-box button:hover {
   background-color: #03e9f4;
   color: white !important;
   border-radius: 5px;
   box-shadow: 0 0 5px #03e9f4, 0 0 25px #03e9f4, 0 0 50px #03e9f4,
     0 0 100px #03e9f4;
-}
+} */
 
 .submit {
   display: flex;

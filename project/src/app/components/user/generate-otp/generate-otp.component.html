@@ -60,14 +60,23 @@
         <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
           Click the generate button to get OTP to you email
         </h3>
+
         <button
-          data-modal-target="popup_modal"
           type="button"
+          title="Generate OTP"
           id="generateOtp"
-          (click)="generateOtp(); closeModal()"
-          class="text-white bg-green-600 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2"
+          (click)="generateOtp()"
+          class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
         >
-          Generate OTP
+          <!-- loading -->
+          <div *ngIf="loading">
+            <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+          </div>
+          <span
+            class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+          >
+            Generate OTP
+          </span>
         </button>
       </div>
     </div>

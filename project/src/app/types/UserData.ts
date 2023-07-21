@@ -16,6 +16,6 @@ export interface USerData {
   location: string;
   updatedAt: string;
   linkedin_link: string;
-  twitter_link: string;
+  github_link: string;
   __v: number;
 }

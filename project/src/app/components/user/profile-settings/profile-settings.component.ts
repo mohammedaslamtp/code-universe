@@ -135,33 +135,33 @@ export class ProfileSettingsComponent implements OnDestroy {
 
   // both forms data update
   subs_userAboutData!: Subscription;
-  urlFormData!: socialMedia;
+  urlFormData: socialMedia = {};
   aboutFormData!: aboutData;
   profileDataLoading: boolean = false;
-  formData(urlForm: socialMedia | null, aboutForm: aboutData | null) {
-    if (urlForm) this.urlFormData = urlForm;
-    if (aboutForm) this.aboutFormData = aboutForm;
-    if (this.urlFormData && this.aboutFormData) {
-      this.profileDataLoading = true;
-      this.subs_userAboutData = this._settingsService
-        .updateUserData(this.urlFormData, this.aboutFormData)
-        .subscribe(
-          (res: apiRes) => {
-            this.profileDataLoading = false;
-            this.userData = res.data;
-            this.successSwal(res.message);
-          },
-          (err) => {
-            this.profileDataLoading = false;
-            this.errorSwal(err.error.status, err.error.message);
-          }
-        );
+  formData() {
+    let urlData = null;
+    if (this.urlFormData) {
+      urlData = this.urlFormData;
     }
+    this.profileDataLoading = true;
+    this.subs_userAboutData = this._settingsService
+      .updateUserData(urlData, this.aboutFormData)
+      .subscribe(
+        (res: apiRes) => {
+          this.profileDataLoading = false;
+          this.userData = res.data;
+          this.successSwal(res.message);
+        },
+        (err) => {
+          this.profileDataLoading = false;
+          this.errorSwal(err.error.status, err.error.message);
+        }
+      );
   }
 
   // updating about form
   error!: string | null;
-  submitAboutForm(aboutForm: NgForm): void {
+  submitAboutForm(aboutForm: NgForm, socialMediaForm: NgForm): void {
     const name: any = aboutForm.controls['displayName'];
     let displayName: string = name.value;
     displayName = displayName.replace(/\s+/g, ' ').trim();
@@ -182,15 +182,18 @@ export class ProfileSettingsComponent implements OnDestroy {
         this.error = null;
         aboutForm.value.displayName = displayName;
         const aboutData = aboutForm.value;
-        if (aboutData.location == undefined) {
+        if (!aboutData.location || aboutData.location == '') {
           aboutData.location = null;
+        } else {
+          aboutData.location = aboutData.location?.replace(/\s+/g, ' ').trim();
         }
-        if (aboutData.bio == undefined) {
+        if (!aboutData.bio || aboutData.bio == '') {
           aboutData.bio = null;
+        } else {
+          aboutData.bio = aboutData.bio?.replace(/\s+/g, ' ').trim();
         }
-        aboutData.location = aboutData.location.replace(/\s+/g, ' ').trim();
-        aboutData.bio = aboutData.bio.replace(/\s+/g, ' ').trim();
-        this.formData(null, aboutData);
+        this.aboutFormData = aboutData;
+        this.submitSocialForm(socialMediaForm);
       }
     }
   }
@@ -198,22 +201,30 @@ export class ProfileSettingsComponent implements OnDestroy {
   // updating form form
   submitSocialForm(socialMedia: NgForm): void {
     if (!this.error) {
-      const socialMediaData = socialMedia.value;
-      if (socialMedia.value.linkedInUrl === undefined) {
+      if (
+        socialMedia.value.linkedInUrl === undefined ||
+        socialMedia.value.linkedInUrl === ''
+      ) {
         socialMedia.value.linkedInUrl = null;
       }
-      if (socialMedia.value.twitterUrl === undefined) {
-        socialMedia.value.twitterUrl = null;
+      if (
+        socialMedia.value.githubUrl === undefined ||
+        socialMedia.value.githubUrl === ''
+      ) {
+        socialMedia.value.githubUrl = null;
       }
-      socialMediaData.linkedInUrl = socialMediaData.linkedInUrl.replace(
+      this.urlFormData.linkedInUrl = socialMedia.value.linkedInUrl?.replace(
         /\s/g,
         ''
       );
-      socialMediaData.twitterUrl = socialMediaData.twitterUrl.replace(
+      this.urlFormData.githubUrl = socialMedia.value.githubUrl?.replace(
         /\s/g,
         ''
       );
-      this.formData(socialMediaData, null);
+      this.urlFormData = socialMedia.value;
+      this.formData();
+    } else {
+      console.log(this.error);
     }
   }
 

@@ -1,6 +1,6 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   client,
   socketConnected,
@@ -10,6 +10,8 @@ import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
 import { Title } from '@angular/platform-browser';
 import { AngularFaviconService } from 'angular-favicon';
+
+const realRoomId = new BehaviorSubject<string>('empty');
 
 @Component({
   selector: 'app-live-coding',
@@ -22,16 +24,19 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
   owner!: USerData;
   isCreator: boolean = false;
   room!: string;
+  liveLoading: boolean = false;
 
   subs_owner!: Subscription;
   subs_isConnected!: Subscription;
+  subs_connectedUsers!: Subscription;
+  subs_param!: Subscription;
+  subs_roomid!: Subscription;
 
   // blocking reaload
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: BeforeUnloadEvent) {
     // Show confirmation dialog
     // event.returnValue = 'Are you sure you want to leave this page?';
-    
   }
 
   constructor(
@@ -42,30 +47,51 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     private _ngxFavIcon: AngularFaviconService
   ) {
     this.subs_isConnected = socketConnected.subscribe((val) => {
-      if (val !== 'empty' && val === 'creator') {
+      if (val === 'creator') {
         this.isCreator = true;
-      } else if (val !== 'empty' && val === 'member') {
+      } else if (val === 'member') {
         this.isCreator = false;
       } else {
         this.isCreator = false;
       }
     });
-    this.room = this._activatedRoute.snapshot.paramMap.get('room') + '';
   }
 
   ngOnInit() {
     this._titleService.setTitle('CODEBOX LIVE');
+    this.subs_roomid = realRoomId.subscribe((val) => {
+      this.room = val;
+    });
+
     // socket connection:
-    this.subs_owner = this._userService.getUserData().subscribe((data) => {
-      this.owner = data;
-      if (this.room) {
-        console.log(this.room);
-        this.joinToLive(data._id, this.room, this.isCreator);
-        this._ngxFavIcon.setFavicon(
-          `${client}/assets/images/liveStroke2/favicon.ico`
-        );
-        this.toggleFavicon();
+    this.subs_param = this._activatedRoute.params.subscribe((param) => {
+      this.liveLoading = true;
+      this.room = param['room'];
+      if (param['room']) {
+        this._socketService.connect();
+        this.subs_owner = this._userService.getUserData().subscribe((data) => {
+          this.owner = data;
+          setTimeout(() => {
+            this.joinToLive(data._id, param['room'], this.isCreator);
+            this._ngxFavIcon.setFavicon(
+              `${client}/assets/images/liveStroke2/favicon.ico`
+              );
+              this.liveLoading = false;
+            this.toggleFavicon();
+          }, 3000);
+        });
       }
+    });
+
+    // update code
+    this._socketService.on('code', (code) => {
+      console.log('code', code);
+      this.htmlCode = code;
+    });
+
+    // fetching connected users
+    this._socketService.on('connectedClients', (data) => {
+      console.log('online ', data);
     });
   }
 
@@ -108,10 +134,9 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     lineNumbers: true,
     autofocus: true,
     theme: 'ayu-mirage',
-    mode: 'htmlmixed',
+    mode: 'html',
     showCursorWhenSelecting: true,
     lineWiseCopyCut: true,
-    autoCloseBrackets: true,
   };
   cssOptions = {
     lineNumbers: true,
@@ -119,22 +144,19 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     mode: 'css',
     showCursorWhenSelecting: true,
     lineWiseCopyCut: true,
-    autoCloseBrackets: true,
   };
   jsOptions = {
     lineNumbers: true,
-    autofocus: true,
     theme: 'ayu-mirage',
     mode: 'javascript',
-    extraKeys: { 'Ctrl-Space': 'autocomplete' },
     showCursorWhenSelecting: true,
     lineWiseCopyCut: true,
-    autoCloseBrackets: true,
   };
 
   htmlCode: string = '<!-- write your html code here -->';
   htmlChange(code: Event): void {
     this.htmlCode = code + '';
+    this._socketService.emit('data', code);
   }
 
   cssCode: string = '/* write your css code here */';
@@ -171,6 +193,8 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     this._ngxFavIcon.setFavicon('favicon.ico');
     this.closeDropDown();
     this.subs_owner?.unsubscribe();
+    this.subs_param?.unsubscribe();
+    this.subs_roomid?.unsubscribe();
     this.subs_isConnected?.unsubscribe();
   }
 }

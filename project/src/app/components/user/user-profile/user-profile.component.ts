@@ -41,7 +41,7 @@ export class UserProfileComponent implements OnDestroy {
   followingCount!: number;
   location: string | null = null;
   bio: string | null = null;
-  twitter: string = 'https://twitter.com';
+  github: string = 'https://github.com';
   linkedIn: string = 'https://in.linkedin.com';
   isFollowing: boolean = false;
   constructor(
@@ -86,8 +86,8 @@ export class UserProfileComponent implements OnDestroy {
                     this.profilePath =
                       '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png';
                   }
-                  if (data.twitter_link) {
-                    this.twitter = data.twitter_link;
+                  if (data.github_link) {
+                    this.github = data.github_link;
                   }
                   if (data.linkedin_link) {
                     this.linkedIn = data.linkedin_link;

@@ -18,6 +18,7 @@ import { DownloadService } from '../services/download.service';
 import { CodesForDownload } from '../types/downloadCode';
 import { SettingsService } from '../services/settings.service';
 import { apiRes } from '../types/defulatApiRes';
+import { genrateOptLoading } from '../components/user/generate-otp/generate-otp.component';
 
 @Injectable()
 export class effects {
@@ -85,16 +86,21 @@ export class effects {
       ofType(otpRequestAction.otpRequest),
       mergeMap((res) => {
         otpSentLoad.next(true);
+        genrateOptLoading.next(true);
         return this._userService.genreateOtp().pipe(
           map((_otpRes) => {
             setTimeout(() => {
               if (_otpRes.isGenerated) {
+                console.log('_otpRes ', _otpRes);
+                otpSentLoad.next(false);
+                genrateOptLoading.next(false);
                 const Toast = Swal.mixin({
                   toast: true,
                   position: 'top-end',
                   showConfirmButton: false,
-                  timer: 3000,
+                  timer: 2000,
                   timerProgressBar: true,
+                  showCloseButton: true,
                   didOpen: (toast) => {
                     toast.addEventListener('mouseenter', Swal.stopTimer);
                     toast.addEventListener('mouseleave', Swal.resumeTimer);
@@ -102,7 +108,7 @@ export class effects {
                 });
                 Toast.fire({
                   icon: 'success',
-                  title: 'OTP send successfully',
+                  title: 'OTP send successfullyyy',
                 });
               }
             }, 2500);
@@ -114,16 +120,19 @@ export class effects {
               toast: true,
               position: 'top-end',
               showConfirmButton: false,
-              timer: 5000,
+              timer: 3000,
+              showCloseButton: true,
               timerProgressBar: true,
               didOpen: (toast) => {
+                otpSentLoad.next(false);
+                genrateOptLoading.next(false);
                 toast.addEventListener('mouseenter', Swal.stopTimer);
                 toast.addEventListener('mouseleave', Swal.resumeTimer);
               },
             });
             Toast.fire({
               icon: 'error',
-              title: `Please check your connection? and retry`,
+              title: `Something went wrong!`,
             });
             return of(otpRequestAction.otpSendingFailure({ error: err.error }));
           })

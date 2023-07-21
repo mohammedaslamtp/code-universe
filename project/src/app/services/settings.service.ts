@@ -32,7 +32,7 @@ export class SettingsService {
 
   // update user about data
   updateUserData(
-    urlForm: socialMedia,
+    urlForm: socialMedia | null,
     aboutForm: aboutData
   ): Observable<apiRes> {
     const url = `${this._apiUrl}/updateAbout`;

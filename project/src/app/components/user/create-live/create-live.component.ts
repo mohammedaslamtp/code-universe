@@ -66,9 +66,11 @@ export class CreateLiveComponent implements OnInit, OnDestroy {
         this.ownerData = data;
         if (data && this.connected == false) {
           this._socketService.connect();
+          this._socketService.emit('connectionData',data._id)
           this.connected = true;
           this._socketService.on('roomId', (roomId) => {
             socketConnected.next('creator');
+           
             this._router.navigate([`/liveCoding/${roomId}`]);
             this.createLoad = false;
           });

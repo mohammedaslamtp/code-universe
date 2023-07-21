@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from './services/user.service';
-import { OTP } from './types/OTP';
-import { Observable } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -10,8 +8,6 @@ import { NavigationEnd, Router } from '@angular/router';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  error$?: Observable<string> | string;
-  data$?: Observable<OTP>;
   constructor(private _userService: UserService, private _router: Router) {
     this._router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
@@ -21,6 +17,8 @@ export class AppComponent implements OnInit {
       }
     });
   }
+
+  title = 'Welcome to Codebox';
 
   ngOnInit(): void {
     this._userService.check();

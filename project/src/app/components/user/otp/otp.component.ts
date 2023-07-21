@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { otpRequest } from 'src/app/stores/actions/generateOtp';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 
 export const otpSentLoad = new BehaviorSubject<boolean>(false);
@@ -13,7 +13,7 @@ export const otpSentLoad = new BehaviorSubject<boolean>(false);
   templateUrl: './otp.component.html',
   styleUrls: ['./otp.component.css'],
 })
-export class OtpComponent implements OnInit {
+export class OtpComponent implements OnDestroy {
   error_msg?: string | boolean;
   remainingTime: number = 0;
   timeoutRunning: boolean = false;
@@ -23,57 +23,62 @@ export class OtpComponent implements OnInit {
     private store: Store,
     private router: Router
   ) {}
-  ngOnInit(): void {}
 
   otp = new FormGroup({
     otp: new FormControl('', [Validators.pattern(/^\d{6}$/)]),
   });
 
+  // otp verification
+  subs_verifyOtp!: Subscription;
+  verifyOtpLoading: boolean = false;
   onSubmit() {
+    this.verifyOtpLoading = true;
     let otpField: any = this.otp.get('otp')?.value;
     otpField = Number(otpField);
-    console.log(Number(otpField));
-    this.userService.verifyOtp(otpField).subscribe((res) => {
-      if (res.valid && res.expired == false) {
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer);
-            toast.addEventListener('mouseleave', Swal.resumeTimer);
-          },
-        });
+    this.subs_verifyOtp = this.userService
+      .verifyOtp(otpField)
+      .subscribe((res) => {
+        this.verifyOtpLoading = false;
+        if (res.valid && res.expired == false) {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer);
+              toast.addEventListener('mouseleave', Swal.resumeTimer);
+            },
+          });
 
-        Toast.fire({
-          icon: 'success',
-          title: 'Your OTP verified',
-        });
-        setTimeout(() => {
-          this.router.navigate(['/home']);
-        }, 3000);
-      } else if (res.valid == false || res.expired == true) {
-        if (!res.valid) {
-          this.error_msg = 'Invalid OTP, try again..';
+          Toast.fire({
+            icon: 'success',
+            title: 'Your OTP verified',
+          });
+          setTimeout(() => {
+            this.router.navigate(['/home']);
+          }, 3000);
+        } else if (res.valid == false || res.expired == true) {
+          if (!res.valid) {
+            this.error_msg = 'Invalid OTP, try again..';
+          }
+          if (res.expired) {
+            this.error_msg =
+              'Your OTP expired it will valid only for 3 minutes, try again..';
+          }
         }
-        if (res.expired) {
-          this.error_msg =
-            'Your OTP expired it will valid only for 3 minutes, try again..';
-        }
-      }
-    });
+      });
   }
 
   // regenerate/resend the otp
   resendOtp() {
-    this.error_msg = false
-    this.close_alert()
+    this.error_msg = false;
+    this.close_alert();
     this.store.dispatch(otpRequest());
     this.otpSendLoading();
   }
-  
+
   otpSendLoading() {
     otpSentLoad.subscribe((val) => {
       if (val) {
@@ -101,6 +106,10 @@ export class OtpComponent implements OnInit {
   close_alert() {
     let alert: any = document.getElementById('alert');
     this.error_msg = false;
-    if(alert)alert.style.display = 'none';
+    if (alert) alert.style.display = 'none';
+  }
+
+  ngOnDestroy(): void {
+    this.subs_verifyOtp?.unsubscribe();
   }
 }

@@ -18,7 +18,7 @@
 </div>
 
 <div
-  [ngStyle]="{ display: !error_msg  ? 'none' : 'block' }"
+  [ngStyle]="{ display: !error_msg ? 'none' : 'block' }"
   class="bg-red-100 text-red-700 px-4 py-3"
   #alert
   style="
@@ -78,18 +78,35 @@
       <div class="buttons">
         <div class="submit">
           <button
-          type="button"
+            type="button"
             (click)="resendOtp()"
             [disabled]="timeoutRunning"
             [ngStyle]="{ cursor: timeoutRunning ? 'not-allowed' : 'pointer' }"
+            title="resend otp"
+            class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
           >
-            Resend
+            <span
+              class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+            >
+              Resend
+            </span>
           </button>
+
           <button
-          type="submit"
             [ngStyle]="{ cursor: !otp.valid ? 'not-allowed' : 'pointer' }"
+            type="submit"
+            title="Verify"
+            class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
           >
-            Verify
+            <!-- loading -->
+            <div *ngIf="verifyOtpLoading">
+              <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+            </div>
+            <span
+              class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+            >
+              Verify
+            </span>
           </button>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import {  generateOtpToggle } from '../generate-otp/generate-otp.component';
+import { generateOtpToggle } from '../generate-otp/generate-otp.component';
 import { UserService } from 'src/app/services/user.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Templates } from 'src/app/types/template_types';
@@ -13,7 +13,6 @@ export const YourWorks = new BehaviorSubject<boolean>(false);
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  
 })
 export class HomeComponent implements OnDestroy {
   otpToggle: boolean = false;
@@ -35,13 +34,7 @@ export class HomeComponent implements OnDestroy {
       this.isYourWorkTab = val;
     });
     generateOtpToggle.subscribe((val) => {
-      if (val == false) {
-        this.otpToggle = false;
-      } else if (val == true) {
-        this.otpToggle = true;
-      } else {
-        this.otpToggle = false;
-      }
+      this.otpToggle = val;
     });
     this.UserData_collector = this._userService
       .getUserData()
@@ -54,6 +47,6 @@ export class HomeComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.UserData_collector.unsubscribe();
+    this.UserData_collector?.unsubscribe();
   }
 }

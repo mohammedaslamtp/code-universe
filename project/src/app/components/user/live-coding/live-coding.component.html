@@ -3,7 +3,21 @@
   href="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/theme/ayu-mirage.css"
 />
 
-<main class="h-screen grid" style="grid-template-rows: 7% 93%;">
+<div *ngIf="liveLoading" class="relative inset-0 bg-black" style="width: 100%; height: 100%">
+  <div
+    class="absolute inset-0 bg-opacity-50 w-full h-full relative bg-neutral-400 flex justify-center align items-center"
+  >
+    <div class="flex flex-col gap-1 text-white">
+      <i
+        class="animate-spin fa-solid px-2 fa-spinner"
+        style="font-size: 2em"
+        title="Please wait"
+      ></i>
+      <p style="letter-spacing: 2px;">Joining</p>
+    </div>
+  </div>
+</div>
+<main class="h-screen grid" *ngIf="!liveLoading" style="grid-template-rows: 7% 93%">
   <!-- Navbar -->
   <nav class="bg-gray-800 w-full">
     <div class="px-3 sm:px-6 lg:px-8">
@@ -22,10 +36,8 @@
               ></span>
             </span>
             <a routerLink="/home">
-              <h1 class="w-auto text-white text-2xl cursor-pointer">
-                CODEBOX
-              </h1></a
-            >
+              <h1 class="w-auto text-white text-2xl cursor-pointer">CODEBOX</h1>
+            </a>
           </div>
         </div>
         <div
