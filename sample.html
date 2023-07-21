@@ -50,3 +50,81 @@
     </div>
   </body>
 </html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>live sample</title>
+  </head>
+  <body>
+    <textarea id="input" name="" id="" cols="30" rows="10"></textarea>
+
+    <div
+      style="
+        width: fit-content;
+        height: auto;
+        border: 1px solid;
+        font-size: large;
+      "
+      id="result"
+    ></div>
+
+    <script>
+      // Get references to the elements
+      const resultDiv = document.getElementById("result");
+      const inputTextarea = document.getElementById("input");
+
+      inputTextarea.addEventListener("keyup", (event) => {
+        console.log("keyup");
+        console.log(event.key);
+        console.log("start ", inputTextarea.selectionStart);
+        if (event.key === "k") {
+          console.log(event);
+
+          // Get the cursor position
+          const cursorPosition = inputTextarea.selectionStart;
+
+          // Perform the replacement action
+          const currentValue = inputTextarea.value;
+          const updatedValue =
+            currentValue.substring(0, cursorPosition) +
+            "o" +
+            currentValue.substring(cursorPosition + 1);
+          inputTextarea.value = updatedValue;
+
+          // Set the cursor position back to the original position
+          inputTextarea.selectionStart = cursorPosition;
+          inputTextarea.selectionEnd = cursorPosition;
+        }
+        // console.log("end ", inputTextarea.selectionEnd);
+      });
+
+      // inputTextarea.addEventListener("input", (event) => {
+      //   console.log("input");
+      //   console.log("key ", event.data);
+      //   var cursorPosition = inputTextarea.selectionStart;
+      //   console.log("position ", cursorPosition);
+      //   if (event.data === "k") {
+      //     console.log(inputTextarea)
+      //   }
+      // });
+
+      inputTextarea.addEventListener("click", () => {
+        console.log("click");
+        var cursorPosition = inputTextarea.selectionStart;
+        console.log("position ", cursorPosition);
+      });
+
+      inputTextarea.addEventListener("select", () => {
+        console.log("select");
+        const startPosition = inputTextarea.selectionStart;
+        const endPosition = inputTextarea.selectionEnd;
+        console.log("start position ", startPosition);
+        console.log("end position ", endPosition);
+      });
+    </script>
+  </body>
+</html>

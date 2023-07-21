@@ -216,14 +216,15 @@ module.exports = {
 
       transporter.sendMail(message, (err, info) => {
         if (err) {
-          // Retry sending the email after a delay (e.g., 5 seconds)1
+          // Retry sending the email after a delay (e.g., 5 seconds)
           const retryDelay = 4000;
           setTimeout(() => {
             transporter.sendMail(message, (retryErr, retryInfo) => {
               if (retryErr) {
-                res.status(404).json({ error: "Failed to send OTP email" });
+                res.status(404).json({ msg: "Failed to send OTP email" });
               } else {
                 emailSent(retryInfo, res, email, OTP);
+                
               }
             });
           }, retryDelay);

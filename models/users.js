@@ -65,10 +65,12 @@ const user = new mongoose.Schema(
 
     linkedin_link: {
       type: String,
+      defulat:'https://in.linkedin.com/'
     },
-
-    twitter_link: {
+    
+    github_link: {
       type: String,
+      defulat:'https://github.com/'
     },
 
     otp_verified: {

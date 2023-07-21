@@ -44,13 +44,11 @@ route
   .patch(
     "/removeProfile",
     auth_token.authenticate,
-
     settings_controller.removeProfileImage
   )
   .patch(
     "/updateAbout",
     auth_token.authenticate,
-
     settings_controller.updateAbout
   )
   .get(

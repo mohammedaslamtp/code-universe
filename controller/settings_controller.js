@@ -69,17 +69,23 @@ module.exports = {
 
   // to update user profile data
   updateAbout: (req, res) => {
+    console.log("body", req.body);
     const urlData = req.body.urlData;
+    let linkedin = "https://in.linkedin.com/";
+    let github = "https://github.com/";
+    if (urlData) {
+      if (urlData.linkedInUrl) linkedin = urlData.linkedInUrl;
+      if (urlData.githubUrl) github = urlData.githubUrl;
+    }
     const aboutData = req.body.aboutData;
-
     User.findByIdAndUpdate(
       req.user._id,
       {
         display_name: aboutData.displayName,
         location: aboutData.location,
         bio: aboutData.bio,
-        linkedin_link: urlData.linkedInUrl,
-        twitter_link: urlData.twitterUrl,
+        linkedin_link: linkedin,
+        github_link: github,
       },
       { new: true }
     )
@@ -155,8 +161,8 @@ module.exports = {
 
               user.password = hashPass;
               user
-              .save()
-              .then((data) => {
+                .save()
+                .then((data) => {
                   apiRes.message = "Password changed";
                   res.status(200).json(apiRes);
                 })
@@ -166,9 +172,9 @@ module.exports = {
                   apiRes.data = null;
                   res.status(404).json(apiRes);
                 });
-              } else {
-                apiRes.message = "Incorrect password!";
-                res.status(200).json(apiRes);
+            } else {
+              apiRes.message = "Incorrect password!";
+              res.status(200).json(apiRes);
             }
           })
           .catch((err) => {
