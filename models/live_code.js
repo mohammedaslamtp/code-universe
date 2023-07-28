@@ -10,7 +10,7 @@ const liveCode = new mongoose.Schema(
     live_creator: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
-      required: true,
+      defualt:'no-creator'
     },
 
     room_id: {
@@ -20,20 +20,20 @@ const liveCode = new mongoose.Schema(
 
     html: {
       type: String,
-      default: "",
+      default: "<!-- write your html code here -->",
     },
 
     css: {
       type: String,
-      default: "",
+      default: "/* write your css code here */",
     },
 
     js: {
       type: String,
-      default: "",
+      default: "// write your js code here",
     },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("liveCode", liveCode);

@@ -9,6 +9,7 @@ const social_controller = require("../controller/social_controller");
 const settings_controller = require("../controller/settings_controller");
 const editor_controller = require("../controller/editor_controller");
 const upload = require("../middlewares/multer");
+const main_controller = require("../controller/main_controller");
 
 route
   .post("/signup", authUser.signup)
@@ -103,4 +104,5 @@ route
     auth_token.authenticate,
     editor_controller.formatOnSave
   )
+  .get("/isValidLive", auth_token.authenticate, main_controller.isValidLive);
 module.exports = route;

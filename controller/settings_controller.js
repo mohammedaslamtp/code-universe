@@ -8,6 +8,7 @@ const apiRes = {
   status: 401,
   data: {},
 };
+
 module.exports = {
   // to update profile image
   updateProfile: (req, res) => {

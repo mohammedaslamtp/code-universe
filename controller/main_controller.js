@@ -1,4 +1,5 @@
 const Codes = require("../models/code");
+const LiveCode = require("../models/live_code");
 
 const apiRes = {
   message: "Authentication success",
@@ -83,6 +84,24 @@ module.exports = {
         apiRes.message = "data not found!";
         apiRes.data = null;
         res.status(404).json(apiRes);
+      });
+  },
+
+  // to check is valid live or not
+  isValidLive: (req, res) => {
+    console.log("q ", req.query.roomId);
+    LiveCode.findOne({ room_id: req.query.roomId })
+    .then((data) => {
+      if (data) {
+          console.log("found");
+          res.status(200).json(true);
+        } else {
+          console.log("not-found");
+          res.status(200).json(false);
+        }
+      })
+      .catch((e) => {
+        res.status(404).json("Something went wrong!");
       });
   },
 };
