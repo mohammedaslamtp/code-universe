@@ -5,11 +5,19 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import Swal from 'sweetalert2';
+
+export const skipWork = new BehaviorSubject<boolean>(false);
 
 @Injectable()
 export class LiveCodingGuard implements CanDeactivate<unknown> {
+  skiping!: boolean;
+  constructor() {
+    skipWork.subscribe((val) => {
+      if (val == true) this.skiping = true;
+    });
+  }
   canDeactivate(
     component: unknown,
     currentRoute: ActivatedRouteSnapshot,
@@ -20,6 +28,9 @@ export class LiveCodingGuard implements CanDeactivate<unknown> {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
+    if (this.skiping == true) {
+      return true;
+    }
     return Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to leave from this live?',

@@ -16,8 +16,8 @@ import { LiveCodingComponent } from './components/user/live-coding/live-coding.c
 import { SearchResultComponent } from './components/search-result/search-result.component';
 import { CreateLiveComponent } from './components/user/create-live/create-live.component';
 import { LiveCodingGuard } from './guard/live-coding.guard';
+import { IsValidLiveGuard } from './guard/is-valid-live.guard';
 // import { CanDeactivateGuard } from './guard/live-coding.guard';
-
 
 const routes: Routes = [
   { path: '', component: GuestHomeComponent, canActivate: [GuestUserGuard] },
@@ -41,7 +41,7 @@ const routes: Routes = [
   {
     path: 'liveCoding/:room',
     component: LiveCodingComponent,
-    canActivate: [UserHomeGuard, BlockUserGuard],
+    canActivate: [UserHomeGuard, BlockUserGuard, IsValidLiveGuard],
     canDeactivate: [LiveCodingGuard],
   },
 

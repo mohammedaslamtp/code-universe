@@ -1,5 +1,12 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+  Component,
+  DoCheck,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import {
   client,
@@ -10,6 +17,7 @@ import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
 import { Title } from '@angular/platform-browser';
 import { AngularFaviconService } from 'angular-favicon';
+import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 
 const realRoomId = new BehaviorSubject<string>('empty');
 
@@ -18,7 +26,7 @@ const realRoomId = new BehaviorSubject<string>('empty');
   templateUrl: './live-coding.component.html',
   styleUrls: ['./live-coding.component.css'],
 })
-export class LiveCodingComponent implements OnInit, OnDestroy {
+export class LiveCodingComponent implements OnInit, OnDestroy, DoCheck {
   isToggledUsers: boolean = false;
   connectedUsers!: [USerData];
   owner!: USerData;
@@ -32,6 +40,9 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
   subs_param!: Subscription;
   subs_roomid!: Subscription;
 
+  @ViewChild('htmlEditor', { static: false })
+  htmlEditor!: CodemirrorComponent;
+
   // blocking reaload
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: BeforeUnloadEvent) {
@@ -44,23 +55,38 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     private _userService: UserService,
     private _activatedRoute: ActivatedRoute,
     private _titleService: Title,
-    private _ngxFavIcon: AngularFaviconService
-  ) {
-    this.subs_isConnected = socketConnected.subscribe((val) => {
-      if (val === 'creator') {
-        this.isCreator = true;
-      } else if (val === 'member') {
-        this.isCreator = false;
-      } else {
-        this.isCreator = false;
-      }
-    });
+    private _ngxFavIcon: AngularFaviconService,
+    private _router: Router
+  ) {}
+
+  htmlCursor!: number;
+  ngDoCheck(): void {
+    // console.log('do check works')
   }
 
+  error!: string;
   ngOnInit() {
+    setTimeout(() => {
+      this._socketService.connect();
+      this.subs_isConnected = socketConnected.subscribe((val) => {
+        if (val === 'creator') {
+          this.isCreator = true;
+        } else if (val === 'member') {
+          this.isCreator = false;
+        } else {
+          this.isCreator = false;
+        }
+      });
+    }, 0);
+
+    // changing title of web component
     this._titleService.setTitle('CODEBOX LIVE');
-    this.subs_roomid = realRoomId.subscribe((val) => {
-      this.room = val;
+
+    // invalid entry!
+    this._socketService.on('room-not-found', (err) => {
+      console.log(err);
+      this.liveLoading = false;
+      this._router.navigate(['**']);
     });
 
     // socket connection:
@@ -68,31 +94,50 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
       this.liveLoading = true;
       this.room = param['room'];
       if (param['room']) {
-        this._socketService.connect();
-        this.subs_owner = this._userService.getUserData().subscribe((data) => {
-          this.owner = data;
-          setTimeout(() => {
-            this.joinToLive(data._id, param['room'], this.isCreator);
-            this._ngxFavIcon.setFavicon(
-              `${client}/assets/images/liveStroke2/favicon.ico`
-              );
-              this.liveLoading = false;
-            this.toggleFavicon();
-          }, 3000);
+        
+        this._socketService.emit('isRoomExist', String(param['room']));
+        this._socketService.on('validRoom', (valid) => {
+          console.log('working');
+          if (valid) {
+            this.subs_owner = this._userService
+              .getUserData()
+              .subscribe((data) => {
+                this.owner = data;
+                this.joinToLive(data._id, param['room'], this.isCreator);
+                this.liveLoading = false;
+                setTimeout(() => {
+                  this._ngxFavIcon.setFavicon(
+                    `${client}/assets/images/liveStroke2/favicon.ico`
+                  );
+                  this.toggleFavicon();
+                }, 3000);
+              });
+          }
         });
       }
     });
 
+    this.subs_roomid = realRoomId.subscribe((val) => {
+      this.room = val;
+    });
+
     // update code
     this._socketService.on('code', (code) => {
-      console.log('code', code);
       this.htmlCode = code;
+      console.log('code', code);
+      this.moveCursor(1, 5);
     });
 
     // fetching connected users
     this._socketService.on('connectedClients', (data) => {
       console.log('online ', data);
     });
+  }
+
+  moveCursor(line: number, position: number) {
+    setTimeout(() => {
+      this.htmlEditor.codeMirror?.setCursor(position);
+    }, 0);
   }
 
   // Toggle the favicon
@@ -113,11 +158,17 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
 
   // join to room
   joinToLive(userId: string, roomId: string, isCreator: boolean) {
-    this._socketService.emit('joinRoom', {
-      userId: userId,
-      roomId: roomId,
-      isCreator: isCreator,
-    });
+    if (isCreator) {
+      this._socketService.emit('createRoom', {
+        userId: userId,
+        roomId: roomId,
+      });
+    } else {
+      this._socketService.emit('joinRoom', {
+        userId: userId,
+        roomId: roomId,
+      });
+    }
   }
 
   // leave from room
@@ -127,6 +178,7 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
       roomId: roomId,
       isCreator: isCreator,
     });
+    this._socketService.disconnect();
   }
 
   // editor options and setup:
@@ -187,8 +239,7 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._titleService.setTitle('CODEBOX');
-    this.leaveFromLive(this.owner._id, this.room, this.isCreator);
-    this._socketService.disconnect();
+    this.leaveFromLive(this.owner?._id, this.room, this.isCreator);
     clearInterval(this.iconInterval);
     this._ngxFavIcon.setFavicon('favicon.ico');
     this.closeDropDown();

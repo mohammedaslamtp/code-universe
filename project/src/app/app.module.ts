@@ -57,6 +57,7 @@ import { SharedValuesService } from './services/shared-values.service';
 import { CreateLiveComponent } from './components/user/create-live/create-live.component';
 import { LiveCodingGuard } from './guard/live-coding.guard';
 import { SettingsService } from './services/settings.service';
+import { IsValidLiveGuard } from './guard/is-valid-live.guard';
 
 @NgModule({
   declarations: [
@@ -116,6 +117,7 @@ import { SettingsService } from './services/settings.service';
     CodingGuard,
     BlockUserGuard,
     LiveCodingGuard,
+    IsValidLiveGuard
   ],
   bootstrap: [AppComponent],
 })

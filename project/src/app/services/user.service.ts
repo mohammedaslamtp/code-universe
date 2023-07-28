@@ -243,4 +243,9 @@ export class UserService {
     const url = `${this.api_url}/deleteCode?id=${id}`;
     return this._http.delete<boolean>(url, httpOptions);
   }
+
+  isValidLive(query: string): Observable<boolean> {
+    const url = `${this.api_url}/isValidLive?roomId=${query}`;
+    return this._http.get<boolean>(url, httpOptions);
+  }
 }
