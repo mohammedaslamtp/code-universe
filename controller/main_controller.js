@@ -93,10 +93,8 @@ module.exports = {
     LiveCode.findOne({ room_id: req.query.roomId })
     .then((data) => {
       if (data) {
-          console.log("found");
           res.status(200).json(true);
         } else {
-          console.log("not-found");
           res.status(200).json(false);
         }
       })
