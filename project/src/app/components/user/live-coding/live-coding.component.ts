@@ -1,6 +1,5 @@
 import {
   Component,
-  DoCheck,
   HostListener,
   OnDestroy,
   OnInit,
@@ -18,6 +17,8 @@ import { USerData } from 'src/app/types/UserData';
 import { Title } from '@angular/platform-browser';
 import { AngularFaviconService } from 'angular-favicon';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
+import Swal from 'sweetalert2';
+import { skipWork } from 'src/app/guard/live-coding.guard';
 
 const realRoomId = new BehaviorSubject<string>('empty');
 
@@ -26,7 +27,7 @@ const realRoomId = new BehaviorSubject<string>('empty');
   templateUrl: './live-coding.component.html',
   styleUrls: ['./live-coding.component.css'],
 })
-export class LiveCodingComponent implements OnInit, OnDestroy, DoCheck {
+export class LiveCodingComponent implements OnInit, OnDestroy {
   isToggledUsers: boolean = false;
   connectedUsers!: [USerData];
   owner!: USerData;
@@ -60,9 +61,7 @@ export class LiveCodingComponent implements OnInit, OnDestroy, DoCheck {
   ) {}
 
   htmlCursor!: number;
-  ngDoCheck(): void {
-    // console.log('do check works')
-  }
+
 
   error!: string;
   ngOnInit() {
@@ -92,12 +91,10 @@ export class LiveCodingComponent implements OnInit, OnDestroy, DoCheck {
     // socket connection:
     this.subs_param = this._activatedRoute.params.subscribe((param) => {
       this.liveLoading = true;
-      this.room = param['room'];
       if (param['room']) {
-        
+        this.room = param['room'];
         this._socketService.emit('isRoomExist', String(param['room']));
         this._socketService.on('validRoom', (valid) => {
-          console.log('working');
           if (valid) {
             this.subs_owner = this._userService
               .getUserData()
@@ -117,10 +114,6 @@ export class LiveCodingComponent implements OnInit, OnDestroy, DoCheck {
       }
     });
 
-    this.subs_roomid = realRoomId.subscribe((val) => {
-      this.room = val;
-    });
-
     // update code
     this._socketService.on('code', (code) => {
       this.htmlCode = code;
@@ -131,6 +124,40 @@ export class LiveCodingComponent implements OnInit, OnDestroy, DoCheck {
     // fetching connected users
     this._socketService.on('connectedClients', (data) => {
       console.log('online ', data);
+      this.connectedUsers = data
+    });
+
+    // if live end
+    this._socketService.on('liveEnd', (alert) => {
+      console.log('end: ', alert);
+      skipWork.next(true);
+      this.endSwal(alert);
+    });
+  }
+
+  // Live end alert
+  endSwal(alert: string) {
+    let timerInterval: any;
+    Swal.fire({
+      title: alert,
+      html: 'The live already end. Going to redirect <b></b>',
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+        const b: any = Swal.getHtmlContainer()?.querySelector('b');
+        timerInterval = setInterval(() => {
+          b.textContent = Swal.getTimerLeft();
+        }, 100);
+      },
+      willClose: () => {
+        clearInterval(timerInterval);
+      },
+    }).then((result) => {
+      if (result.dismiss === Swal.DismissReason.timer) {
+        this._router.navigate(['/createLive']);
+        console.log('I was closed by the timer');
+      }
     });
   }
 
@@ -172,13 +199,11 @@ export class LiveCodingComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   // leave from room
-  leaveFromLive(userId: string, roomId: string, isCreator: boolean) {
+  leaveFromLive(userId: string, roomId: string) {
     this._socketService.emit('leaveRoom', {
       userId: userId,
       roomId: roomId,
-      isCreator: isCreator,
     });
-    this._socketService.disconnect();
   }
 
   // editor options and setup:
@@ -208,6 +233,8 @@ export class LiveCodingComponent implements OnInit, OnDestroy, DoCheck {
   htmlCode: string = '<!-- write your html code here -->';
   htmlChange(code: Event): void {
     this.htmlCode = code + '';
+    console.log('change ',code);
+    
     this._socketService.emit('data', code);
   }
 
@@ -239,10 +266,11 @@ export class LiveCodingComponent implements OnInit, OnDestroy, DoCheck {
 
   ngOnDestroy(): void {
     this._titleService.setTitle('CODEBOX');
-    this.leaveFromLive(this.owner?._id, this.room, this.isCreator);
+    this.leaveFromLive(this.owner?._id, this.room);
     clearInterval(this.iconInterval);
     this._ngxFavIcon.setFavicon('favicon.ico');
     this.closeDropDown();
+    this._socketService.disconnect()
     this.subs_owner?.unsubscribe();
     this.subs_param?.unsubscribe();
     this.subs_roomid?.unsubscribe();
