@@ -19,6 +19,7 @@ import { AngularFaviconService } from 'angular-favicon';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import Swal from 'sweetalert2';
 import { skipWork } from 'src/app/guard/live-coding.guard';
+import CodeMirror, { Position } from 'codemirror';
 
 const realRoomId = new BehaviorSubject<string>('empty');
 
@@ -59,9 +60,6 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     private _ngxFavIcon: AngularFaviconService,
     private _router: Router
   ) {}
-
-  htmlCursor!: number;
-
 
   error!: string;
   ngOnInit() {
@@ -114,17 +112,21 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
       }
     });
 
-    // update code
-    this._socketService.on('code', (code) => {
-      this.htmlCode = code;
-      console.log('code', code);
-      this.moveCursor(1, 5);
+    // update html code
+    this._socketService.on('htmlCode', (data) => {
+      const cmInstance = this.htmlEditor.codeMirror;
+      const newCharacterPosition = {
+        line: data.position.line,
+        ch: data.position.ch,
+      };
+      cmInstance?.replaceRange(data.code, newCharacterPosition);
+      console.log('code ', data);
     });
 
     // fetching connected users
     this._socketService.on('connectedClients', (data) => {
       console.log('online ', data);
-      this.connectedUsers = data
+      this.connectedUsers = data;
     });
 
     // if live end
@@ -132,6 +134,61 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
       console.log('end: ', alert);
       skipWork.next(true);
       this.endSwal(alert);
+    });
+
+    // initial code fetch
+    this._socketService.on('initialHtmlEmit', (data) => {
+      console.log(data);
+      this.htmlCode = data;
+    });
+
+    // adding new line
+    this._socketService.on('newLine', (line) => {
+      this.htmlEditor.codeMirror?.replaceRange('\n', { line, ch: 0 });
+    });
+
+    // backspace press
+    this._socketService.on('backspacePress', (data) => {
+      data.position.line += 1;
+      const cmInstance = this.htmlEditor.codeMirror;
+      console.log('backspacePress', data);
+
+      if (data.position.ch == 0 && data.position.line > 0) {
+        let lineContent = '';
+        if (cmInstance?.getLine(data.position.line) !== undefined) {
+          lineContent = cmInstance?.getLine(data.position.line);
+          console.log('line content: ', lineContent);
+        }
+        const prevLineEnd = cmInstance?.getLineHandle(data.position.line - 1)
+          ?.text.length;
+        console.log('prev line len: ', prevLineEnd);
+        cmInstance?.replaceRange(lineContent, {
+          line: data.position.line - 1,
+          ch: Number(prevLineEnd),
+        });
+        cmInstance?.replaceRange('', {
+          line: data.position.line,
+        } as Position);
+      } else {
+        cmInstance?.replaceRange(
+          '',
+          {
+            line: data.position.line - 1,
+            ch: data.position.ch + 1,
+          },
+          { line: data.position.line - 1, ch: data.position.ch }
+        );
+      }
+    });
+
+    // backspace press
+    this._socketService.on('ctrlBackspacePress', (data) => {
+      const cmInstance = this.htmlEditor.codeMirror;
+      const wordStart = { line: data.position.line, ch: data.position.ch };
+      const range = cmInstance?.findWordAt(wordStart);
+      console.log('wordStart ', wordStart);
+      // console.log('wordEnd ', wordEnd);
+      if (range) cmInstance?.replaceRange('', range?.anchor, range?.head);
     });
   }
 
@@ -156,15 +213,8 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     }).then((result) => {
       if (result.dismiss === Swal.DismissReason.timer) {
         this._router.navigate(['/createLive']);
-        console.log('I was closed by the timer');
       }
     });
-  }
-
-  moveCursor(line: number, position: number) {
-    setTimeout(() => {
-      this.htmlEditor.codeMirror?.setCursor(position);
-    }, 0);
   }
 
   // Toggle the favicon
@@ -173,7 +223,6 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     const ico = document.getElementById('favicon') as HTMLLinkElement;
     const favicon1 = `${client}/assets/images/liveStroke1/favicon.ico`;
     const favicon2 = `${client}/assets/images/liveStroke2/favicon.ico`;
-
     this.iconInterval = setInterval(() => {
       if (ico.href == favicon1) {
         this._ngxFavIcon.setFavicon(favicon2);
@@ -230,12 +279,91 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     lineWiseCopyCut: true,
   };
 
-  htmlCode: string = '<!-- write your html code here -->';
-  htmlChange(code: Event): void {
-    this.htmlCode = code + '';
-    console.log('change ',code);
-    
-    this._socketService.emit('data', code);
+  // set cursor position
+  htmlCursor!: Position | undefined;
+  setCursor(position: Position | number | undefined, lang: string) {
+    if (position) {
+      if (lang === 'html') {
+        this.htmlEditor.codeMirror?.setCursor(position);
+      }
+    }
+  }
+
+  // updating cursor position in every mouse click
+  getCursor(event: Event | MouseEvent | KeyboardEvent, lang: string) {
+    if (
+      (event.type == 'click' || event.type == 'contextmenu') &&
+      lang === 'html'
+    ) {
+      console.log('event: ', event);
+      this.htmlPrivateCursorPosition = this.htmlEditor.codeMirror?.getCursor();
+    }
+    if (lang === 'html') {
+      this.htmlCursor = this.htmlEditor.codeMirror?.getCursor();
+    }
+  }
+
+  // to get selection range
+  selectionRange(event: Event) {
+    this.getCursor(event, 'html');
+    const selsectionStart = this.htmlEditor.codeMirror?.getCursor('start');
+    const selsectionEnd = this.htmlEditor.codeMirror?.getCursor('end');
+    console.log('start: ', selsectionStart);
+    console.log('end: ', selsectionEnd);
+  }
+
+  // copy paste caughting
+  pasteCode(event: ClipboardEvent, lang: string): void {
+    const pasteData = event.clipboardData?.getData('text');
+    console.log(pasteData);
+    if (pasteData) {
+      if (lang === 'html') {
+        // this._socketService.emit('html', { position: cursor, code: code.key });
+      }
+    }
+  }
+
+  htmlPrivateCursorPosition: Position | undefined;
+  htmlCode!: string;
+  htmlChange(code: KeyboardEvent): void {
+    const cursor = this.htmlEditor.codeMirror?.getCursor();
+    console.log('cursor position: ', cursor);
+    console.log(code.key);
+    // if press backspace
+    if (code.key === 'Backspace') {
+      console.log('backspace position: ', cursor);
+      let pos = cursor;
+      if (cursor?.ch == 0) {
+        pos = this.htmlPrivateCursorPosition;
+      }
+      this._socketService.emit('Backspace', { position: pos });
+    }
+    // updating private cursor position
+    if (
+      code.key == 'Enter' ||
+      code.key == 'ArrowRight' ||
+      code.key == 'ArrowLeft' ||
+      code.key == 'ArrowDown' ||
+      code.key == 'ArrowUp'
+    ) {
+      this.htmlPrivateCursorPosition = cursor;
+    }
+
+    // adding new line
+    if (code.key === 'Enter') {
+      if (cursor) {
+        const line = cursor.line;
+        this._socketService.emit('addNewLine', { line: line });
+      }
+    }
+
+    if ((code.ctrlKey || code.metaKey) && code.key === 'Backspace') {
+      this._socketService.emit('ctrlAndBackspace', { position: cursor });
+    }
+
+    if (code.key.length == 1) {
+      this._socketService.emit('html', { position: cursor, code: code.key });
+    }
   }
 
   cssCode: string = '/* write your css code here */';
@@ -270,7 +398,7 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     clearInterval(this.iconInterval);
     this._ngxFavIcon.setFavicon('favicon.ico');
     this.closeDropDown();
-    this._socketService.disconnect()
+    // this._socketService.disconnect();
     this.subs_owner?.unsubscribe();
     this.subs_param?.unsubscribe();
     this.subs_roomid?.unsubscribe();

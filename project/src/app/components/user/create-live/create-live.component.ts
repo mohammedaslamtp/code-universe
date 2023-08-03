@@ -83,14 +83,14 @@ export class CreateLiveComponent implements OnInit, OnDestroy {
   clearWarnings = () => (this.warnings = null);
 
   // join with url
+  subs_joinUrl!: Subscription;
   onSubmit(form: NgForm) {
     this.joinLoad = true;
     let roomId = String(form.value.joinUrl);
     roomId = roomId.replace('/liveCoding/', '');
-    setTimeout(() => {
-      this._socketService.emit('isRoomExist', roomId);
-    }, 0);
-    this._socketService.on('validRoom', (valid) => {
+    this._userService.isValidLive(roomId).subscribe((valid) => {
+      console.log('isvalid ', valid);
+
       if (valid == true) {
         this.subs_ownerData = this._userService.getUserData().subscribe(
           (data) => {
@@ -108,16 +108,22 @@ export class CreateLiveComponent implements OnInit, OnDestroy {
             this.warnings = 'somthing went wrong! please try again.';
           }
         );
+      } else {
+        this.error = "Live dosen't exist!";
+        this.joinLoad = false;
       }
     });
   }
+
+  clearError = () => (this.error = null);
 
   ngOnDestroy(): void {
     if (this.isToggledUsers) this.isToggledUsers = false;
     if (this.createLoad) this.createLoad = false;
     if (this.joinLoad) this.joinLoad = false;
     if (this.warnings) this.clearWarnings();
-    this.error = null;
+    this.clearError();
     this.subs_ownerData?.unsubscribe();
+    this.subs_joinUrl?.unsubscribe();
   }
 }

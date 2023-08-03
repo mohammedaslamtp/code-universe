@@ -148,7 +148,11 @@
         [(ngModel)]="htmlCode"
         [options]="htmlOptions"
         [autoFocus]="true"
-        (ngModelChange)="htmlChange($event)"
+        (keydown)="htmlChange($event)"
+        (click)="getCursor($event,'html')"
+        (contextmenu)="getCursor($event,'html')"
+        (select)="selectionRange($event)"
+        (paste)="pasteCode($event, 'html')"
       ></ngx-codemirror>
       <div
         style="flex: 1; background-color: gray; border-bottom: 5px solid"
