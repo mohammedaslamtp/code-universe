@@ -89,7 +89,6 @@ module.exports = {
 
   // to check is valid live or not
   isValidLive: (req, res) => {
-    console.log("q ", req.query.roomId);
     LiveCode.findOne({ room_id: req.query.roomId })
     .then((data) => {
       if (data) {

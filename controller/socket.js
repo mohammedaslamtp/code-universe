@@ -9,7 +9,7 @@ module.exports = {
       io.on("connection", (client) => {
         console.log("socket connected");
         let roomId = "";
-        let htmlCodePart = "<!-- write your html code here -->";
+        let  htmlCodePart = "<!-- write your html code here -->";
         let connectedClients = [];
         let liveCreator;
         client.on("connectionData", (data) => {
@@ -63,6 +63,8 @@ module.exports = {
                   connectedClients: connectedClients,
                   liveCreator: liveCreator,
                 });
+                // initial html emit
+                client.emit("initialHtmlEmit", htmlCodePart);
               }
             });
         });
@@ -89,6 +91,8 @@ module.exports = {
                   connectedClients: connectedClients,
                   liveCreator: liveCreator,
                 });
+                // initial html emit
+                client.emit("initialHtmlEmit", htmlCodePart);
               } else {
                 client.emit("validRoom", false);
                 client.emit("room-not-found", "Live dosen't exist!");
@@ -98,12 +102,35 @@ module.exports = {
 
         // need to modify...working on it..
         // passing data
-        client.on("data", (data) => {
-          const changes = Diff.diffChars(htmlCodePart, data);
-          console.log("diff changes: ", changes);
-          htmlCodePart = data;
-          console.log("data: ", htmlCodePart);
-          client.to(roomId).emit("code", htmlCodePart);
+        client.on("html", (data) => {
+          client.to(roomId).emit("htmlCode", data);
+          console.log("code for update: ",data);
+          // const part1 = htmlCodePart.slice(0, data.position.ch);
+          // const part2 = htmlCodePart.slice(data.position.ch);
+          // htmlCodePart = part1 + data.code + part2;
+        });
+
+
+
+        
+
+        // if pressing backspace
+        client.on("Backspace", (data) => {
+          client.to(roomId).emit("backspacePress", data);
+        });
+
+
+        // if pressing control + backspace
+        client.on("ctrlAndBackspace", (data) => {
+          client.to(roomId).emit("ctrlBackspacePress", data);
+        });
+
+
+
+
+        // if pressing Enter (add new line)
+        client.on("addNewLine", (data) => {
+          client.to(roomId).emit("newLine", data.line);
         });
 
         // Leave the specified room
