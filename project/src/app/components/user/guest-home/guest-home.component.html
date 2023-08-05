@@ -1,1 +1,415 @@
+<div
+  class="ml-64 sm:w-7/12 md:w-10/12 lg:w-10/12 xs:w-6/12 bg-gray-200 absolute p-9"
+  style="margin-top: 4em; width: 86.58%"
+>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Heebo:wght@700&family=Signika&display=swap");
+  </style>
+
+  <h1
+    class="flex items-center justify-center px-4 pb-7 leading-relaxed sm:leading-normal text-6xl font-semibold"
+    style="font-family: 'Heebo', sans-serif"
+  >
+    Boxed&nbsp;<img
+      src="../../../../assets/images/codeIcon.png"
+      width="100px"
+      alt="code"
+    />&nbsp;Universe
+  </h1>
+  <!-- login alert -->
+  <div
+    class="bg-orange-100 border border-orange-400 text-orange-700 px-4 py-3 rounded fixed mr-8"
+    role="alert"
+    [@fade]="alert ? 'visible' : 'hidden'"
+    style="z-index: 20; width: -webkit-fill-available; top: 5em"
+  >
+    <strong class="font-bold">Authentication required! </strong>
+    <span class="block sm:inline"
+      >You haven't login.Please
+      <a routerLink="/login" class="underline text-blue-600">login</a>.</span
+    >
+    <span
+      class="absolute top-0 bottom-0 right-0 px-4 py-3"
+      (click)="closeAlert()"
+    >
+      <svg
+        class="fill-current h-6 w-6 text-red-500"
+        role="button"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+      >
+        <title>Close</title>
+        <path
+          d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"
+        />
+      </svg>
+    </span>
+  </div>
+  <!-- /login alert -->
+  <section
+    class="flex flex-col sm:flex-row w-full bg-gray-200 h-full border-2 gap-4"
+  >
+    <div
+      class="flex gap-y-4 flex-col justify-center items-center w-full sm:w-2/4 p-8"
+    >
+      <h1
+        class="text-center leading-relaxed sm:leading-normal text-5xl font-semibold"
+        style="font-family: 'Signika', sans-serif"
+      >
+        "Explore the boundless possibilities of front-end development in a space
+        built for innovation and experimentation."
+      </h1>
+      <button
+        type="button"
+        title="Create account"
+        class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+        routerLink="/signup"
+      >
+        <span
+          class="relative items-center flex px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+        >
+          <!-- button icon -->
+          <div class="mr-1">
+            <i class="fa-solid fa-plus"></i>
+          </div>
+          CREATE ACCOUNT
+        </span>
+      </button>
+    </div>
+    <!-- small about -->
+    <div
+      class="flex flex-col rounded-md w-full drop-shadow-xl shadow-gray-400 m:w-2/4 p-9 text-xl"
+      style="background: linear-gradient(#141e30, #243b55); color: #c8c8c8"
+    >
+      <div class="flex justify-between items-center gap-x-4 flex-1">
+        <!-- html icon -->
+        <div class="">
+          <svg
+            width="150px"
+            height="150px"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M6 28L4 3H28L26 28L16 31L6 28Z" fill="#E44D26" />
+            <path d="M26 5H16V29.5L24 27L26 5Z" fill="#F16529" />
+            <path
+              d="M9.5 17.5L8.5 8H24L23.5 11H11.5L12 14.5H23L22 24L16 26L10 24L9.5 19H12.5L13 21.5L16 22.5L19 21.5L19.5 17.5H9.5Z"
+              fill="white"
+            />
+          </svg>
+        </div>
+        <div class="font-bold">
+          <h1 class="" style="line-height: 1.4em">
+            "HTML is the foundation of all websites. Without it, the web would
+            be like a house without a foundation: unstable, unreliable, and
+            prone to collapse."
+          </h1>
+        </div>
+      </div>
+      <div class="flex justify-between items-center gap-x-4 flex-1">
+        <div class="font-bold">
+          <h1 style="line-height: 1.4em">
+            "CSS is the artist's paintbrush for the web - with it, you can bring
+            to life stunning visuals and breathtaking designs that capture the
+            imagination and enhance the user experience."
+          </h1>
+        </div>
+        <div class="">
+          <!-- css icon -->
+          <svg
+            width="150px"
+            height="150px"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M6 28L4 3H28L26 28L16 31L6 28Z" fill="#1172B8" />
+            <path d="M26 5H16V29.5L24 27L26 5Z" fill="#33AADD" />
+            <path
+              d="M19.5 17.5H9.5L9 14L17 11.5H9L8.5 8.5H24L23.5 12L17 14.5H23L22 24L16 26L10 24L9.5 19H12.5L13 21.5L16 22.5L19 21.5L19.5 17.5Z"
+              fill="white"
+            />
+          </svg>
+        </div>
+      </div>
+      <div class="flex justify-between items-center gap-x-4 flex-1">
+        <div class="">
+          <!-- js icon -->
+          <svg
+            width="100px"
+            height="100px"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g fill="none" fill-rule="evenodd">
+              <rect width="24" height="24" fill="#F1DC50" />
+              <path
+                stroke="#333"
+                stroke-width="2"
+                d="M12,11 C12,15.749205 12,18.4158717 12,19 C12,19.8761925 11.4771235,21 10,21 C7.61461794,21 7.5,19 7.5,19 M20.7899648,13.51604 C20.1898831,12.5053467 19.3944074,12 18.4035378,12 C16.8563489,12 16,13 16,14 C16,15 16.5,16 18.5084196,16.5 C19.7864643,16.8181718 21,17.5 21,19 C21,20.5 19.6845401,21 18.5,21 C16.9861609,21 15.9861609,20.3333333 15.5,19"
+              />
+            </g>
+          </svg>
+        </div>
+        <div class="font-bold">
+          <h1 style="line-height: 1.4em">
+            "JavaScript is like the duct tape of the internet - it may not be
+            the most elegant solution, but it gets the job done quickly and
+            reliably."
+          </h1>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="w-full rounded-lg mt-8 bg-gray-200">
+    <h1 class="text-center text-4xl font-bold">Explore</h1>
+
+    <!-- for loading -->
+    <div class="mt-8 flex p-5 flex-wrap gap-4" *ngIf="isLoading">
+      <section class="cards flex-1">
+        <article class="card animate-pulse" style="height: 18em; width: 20em">
+          <iframe
+            src="http://127.0.0.1:5500/"
+            width="320"
+            height="200"
+            frameborder="0"
+          ></iframe>
+
+          <div class="card__info mt-5">
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+              style="background-color: rgb(212, 211, 211)"
+            ></h3>
+            <div class="flex gap-4">
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+            </div>
+            <div class="flex gap-4">
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+            </div>
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+              style="background-color: rgb(212, 211, 211)"
+            ></h3>
+          </div>
+        </article>
+      </section>
+      <section class="cards flex-1">
+        <article class="card animate-pulse" style="height: 18em; width: 20em">
+          <iframe
+            src="http://127.0.0.1:5500/zzzzzz/"
+            width="320"
+            height="200"
+            frameborder="0"
+          ></iframe>
+
+          <div class="card__info mt-5">
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+              style="background-color: rgb(212, 211, 211)"
+            ></h3>
+            <div class="flex gap-4">
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+            </div>
+            <div class="flex gap-4">
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+            </div>
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+              style="background-color: rgb(212, 211, 211)"
+            ></h3>
+          </div>
+        </article>
+      </section>
+      <section class="hidden sm:block cards flex-1">
+        <article class="card animate-pulse" style="height: 18em; width: 20em">
+          <iframe
+            src="http://127.0.0.1:5500/zzzzzz/"
+            width="320"
+            height="200"
+            frameborder="0"
+          ></iframe>
+
+          <div class="card__info mt-5">
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+              style="background-color: rgb(212, 211, 211)"
+            ></h3>
+            <div class="flex gap-4">
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+            </div>
+            <div class="flex gap-4">
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+            </div>
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+              style="background-color: rgb(212, 211, 211)"
+            ></h3>
+          </div>
+        </article>
+      </section>
+      <section class="cards flex-1 hidden sm:block">
+        <article class="card animate-pulse" style="height: 18em; width: 20em">
+          <iframe
+            src="http://127.0.0.1:5500/zzzzzz/"
+            width="320"
+            height="200"
+            frameborder="0"
+          ></iframe>
+
+          <div class="card__info mt-5">
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+              style="background-color: rgb(212, 211, 211)"
+            ></h3>
+            <div class="flex gap-4">
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+            </div>
+            <div class="flex gap-4">
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+              <h3
+                class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+                style="background-color: rgb(212, 211, 211)"
+              ></h3>
+            </div>
+            <h3
+              class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+              style="background-color: rgb(212, 211, 211)"
+            ></h3>
+          </div>
+        </article>
+      </section>
+    </div>
+    <!-- /for loading -->
+    <!-- real data -->
+    <div class="mt-8 flex p-5 flex-wrap gap-4" *ngIf="allTemplates">
+      <section class="cards flex-1 sm:flex">
+        <article
+          class="card border border-zinc-200"
+          style="height: 17.3em; width: 20em; margin-bottom: 1.5em"
+          *ngFor="let el of allTemplates"
+        >
+          <iframe
+            id="{{ el.template_id }}"
+            style="width: 100%"
+            class="www"
+            scrolling="no"
+          ></iframe>
+
+          <div
+            class="card__info mt-2"
+            style="border-top: 0.5px solid rgb(210, 222, 233)"
+          >
+            <h3 routerLink="/coding/{{ el._id }}" class="card__title">
+              {{ el.title }}
+            </h3>
+            <span class="card__by">
+              <a
+                class="card__author"
+                (click)="pleaseLogin()"
+                title="{{ el.user.full_name }}"
+                >{{ el.user.full_name }}</a
+              ></span
+            >
+            <div class="flex justify-start mt-3 gap-x-3 tems-center">
+              <div class="action cursor-pointer" (click)="pleaseLogin()">
+                <small class="flex items-center"
+                  ><i
+                    class="fa-solid fa-heart"
+                    style="color: rgb(175, 0, 0)"
+                  ></i
+                  >&nbsp;{{ el.like.length }}</small
+                >
+              </div>
+              <div class="action cursor-pointer" (click)="pleaseLogin()">
+                <small class="flex items-center"
+                  ><i
+                    class="fa-solid fa-comment"
+                    style="color: rgb(0, 0, 0)"
+                  ></i
+                  >&nbsp;10</small
+                >
+              </div>
+              <div class="action cursor-pointer" (click)="pleaseLogin()">
+                <small class="flex items-center"
+                  ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i
+                  >&nbsp;{{ el.views.length }}</small
+                >
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
+    <!-- /real data -->
+  </section>
+</div>
 <app-user-header></app-user-header>

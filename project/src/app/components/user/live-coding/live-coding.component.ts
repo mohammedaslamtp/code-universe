@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import {
   client,
   socketConnected,
@@ -19,9 +19,7 @@ import { AngularFaviconService } from 'angular-favicon';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import Swal from 'sweetalert2';
 import { skipWork } from 'src/app/guard/live-coding.guard';
-import CodeMirror, { Position } from 'codemirror';
-
-const realRoomId = new BehaviorSubject<string>('empty');
+import { Position } from 'codemirror';
 
 @Component({
   selector: 'app-live-coding',
@@ -120,25 +118,21 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
         ch: data.position.ch,
       };
       cmInstance?.replaceRange(data.code, newCharacterPosition);
-      console.log('code ', data);
     });
 
     // fetching connected users
     this._socketService.on('connectedClients', (data) => {
-      console.log('online ', data);
       this.connectedUsers = data;
     });
 
     // if live end
     this._socketService.on('liveEnd', (alert) => {
-      console.log('end: ', alert);
       skipWork.next(true);
       this.endSwal(alert);
     });
 
     // initial code fetch
     this._socketService.on('initialHtmlEmit', (data) => {
-      console.log(data);
       this.htmlCode = data;
     });
 
@@ -149,7 +143,6 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
 
     // backspace press
     this._socketService.on('backspacePress', (data) => {
-      data.position.line += 1;
       const cmInstance = this.htmlEditor.codeMirror;
       console.log('backspacePress', data);
 
@@ -159,12 +152,12 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
           lineContent = cmInstance?.getLine(data.position.line);
           console.log('line content: ', lineContent);
         }
-        const prevLineEnd = cmInstance?.getLineHandle(data.position.line - 1)
-          ?.text.length;
+        const prevLine = data.position.line - 1;
+        const prevLineEnd = cmInstance?.getLineHandle(prevLine)?.text.length;
         console.log('prev line len: ', prevLineEnd);
         cmInstance?.replaceRange(lineContent, {
-          line: data.position.line - 1,
-          ch: Number(prevLineEnd),
+          line: prevLine,
+          ch: prevLineEnd as number,
         });
         cmInstance?.replaceRange('', {
           line: data.position.line,
@@ -173,10 +166,10 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
         cmInstance?.replaceRange(
           '',
           {
-            line: data.position.line - 1,
+            line: data.position.line,
             ch: data.position.ch + 1,
           },
-          { line: data.position.line - 1, ch: data.position.ch }
+          { line: data.position.line, ch: data.position.ch }
         );
       }
     });

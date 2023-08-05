@@ -58,13 +58,13 @@
         title="Your profile"
         class="items-center px-3 py-2 text-sm mr-0 font-medium text-center text-gray-600 rounded-lg md:mb-0 dark:hover:text-gray-300"
         type="button"
-        >
+      >
         <i class="fa-solid fa-user cursor-pointer"></i>
       </button>
       <button
-      *ngIf="isProfile"
-      (click)="dropDown()"
-      title="menu"
+        *ngIf="isProfile"
+        (click)="dropDown()"
+        title="menu"
         class="items-center px-3 py-2 text-sm mr-0 font-medium text-center text-gray-600 rounded-lg md:mb-0 dark:hover:text-gray-300"
         type="button"
       >
@@ -104,7 +104,7 @@
             </li>
             <li>
               <a
-                [routerLink]="'settings/'+ userData._id"
+                [routerLink]="'settings/' + userData._id"
                 class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >Settings</a
               >
@@ -113,7 +113,7 @@
           <div class="py-2">
             <a
               (click)="logout()"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+              class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-red-600"
               >Sign out</a
             >
           </div>
@@ -124,7 +124,11 @@
 </nav>
 
 <!-- Guest Navbar -->
-<nav class="bg-gray-800" *ngIf="authenticated == false">
+<nav
+  class="bg-gray-800 w-full fixed"
+  *ngIf="authenticated == false"
+  style="z-index: 50;"
+>
   <div class="mx-auto px-4">
     <div class="flex justify-between h-16 items-center">
       <div class="flex space-x-4">
@@ -249,7 +253,11 @@
 </div>
 
 <!-- Guest Sidebar -->
-<div class="flex h-screen bg-gray-200" *ngIf="authenticated == false">
+<div
+  class="flex h-screen bg-gray-200 fixed"
+  *ngIf="authenticated == false"
+
+>
   <div class="flex-shrink-0 w-64 bg-gray-800">
     <div class="flex flex-col h-full">
       <div class="flex items-center justify-center h-16 bg-gray-900">
@@ -313,8 +321,5 @@
         </ul>
       </div>
     </div>
-  </div>
-  <div class="flex-1 overflow-auto">
-    <!-- Content -->
   </div>
 </div>
