@@ -105,13 +105,7 @@ module.exports = {
         client.on("html", (data) => {
           client.to(roomId).emit("htmlCode", data);
           console.log("code for update: ",data);
-          // const part1 = htmlCodePart.slice(0, data.position.ch);
-          // const part2 = htmlCodePart.slice(data.position.ch);
-          // htmlCodePart = part1 + data.code + part2;
         });
-
-
-
         
 
         // if pressing backspace

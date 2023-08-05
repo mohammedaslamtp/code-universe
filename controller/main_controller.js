@@ -12,7 +12,10 @@ module.exports = {
   // to get all templates
   getTemplates: async (req, res) => {
     try {
-      const templates = await Codes.find({ isGuest: false }).populate("user");
+      const templates = await Codes.find({
+        isPrivate: false,
+        isGuest: false,
+      }).populate("user");
       res.status(200).json({ all_templates: templates });
     } catch (error) {
       console.log("error: ", error);
@@ -90,8 +93,8 @@ module.exports = {
   // to check is valid live or not
   isValidLive: (req, res) => {
     LiveCode.findOne({ room_id: req.query.roomId })
-    .then((data) => {
-      if (data) {
+      .then((data) => {
+        if (data) {
           res.status(200).json(true);
         } else {
           res.status(200).json(false);

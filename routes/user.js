@@ -22,7 +22,7 @@ route
   .put("/saveCode", code.saveCodeData)
   .put("/storeCode", auth_token.authenticate, code.storeTemplate)
   .delete("/removeCode", code.removeCode)
-  .get("/getTemplates", auth_token.authenticate, mainController.getTemplates)
+  .get("/getTemplates", mainController.getTemplates)
   .get("/searchCode", mainController.searching)
   .get("/getPrivateCodes", code_controller.getPrivateCodes)
   .get("/getPublicCodes", code_controller.getPublicCodes)
