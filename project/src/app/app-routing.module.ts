@@ -17,6 +17,8 @@ import { SearchResultComponent } from './components/search-result/search-result.
 import { CreateLiveComponent } from './components/user/create-live/create-live.component';
 import { LiveCodingGuard } from './guard/live-coding.guard';
 import { IsValidLiveGuard } from './guard/is-valid-live.guard';
+import { SearchingComponent } from './components/searching/searching.component';
+import { OverallViewComponent } from './components/user/overall-view/overall-view.component';
 // import { CanDeactivateGuard } from './guard/live-coding.guard';
 
 const routes: Routes = [
@@ -46,9 +48,22 @@ const routes: Routes = [
   },
 
   {
+    path: 'overallView/:id',
+    component: OverallViewComponent,
+    canActivate: [UserHomeGuard, BlockUserGuard]
+  },
+
+  // auth user
+  {
     path: 'search/:q',
     component: SearchResultComponent,
     canActivate: [BlockUserGuard],
+  },
+
+  // guest user
+  {
+    path: 'guest/search',
+    component: SearchingComponent,
   },
 
   { path: '404', component: NotFoundComponent },

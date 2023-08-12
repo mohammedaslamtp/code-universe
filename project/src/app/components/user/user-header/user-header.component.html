@@ -127,7 +127,7 @@
 <nav
   class="bg-gray-800 w-full fixed"
   *ngIf="authenticated == false"
-  style="z-index: 50;"
+  style="z-index: 50"
 >
   <div class="mx-auto px-4">
     <div class="flex justify-between h-16 items-center">
@@ -253,11 +253,7 @@
 </div>
 
 <!-- Guest Sidebar -->
-<div
-  class="flex h-screen bg-gray-200 fixed"
-  *ngIf="authenticated == false"
-
->
+<div class="flex h-screen bg-gray-200 fixed" *ngIf="authenticated == false">
   <div class="flex-shrink-0 w-64 bg-gray-800">
     <div class="flex flex-col h-full">
       <div class="flex items-center justify-center h-16 bg-gray-900">
@@ -266,7 +262,7 @@
       <div class="overflow-y-auto">
         <ul class="mt-4">
           <li>
-            <a class="flex items-center py-2 px-6 bg-gray-900 text-gray-200">
+            <a class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200" routerLink="/">
               <svg
                 class="h-5 w-5 fill-current text-gray-500"
                 viewBox="0 0 24 24"
@@ -294,6 +290,7 @@
           <li>
             <a
               class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+              routerLink="guest/search"
             >
               <svg
                 class="h-5 w-5 fill-current text-gray-500"

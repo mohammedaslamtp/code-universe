@@ -58,6 +58,8 @@ import { CreateLiveComponent } from './components/user/create-live/create-live.c
 import { LiveCodingGuard } from './guard/live-coding.guard';
 import { SettingsService } from './services/settings.service';
 import { IsValidLiveGuard } from './guard/is-valid-live.guard';
+import { SearchingComponent } from './components/searching/searching.component';
+import { OverallViewComponent } from './components/user/overall-view/overall-view.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +81,8 @@ import { IsValidLiveGuard } from './guard/is-valid-live.guard';
     SearchResultComponent,
     SettingsComponent,
     CreateLiveComponent,
+    SearchingComponent,
+    OverallViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -117,7 +121,7 @@ import { IsValidLiveGuard } from './guard/is-valid-live.guard';
     CodingGuard,
     BlockUserGuard,
     LiveCodingGuard,
-    IsValidLiveGuard
+    IsValidLiveGuard,
   ],
   bootstrap: [AppComponent],
 })

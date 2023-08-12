@@ -14,6 +14,13 @@ import * as jsParser from 'prettier/parser-babel';
 import * as cssParser from 'prettier/parser-postcss';
 import * as JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
 
 import {
   coding,
@@ -38,6 +45,14 @@ import { USerData } from 'src/app/types/UserData';
   selector: 'app-guest-coding',
   templateUrl: './guest-coding.component.html',
   styleUrls: ['./guest-coding.component.css'],
+  animations: [
+    trigger('fade', [
+      state('visible', style({ opacity: 1 })),
+      state('hidden', style({ opacity: 0, display: 'none' })),
+      transition('visible => hidden', animate('300ms ease-out')),
+      transition('hidden => visible', animate('300ms ease-in')),
+    ]),
+  ],
 })
 export class GuestCodingComponent implements OnInit, OnDestroy {
   // confirmation for reaload
@@ -108,8 +123,11 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     // updating download error state
     this.subs_downloadDataError = this._store
       .pipe(select(downloadCode_errorSelector))
-      .subscribe((error) => {
-        this.downloadCodeError$ = error;
+      .subscribe((e: any) => {
+        if (e) {
+          console.log(e.error);
+          this.downloadCodeError$ = e.error;
+        }
       });
   }
 
@@ -228,7 +246,9 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
               this.jsCode = res.data.js;
               this.templateId = res.data.template_id;
               this.titleHead.nativeElement.textContent = this.title;
-              if (res.data.user == this.userData._id) {
+              console.log(res.data.user);
+              
+              if (res.data.user._id == this.userData?._id) {
                 this.isOwner = true;
                 templateListing.next(false);
                 this.random = res.data.template_id;
@@ -316,8 +336,10 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
           this._userService.reloadIframe(data.template_id).subscribe(
             (response: any) => {
               if (response) this.isLoading = false;
+
               const blob = new Blob([response], { type: 'text/html' });
               const url = URL.createObjectURL(blob);
+
               this.iFrame.nativeElement.src = url;
             },
             (err) => {
@@ -538,10 +560,15 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
   }
 
   // get codes for download data
+  error!: boolean;
   getCodes() {
-    console.log('id: ', this.templateId);
+    if (this._userService.loggedIn()) {
+      this._store.dispatch(codesDownload({ id: this.templateId }));
+      this.error = false;
+    } else {
+      this.error = true;
+    }
 
-    this._store.dispatch(codesDownload({ id: this.templateId }));
     this.intervelIdLoading = setInterval(() => {
       if (this.downloadLoading$) {
         clearInterval(this.intervelIdLoading);
@@ -562,6 +589,11 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
         clearInterval(this.intervelIdError);
       }
     }, 1000);
+  }
+
+  clearError() {
+    this.error = false;
+    this.downloadCodeError$ = null;
   }
 
   closeModal = () => (this.toggle = false);
@@ -589,5 +621,6 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
     this.subs_param?.unsubscribe();
     this.subs_option?.unsubscribe();
     this.subs_runCode?.unsubscribe();
+    this.error = false;
   }
 }

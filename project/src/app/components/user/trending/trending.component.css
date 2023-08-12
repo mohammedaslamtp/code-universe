@@ -37,10 +37,6 @@ body {
   width: 18px;
 }
 
-.card__clock-info {
-  float: right;
-}
-
 .card__img {
   visibility: hidden;
   background-size: cover;
@@ -66,7 +62,6 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   width: 100%;
-  position: absolute;
   height: 235px;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -79,14 +74,14 @@ body {
   width: 15em;
   position: relative;
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0px 13px 10px -7px rgba(0, 0, 0, 0.1);
 }
 .card:hover {
   box-shadow: 0px 30px 18px -8px rgba(0, 0, 0, 0.1);
+}
+.card-scale:hover {
   transform: scale(1.1, 1.1);
 }
-
 .card__info {
   z-index: 2;
   background-color: #fff;
@@ -127,7 +122,6 @@ body {
 
 .card:hover .card__info {
   background-color: transparent;
-  position: relative;
   cursor: pointer;
 }
 
@@ -135,49 +129,3 @@ body {
   opacity: 1;
 }
 
-.tab-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.tabs {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  margin-bottom: 2em;
-}
-
-.tabs li {
-  cursor: pointer;
-  margin-right: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  color: rgb(8, 8, 43);
-  border-radius: 4px;
-}
-
-.tabs li:hover {
-  background-color: rgb(8, 8, 43);
-  transition: all 0.2s ease-in-out;
-  color: white;
-}
-
-.tabs li.active {
-  border: none;
-  border-bottom: 3px solid rgb(25, 105, 0);
-  border-bottom-color: rgb(25, 105, 0);
-  border-radius: 5px 5px 0 0;
-}
-
-.tab-content {
-  padding: 10px;
-}
-
-.tab-content > div {
-  display: none;
-}
-
-.tab-content > div.active {
-  display: block;
-}

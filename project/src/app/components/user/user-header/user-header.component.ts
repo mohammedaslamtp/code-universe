@@ -65,9 +65,7 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
     this.is_guest();
   }
 
-  is_guest() {
-    this.authenticated = this._userService.loggedIn();
-  }
+  is_guest = () => (this.authenticated = this._userService.loggedIn());
 
   @HostListener('document:keyup', ['$event'])
   onDocumentKeyUp(event: KeyboardEvent) {

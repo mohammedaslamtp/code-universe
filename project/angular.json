@@ -20,11 +20,8 @@
             "tsConfig": "tsconfig.app.json",
             "assets": ["src/favicon.ico", "src/assets"],
 
-            "scripts": [
-            ],
-            "styles": [
-              "src/styles.css"
-            ]
+            "scripts": [],
+            "styles": ["src/styles.css"]
           },
           "configurations": {
             "production": {

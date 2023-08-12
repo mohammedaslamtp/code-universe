@@ -22,7 +22,6 @@ export class SearchResultComponent implements OnDestroy {
   subs_query: Subscription;
   searchLoading$?: Observable<boolean> | boolean = false;
   searchResult$!: Codes;
-  result?: Codes;
   searchError$?: Observable<string> | string;
   empty: boolean = false;
 

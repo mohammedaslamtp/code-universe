@@ -95,9 +95,7 @@ export class ProfileSettingsComponent implements OnDestroy {
       );
   }
 
-  openFilePicker() {
-    this.fileInput.nativeElement.click();
-  }
+  openFilePicker = () => this.fileInput.nativeElement.click();
 
   // profile img remove option
   subs_removeProfileimg!: Subscription;

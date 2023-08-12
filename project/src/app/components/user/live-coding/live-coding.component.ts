@@ -47,7 +47,7 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
   @HostListener('window:beforeunload', ['$event'])
   handleBeforeUnload(event: BeforeUnloadEvent) {
     // Show confirmation dialog
-    // event.returnValue = 'Are you sure you want to leave this page?';
+    event.returnValue = 'Are you sure you want to leave this page?';
   }
 
   constructor(
@@ -79,7 +79,6 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
 
     // invalid entry!
     this._socketService.on('room-not-found', (err) => {
-      console.log(err);
       this.liveLoading = false;
       this._router.navigate(['**']);
     });
@@ -97,11 +96,11 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
               .subscribe((data) => {
                 this.owner = data;
                 this.joinToLive(data._id, param['room'], this.isCreator);
-                this.liveLoading = false;
                 setTimeout(() => {
+                  this.liveLoading = false;
                   this._ngxFavIcon.setFavicon(
                     `${client}/assets/images/liveStroke2/favicon.ico`
-                  );
+                  );           
                   this.toggleFavicon();
                 }, 3000);
               });
@@ -180,7 +179,6 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
       const wordStart = { line: data.position.line, ch: data.position.ch };
       const range = cmInstance?.findWordAt(wordStart);
       console.log('wordStart ', wordStart);
-      // console.log('wordEnd ', wordEnd);
       if (range) cmInstance?.replaceRange('', range?.anchor, range?.head);
     });
   }

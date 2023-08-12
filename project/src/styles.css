@@ -1,4 +1,3 @@
-
 .popup {
   position: absolute !important;
   margin: 0 !important;
@@ -7,8 +6,15 @@
   width: 100% !important;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 dialog [data-model]::backdrop {
   background-color: rgba(0, 0, 0, 0.9); /* Increase opacity to 0.5 */
