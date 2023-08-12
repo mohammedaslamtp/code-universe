@@ -1,6 +1,9 @@
 const LiveCode = require("../models/live_code");
 const crypto = require("crypto");
 const Diff = require("diff");
+// comment
+const Comment = require("../models/comment");
+const SubComment = require("../models/subComment");
 
 module.exports = {
   socketIo: (io) => {
@@ -9,9 +12,10 @@ module.exports = {
       io.on("connection", (client) => {
         console.log("socket connected");
         let roomId = "";
-        let  htmlCodePart = "<!-- write your html code here -->";
+        let htmlCodePart = "<!-- write your html code here -->";
         let connectedClients = [];
         let liveCreator;
+
         client.on("connectionData", (data) => {
           roomId = hashString(data);
           LiveCode.create({ room_id: roomId })
@@ -104,23 +108,17 @@ module.exports = {
         // passing data
         client.on("html", (data) => {
           client.to(roomId).emit("htmlCode", data);
-          console.log("code for update: ",data);
         });
-        
 
         // if pressing backspace
         client.on("Backspace", (data) => {
           client.to(roomId).emit("backspacePress", data);
         });
 
-
         // if pressing control + backspace
         client.on("ctrlAndBackspace", (data) => {
           client.to(roomId).emit("ctrlBackspacePress", data);
         });
-
-
-
 
         // if pressing Enter (add new line)
         client.on("addNewLine", (data) => {
@@ -156,6 +154,73 @@ module.exports = {
               });
           }
         });
+
+        // not related on the live coding
+        // adding comments(reactions) for templates
+        client.on("addComment", (data) => {
+          const commentDetails = data;
+          console.log(data);
+          Comment.create({
+            commentText: commentDetails.comment,
+            dateAndTime: Date.now(),
+            user: commentDetails.userId,
+            tempId: commentDetails.tempId,
+          })
+            .then((res) => {
+              console.log("comment added: ", res);
+              fetchComments(res.tempId);
+            })
+            .catch((e) => {
+              console.log("something went wront! ", e);
+            });
+        });
+
+        // adding sub comments or replay comments
+        client.on("addSubComment", (data) => {
+          const commentDetails = data;
+          SubComment.create({
+            commentText: commentDetails.comment,
+            dateAndTime: Date.now(),
+            user: commentDetails.userId,
+          })
+            .then((res) => {
+              Comment.findOneAndUpdate(
+                { tempId: commentDetails.tempId },
+                { $addToSet: { subComment: res._id } }
+              ).then((val) => {
+                console.log("sub comment added to array", val);
+                fetchComments(val.tempId);
+              });
+            })
+            .catch((e) => {
+              console.log("something went wront! ", e);
+            });
+        });
+
+        // emitting comments
+        client.on("giveAllComments", (query) => {
+          fetchComments(query.id);
+        });
+        
+        // delete comments
+        client.on("deleteComment", (query) => {
+          Comment.deleteOne({_id:query.id}).then(res=>{
+            fetchComments(query.id);
+          })
+        });
+
+        function fetchComments(id) {
+          Comment.find({ tempId: id })
+            .populate("user")
+            .populate("subComment")
+            .populate({
+              path: "subComment",
+              populate: { path: "user", model: "Users" },
+            })
+            .then((val) => {
+              client.emit("allComments", val);
+            });
+        }
 
         //socket disconnecting
         client.on("disconnect", () => {

@@ -15,7 +15,9 @@ module.exports = {
       const templates = await Codes.find({
         isPrivate: false,
         isGuest: false,
-      }).populate("user");
+      })
+        .populate("user")
+        .populate("like");
       res.status(200).json({ all_templates: templates });
     } catch (error) {
       console.log("error: ", error);
@@ -72,6 +74,8 @@ module.exports = {
   getTemplateDetail: (req, res) => {
     const tempId = req.query.id;
     Codes.findById(tempId)
+      .populate("like")
+      .populate("user")
       .then((data) => {
         console.log(data);
         apiRes.status = 200;

@@ -224,7 +224,6 @@ module.exports = {
                 res.status(404).json({ msg: "Failed to send OTP email" });
               } else {
                 emailSent(retryInfo, res, email, OTP);
-                
               }
             });
           }, retryDelay);

@@ -31,6 +31,8 @@ route
   .delete("/deleteCode", auth_token.authenticate, code_controller.deleteCode)
   .patch("/following", auth_token.authenticate, social_controller.follow)
   .patch("/unFollowing", auth_token.authenticate, social_controller.unFollow)
+  .patch("/like", auth_token.authenticate, social_controller.like)
+  .patch("/disLike", auth_token.authenticate, social_controller.disLike)
   .get(
     "/codeForDownload",
     auth_token.authenticate,
@@ -104,5 +106,5 @@ route
     auth_token.authenticate,
     editor_controller.formatOnSave
   )
-  .get("/isValidLive", auth_token.authenticate, main_controller.isValidLive);
+  .get("/isValidLive", auth_token.authenticate, main_controller.isValidLive)
 module.exports = route;

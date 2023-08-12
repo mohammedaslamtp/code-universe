@@ -1,4 +1,15 @@
 const User = require("../models/users");
+const Template = require("../models/code");
+const Comment = require("../models/comment");
+const SubComment = require("../models/subComment");
+
+const apiRes = {
+  message: "Authentication success",
+  authorization: true,
+  status: 401,
+  data: {},
+};
+
 module.exports = {
   follow: async (req, res) => {
     try {
@@ -43,4 +54,51 @@ module.exports = {
       res.status(404).json(e);
     }
   },
+
+  like: (req, res) => {
+    const id = req.query.id;
+    console.log(id);
+    Template.findByIdAndUpdate(
+      id,
+      { $addToSet: { like: req.user._id } },
+      { new: true }
+    )
+      .populate("like")
+      .populate("user")
+      .then((data) => {
+        apiRes.data = data;
+        apiRes.status = 200;
+        console.log("like works: ", data);
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.data = e.message;
+        apiRes.status = 404;
+        res.status(404).json(apiRes);
+      });
+  },
+
+  disLike: (req, res) => {
+    const id = req.query.id;
+    Template.findOneAndUpdate(
+      { _id: id },
+      { $pull: { like: req.user._id } },
+      { new: true }
+    )
+      .populate("user")
+      .populate("like")
+      .then((data) => {
+        apiRes.data = data;
+        apiRes.status = 200;
+        console.log("dislike works: ", data);
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.data = e.message;
+        apiRes.status = 404;
+        res.status(404).json(apiRes);
+      });
+  },
+
+  
 };
