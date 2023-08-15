@@ -1,0 +1,432 @@
+<!-- page loading -->
+<div
+  class="flex items-center justify-center"
+  style="height: 100vh; background-color: rgba(0, 0, 0, 0.3)"
+  *ngIf="pageLoading"
+>
+  <i class="animate-spin fa-solid fa-spinner" title="loading.."></i>
+</div>
+<!-- /page loading -->
+<div class="flex flex-col w-full h-screen" *ngIf="!pageLoading">
+  <!-- Navbar -->
+  <nav class="flex bg-gray-800 w-full z-10">
+    <div class="w-full mx-auto px-4">
+      <div class="flex justify-between w-full h-16 items-center">
+        <div style="flex: 1" class="flex space-x-4 items-center text-white">
+          <h1 class="m-0 text-2xl font-bold cursor-pointer" routerLink="/">
+            CODE UNIVERSE
+          </h1>
+        </div>
+        <div style="flex: 1" class="flex items-center justify-end">
+          <a
+            [routerLink]="currentUrl"
+            title="exit"
+            class="py-2 text-gray-400 text-lg hover:text-white ml-3 mt-1.5"
+            ><i class="fa-solid fa-right-from-bracket"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- /Navbar -->
+
+  <!-- content -->
+  <main class="flex w-full flex-col duration-300" style="height: 93.3%">
+    <section
+      class="flex flex-col sm:flex-row w-full duration-300"
+      style="height: 100%"
+    >
+      <div
+        class="h-full flex flex-col duration-300 basis-4/6 sm:basis-3/6 md:basis-4/6"
+      >
+        <!-- iframe -->
+        <div class="flex flex-col basis-4/6 w-full md:h-4/6">
+          <!-- reaload -->
+          <div
+            class="flex justify-end p-1 items-center bg-gray-300"
+            style="width: 100%"
+          >
+            <button
+              (click)="loadTemplate(tempDetails.template_id)"
+              title="reload"
+              class="p-2 rounded-full hover:bg-gray-200"
+            >
+              <span *ngIf="Realoading"
+                ><i class="fa-solid fa-rotate-right animate-spin"></i
+              ></span>
+              <span *ngIf="!Realoading"
+                ><i class="fa-solid fa-rotate-right"></i
+              ></span>
+            </button>
+          </div>
+          <!-- /reaload -->
+          <iframe
+            #url
+            class="bg-white w-full h-full select-none"
+            frameborder="0"
+          ></iframe>
+        </div>
+        <!-- /iframe -->
+        <!-- temp details -->
+        <div
+          class="flex flex-col md:flex-row md:h-2/6 basis-2/6 border-t-2 duration-300"
+        >
+          <section class="p-5 basis-full md:basis-2/6">
+            <div class="p-5">
+              <h1 class="font-bold text-2xl">{{ tempDetails.title }}</h1>
+              <h1 class="font-semibold">
+                Created by {{ tempDetails.user.display_name }}
+              </h1>
+            </div>
+            <div class="p-5">
+              <div class="flex gap-4 items-center justify-start">
+                <img
+                  width="70"
+                  height="70"
+                  [routerLink]="'/userProfile/' + tempDetails.user.full_name"
+                  class="cursor-pointer outline outline-offset-2 outline-1 rounded-lg"
+                  [src]="
+                    tempDetails.user.avatar
+                      ? domain + '/' + tempDetails.user.avatar
+                      : '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png'
+                  "
+                  [alt]="tempDetails.user.display_name"
+                />
+                <div class="flex flex-col">
+                  <h1 class="font-bold text-2xl cursor-pointer">
+                    {{ tempDetails.user.display_name }}
+                  </h1>
+                  <button
+                    type="button"
+                    [title]="'Follow ' + tempDetails.user.display_name"
+                    class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+                  >
+                    <!-- <div>
+                      <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+                    </div> -->
+                    <span
+                      class="relative px-4 py-1 flex items-center transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+                    >
+                      <i class="fa-solid fa-plus"></i>&nbsp;Follow
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="flex flex-col basis-full md:basis-4/6 p-5 gap-y-2">
+            <div class="h-8 bg-gray-200 p-2 w-full flex rounded items-center">
+              <h3 class="font-semibold">{{ likedUsersCount }}&nbsp;Likes</h3>
+            </div>
+            <div
+              [ngClass]="
+                likedUsersCount <= 0 || LikesLoading
+                  ? 'flex justify-center'
+                  : 'grid grid-cols-3 '
+              "
+              class="duration-300 overflow-y-scroll no-scroll-style max-h-56 border h-full rounded-md w-full p-4 gap-2"
+            >
+              <!-- likes loading -->
+              <div
+                *ngIf="LikesLoading"
+                class="h-full flex flex-col justify-center items-center"
+              >
+                <p class="text-center text-xl">
+                  <i
+                    class="animate-spin fa-solid fa-spinner"
+                    title="likes loading.."
+                  ></i>
+                </p>
+              </div>
+              <!-- /likes loading -->
+              <!-- if empty -->
+              <div
+                class="flex justify-center items-center w-full h-full"
+                *ngIf="likedUsersCount <= 0 && !LikesLoading"
+              >
+                <p>No Likes yet.</p>
+              </div>
+              <!-- /if empty -->
+              <!-- card -->
+              <div
+                class="flex bg-gray-100 p-1 items-center rounded h-12"
+                *ngFor="let el of likedUsers"
+              >
+                <img
+                  [src]="
+                    el.avatar
+                      ? domain + '/' + el.avatar
+                      : '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png'
+                  "
+                  class="rounded h-8 w-10 cursor-pointer"
+                  alt=""
+                  [routerLink]="'/userProfile/' + el.full_name"
+                />
+                <div class="flex flex-col pl-2 pt-0">
+                  <h5
+                    [routerLink]="'/userProfile/' + el.full_name"
+                    class="font-semibold cursor-pointer text-medium"
+                  >
+                    {{ el.display_name }}
+                  </h5>
+                  <a
+                    [routerLink]="'/userProfile/' + el.full_name"
+                    class="cursor-pointer text-sky-500 text-medium "
+                    >@{{ el.full_name }}</a
+                  >
+                </div>
+              </div>
+              <!--/card -->
+            </div>
+          </section>
+        </div>
+        <!-- /temp details -->
+      </div>
+      <!-- comment area -->
+      <div
+        class="bg-white h-full duration-300 basis-2/6 sm:basis-3/6 md:basis-2/6 flex flex-col justify-between p-4 border-t-2 sm:border-l-2"
+        style="overflow: hidden"
+      >
+        <div
+          *ngIf="commentLoading"
+          class="h-full flex flex-col justify-center items-center"
+        >
+          <p class="text-center text-xl">
+            <i
+              class="animate-spin fa-solid fa-spinner"
+              title="comments loading.."
+            ></i>
+          </p>
+        </div>
+
+        <div
+          #commentArea
+          class="wrapper no-scroll-style overflow-y-scroll pb-2"
+        >
+          <div class="comment">
+            <h1
+              class="text-xl font-semibold"
+              *ngIf="comments && !commentLoading"
+            >
+              <span *ngIf="comments && !commentLoading">{{
+                comments.length
+              }}</span>
+              Comments:
+            </h1>
+
+            <div *ngIf="comments?.length == 0 && !commentLoading">
+              <p class="text-center text-xl">No comments yet.</p>
+            </div>
+
+            <!-- comment -->
+            <div *ngFor="let el of comments">
+              <div class="content">
+                <div class="avatar">
+                  <img
+                    class="cursor-pointer rounded-full object-cover max-w-full"
+                    [routerLink]="'/userProfile/' + el.user.full_name"
+                    [src]="
+                      el.user.avatar
+                        ? domain + '/' + el.user.avatar
+                        : '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png'
+                    "
+                  />
+                </div>
+                <div class="content-comment">
+                  <div class="user">
+                    <h5
+                      class="font-semibold cursor-pointer"
+                      [routerLink]="'/userProfile/' + el.user.full_name"
+                    >
+                      {{ el.user.display_name }}
+                    </h5>
+                    <span class="is-mute">{{ timeSetUp(el.dateAndTime) }}</span>
+                  </div>
+                  <p>{{ el.commentText }}</p>
+                  <div class="content-footer">
+                    <button
+                      title="like"
+                      class="flex btn btn-outline items-center"
+                      (click)="likeAndRemoveLike(el._id, false)"
+                    >
+                      <i class="fa-regular fa-thumbs-up"></i
+                      >{{ el.like.length }}
+                    </button>
+                    <button
+                      title="replay"
+                      (click)="replay(el._id, el.user.full_name)"
+                      class="btn btn-outline"
+                    >
+                      <i class="fa-solid fa-share"></i>Reply
+                    </button>
+                    <button
+                      *ngIf="el.user._id == owner._id"
+                      title="delete"
+                      class="flex btn btn-outline items-center"
+                      (click)="deleteComment(el._id, false)"
+                    >
+                      <i
+                        class="fa-regular fa-trash-can"
+                        style="color: #a80000"
+                      ></i
+                      >Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- comment -->
+              <div class="subcomment mt-3" *ngFor="let sub of el.subComment">
+                <!-- replay icon -->
+                <div class="icon">
+                  <svg
+                    width="20"
+                    height="20"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M20 21a1 1 0 0 1-.883.993L19 22h-6.5a3.5 3.5 0 0 1-3.495-3.308L9 18.5V5.415L5.707 8.707a1 1 0 0 1-1.32.083l-.094-.083a1 1 0 0 1-.083-1.32l.083-.094 5-5a1.01 1.01 0 0 1 .112-.097l.11-.071.114-.054.105-.035.118-.025.058-.007L10 2l.075.003.126.017.111.03.111.044.098.052.092.064.094.083 5 5a1 1 0 0 1-1.32 1.497l-.094-.083L11 5.415V18.5a1.5 1.5 0 0 0 1.355 1.493L12.5 20H19a1 1 0 0 1 1 1Z"
+                      fill="#969696"
+                    />
+                  </svg>
+                </div>
+                <!-- /replay icon -->
+
+                <!-- replay -->
+                <div class="other_comments">
+                  <div class="com">
+                    <div class="content">
+                      <div class="avatar">
+                        <img
+                          [routerLink]="'/userProfile/' + sub.user.full_name"
+                          class="cursor-pointer rounded-full object-cover max-w-full"
+                          [src]="
+                            sub.user.avatar
+                              ? domain + '/' + sub.user.avatar
+                              : '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png'
+                          "
+                        />
+                      </div>
+                      <div class="content-comment">
+                        <div class="user">
+                          <h5
+                            class="font-semibold cursor-pointer"
+                            [routerLink]="'/userProfile/' + sub.user.full_name"
+                          >
+                            {{ sub.user.display_name }}
+                          </h5>
+                          <span class="is-mute">{{
+                            timeSetUp(sub.dateAndTime)
+                          }}</span>
+                        </div>
+                        <p>{{ sub.commentText }}</p>
+                        <div class="content-footer">
+                          <button
+                            title="like"
+                            class="flex btn btn-outline items-center"
+                            (click)="likeAndRemoveLike(sub._id, true)"
+                          >
+                            <i class="fa-regular fa-thumbs-up"></i
+                            >{{ sub.like.length }}
+                          </button>
+                          <button
+                            (click)="replay(el._id, sub.user.display_name)"
+                            title="replay"
+                            class="btn btn-outline"
+                          >
+                            <i class="fa-solid fa-share"></i>Reply
+                          </button>
+                          <button
+                            *ngIf="sub.user._id == owner._id"
+                            title="delete"
+                            class="flex btn btn-outline items-center"
+                            (click)="
+                              deleteComment(
+                                sub._id,
+                                true,
+                                sub.subCommentOf + ''
+                              )
+                            "
+                          >
+                            <i
+                              class="fa-regular fa-trash-can"
+                              style="color: #a80000"
+                            ></i
+                            >Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="footer"></div>
+                  </div>
+                  <!-- /replay -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- comment input -->
+        <div>
+          <div class="relative">
+            <div
+              [ngClass]="
+                replayTo
+                  ? 'h-auto opacity-1 bottom-full'
+                  : ' h-0 opacity-0 bottom-0'
+              "
+              class="w-full duration-300 bg-gray-200 absolute flex items-center justify-between p-1 rounded-t-lg"
+            >
+              <div class="h-full flex items-center">
+                Replay to {{ replayTo }}
+              </div>
+              <button
+                title="remove mention"
+                class="h-full flex items-center text-red-700 bg-gray-100 px-1 rounded-full hover:bg-gray-300 cursor-pointer"
+                (click)="removeMention()"
+              >
+                &times;
+              </button>
+            </div>
+            <form #comment="ngForm">
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+                >
+                  <i
+                    class="fa-regular fa-comment text-gray-400 focus:text-black"
+                  ></i>
+                </div>
+                <textarea
+                  #commentField
+                  type="text"
+                  name="comment"
+                  [(ngModel)]="textAreaContent"
+                  [ngClass]="replayTo ? 'rounded-t-none duration-300' : ''"
+                  class="block w-full p-4 pl-10 text-sm text-gray-900 border rounded-lg border-gray-300 bg-gray-50"
+                  autocomplete="off"
+                  placeholder="add your comment.."
+                  required
+                  cols="30"
+                  rows="1"
+                ></textarea>
+
+                <button
+                  (click)="addComment(comment)"
+                  type="submit"
+                  class="text-white right-2.5 bg-gray-600 absolute bottom-2.5 text-sm hover:bg-gray-500 focus:outline-none font-medium rounded-lg px-4 py-2"
+                >
+                  Comment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- /comment input -->
+      </div>
+      <!-- /comment area -->
+    </section>
+  </main>
+  <!-- /content -->
+</div>

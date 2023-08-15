@@ -1,0 +1,103 @@
+<section>
+  <div *ngIf="error_reason$" id="alert">
+    <strong>Somthing wrong!</strong>{{ error_reason$ }}
+    <button class="close" (click)="close_alert()">X</button>
+  </div>
+  <div class="login-box">
+    <h2 class="font-semibold text-2xl ">CODE UNIVERSE</h2>
+    <form [formGroup]="signup" (ngSubmit)="onSubmit()">
+      <div
+        *ngIf="
+          signup.get('fullName')?.invalid &&
+          (signup.get('fullName')?.touched || signup.get('fullName')?.dirty)
+        "
+        class="alert-msg"
+      >
+        <small *ngIf="signup.get('fullName')?.hasError('required')"
+          >Full Name is required</small
+        ><small *ngIf="signup.get('fullName')?.hasError('pattern')"
+          >invalid username</small
+        >
+        <small *ngIf="signup.get('fullName')?.hasError('minlength')"
+          >Minimum 5 charecters</small
+        >
+      </div>
+      <div class="user-box">
+        <input
+          type="text"
+          formControlName="fullName"
+          minlength="5"
+          title="Please enter alphabetic characters only"
+          required
+        />
+        <label>Full Name</label>
+      </div>
+
+      <div
+        *ngIf="signup.get('email')?.invalid && signup.get('email')?.touched"
+        class="alert-msg"
+      >
+        <small *ngIf="signup.get('email')?.hasError('pattern')"
+          >invalid email</small
+        ><small *ngIf="signup.get('email')?.hasError('required')"
+          >Email is required</small
+        >
+      </div>
+      <div class="user-box">
+        <input
+          type="email"
+          formControlName="email"
+          pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+          required
+        />
+        <label>Email</label>
+      </div>
+
+      <div
+        *ngIf="
+          signup.get('new_password')?.invalid &&
+          signup.get('new_password')?.touched
+        "
+        class="alert-msg"
+      >
+        <small *ngIf="signup.get('new_password')?.hasError('required')"
+          >Password is required!</small
+        >
+        <small *ngIf="signup.get('new_password')?.hasError('minlength')"
+          >Minimum 8 letters!</small
+        >
+      </div>
+      <div class="user-box">
+        <input
+          type="password"
+          formControlName="new_password"
+          minlength="8"
+          required
+        />
+        <label>New Password</label>
+      </div>
+
+      <a routerLink="/login"
+        ><small style="color: white; float: right">Login</small></a
+      >
+      <div class="flex justify-center">
+        <button
+          [disabled]="!signup.valid"
+          [ngStyle]="{ cursor: !signup.valid ? 'not-allowed' : 'pointer' }"
+          type="submit"
+          title="submit"
+          class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+        >
+          <div *ngIf="loading$">
+            <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+          </div>
+          <span
+            class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+          >
+            Signup
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
