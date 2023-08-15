@@ -1,0 +1,136 @@
+<!-- dark themes:- -->
+<!-- ayu-mirage -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/ayu-mirage.css"
+/>
+
+<!-- darcula -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/darcula.css"
+/>
+
+<!-- dracula -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/dracula.css"
+/>
+<!-- twilight -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/twilight.css"
+/>
+<!-- monokai -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/monokai.css"
+/>
+<!-- night -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/3024-night.css"
+/>
+<!-- blackboard -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/blackboard.css"
+/>
+<!-- hopscotch -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/hopscotch.css"
+/>
+<!-- meterial -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/material.css"
+/>
+<!-- tomorrow-night-bright -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/tomorrow-night-bright.css"
+/>
+
+<!-- light themes:- -->
+<!-- eclipse -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/eclipse.css"
+/>
+
+<!-- panda -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/panda-syntax.css"
+/>
+
+<!-- day -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/3024-day.css"
+/>
+<!-- base16-light -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/base16-light.css"
+/>
+<!-- duotone-light -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/duotone-light.css"
+/>
+<!-- elegant -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/elegant.css"
+/>
+<!-- idea -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/idea.css"
+/>
+<!-- paraiso-light -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/paraiso-light.css"
+/>
+
+<!-- juejin -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/juejin.css"
+/>
+<!-- yeti-->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/codemirror@6.65.7/theme/yeti.css"
+/>
+
+
+
+<div class="bg-red-200 my-5" id="code">
+  <div
+    class="max-w-7xl mx-auto pt-16 pb-6 px-4 sm:px-6 lg:px-8 lg:flex lg:justify-between"
+  >
+    <div class="max-w-xl">
+      <h2
+        class="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl"
+      >
+        Angular CodeMirror
+      </h2>
+      <div class="mt-5"></div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="ngx-codemirror mb-2 pb-4">
+      <ngx-codemirror
+        [ngModel]="data"
+        [options]="options"
+        [autoFocus]="true"
+        (ngModelChange)="handleChange($event)"
+      ></ngx-codemirror>
+    </div>
+  </div>
+</div>

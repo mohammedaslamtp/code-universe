@@ -1,0 +1,37 @@
+
+POST http://localhost:3000/login HTTP/1.1
+content-type: application/json
+
+{
+   "email":"aslam@gmail.com",
+   "password":"12312312"
+}
+
+
+
+###
+GET http://localhost:3000/generateOtp?email=aslamtp11@gmail.com HTTP/1.1
+content-type: application/json
+
+
+###
+PUT http://localhost:3000/storeCode HTTP/1.1
+content-type: application/json
+
+{
+   "html": "643d3948ea00ccd6d9904a63",
+   "css": "643d3948ea00ccd6d9904a63",
+   "js": "643d3948ea00ccd6d9904a63"
+}
+
+
+###
+POST http://localhost:3000/verifyOtp HTTP/1.1
+content-type: application/json
+
+{
+   "email":"aslamtp11@gmail.com",
+   "otp":175821 
+}
+
+
