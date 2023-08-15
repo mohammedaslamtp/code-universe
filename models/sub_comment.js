@@ -21,6 +21,12 @@ const subComment = new mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Users",
     },
+
+    subCommentOf: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "comment",
+      required: [true, "Id of parent comment is required"],
+    },
   },
   { timestamps: true }
 );

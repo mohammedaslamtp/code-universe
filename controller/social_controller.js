@@ -1,7 +1,6 @@
 const User = require("../models/users");
 const Template = require("../models/code");
-const Comment = require("../models/comment");
-const SubComment = require("../models/subComment");
+const Comments = require("../models/comment");
 
 const apiRes = {
   message: "Authentication success",
@@ -68,7 +67,6 @@ module.exports = {
       .then((data) => {
         apiRes.data = data;
         apiRes.status = 200;
-        console.log("like works: ", data);
         res.status(200).json(apiRes);
       })
       .catch((e) => {
@@ -90,7 +88,6 @@ module.exports = {
       .then((data) => {
         apiRes.data = data;
         apiRes.status = 200;
-        console.log("dislike works: ", data);
         res.status(200).json(apiRes);
       })
       .catch((e) => {
@@ -100,5 +97,29 @@ module.exports = {
       });
   },
 
-  
+  allComments: (req, res) => {
+    Comments.find({ tempId: req.query.id })
+      .then((data) => {
+        apiRes.status = 200;
+        apiRes.data = data.length;
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        console.log("something went wrong!");
+      });
+  },
+
+  likedUsers: (req, res) => {
+    Template.findById(req.query.id)
+      .populate("like")
+      .then((data) => {
+        console.log('all liked users: ',data.like);
+        apiRes.status = 200;
+        apiRes.data = data.like;
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        console.log("something went wrong!");
+      });
+  },
 };

@@ -1,9 +1,10 @@
 const LiveCode = require("../models/live_code");
 const crypto = require("crypto");
-const Diff = require("diff");
+const Code = require("../models/code");
+
 // comment
 const Comment = require("../models/comment");
-const SubComment = require("../models/subComment");
+const SubComment = require("../models/sub_comment");
 
 module.exports = {
   socketIo: (io) => {
@@ -155,11 +156,18 @@ module.exports = {
           }
         });
 
-        // not related on the live coding
+        // not related to the live coding
         // adding comments(reactions) for templates
+        let commentRoomId = "";
+        // join comment room
+        client.on("joinCommentRoom", (id) => {
+          commentRoomId = id;
+          client.join(id);
+        });
+
+        // adding comments
         client.on("addComment", (data) => {
           const commentDetails = data;
-          console.log(data);
           Comment.create({
             commentText: commentDetails.comment,
             dateAndTime: Date.now(),
@@ -167,11 +175,15 @@ module.exports = {
             tempId: commentDetails.tempId,
           })
             .then((res) => {
-              console.log("comment added: ", res);
-              fetchComments(res.tempId);
+              Code.findOneAndUpdate(
+                { _id: commentDetails.tempId },
+                { $addToSet: { comment: res._id } }
+              ).then((val) => {
+                fetchComments(val._id);
+              });
             })
             .catch((e) => {
-              console.log("something went wront! ", e);
+              console.log("something went wrong! ", e);
             });
         });
 
@@ -182,31 +194,103 @@ module.exports = {
             commentText: commentDetails.comment,
             dateAndTime: Date.now(),
             user: commentDetails.userId,
+            subCommentOf: commentDetails.parentId,
           })
             .then((res) => {
+              console.log("sub comment added: ", res);
               Comment.findOneAndUpdate(
-                { tempId: commentDetails.tempId },
+                { _id: commentDetails.parentId },
                 { $addToSet: { subComment: res._id } }
               ).then((val) => {
-                console.log("sub comment added to array", val);
-                fetchComments(val.tempId);
+                fetchComments(data.tempId);
               });
             })
             .catch((e) => {
-              console.log("something went wront! ", e);
+              console.log("something went wrong! ", e);
             });
+        });
+
+        // like and remove like of comments
+        client.on("adjustLike", (query) => {
+          if (query.isChild) {
+            SubComment.findById(query.id).then((val) => {
+              const index = val.like.indexOf(query.userId);
+              if (index !== -1) {
+                val.like.splice(index, 1);
+              } else {
+                val.like.push(query.userId);
+              }
+              val.save().then((res) => {
+                client.emit("likeCountUpdated", {
+                  fullDetails: res,
+                  isChild: true,
+                });
+                client.to(commentRoomId).emit("likeCountUpdated", {
+                  fullDetails: res,
+                  isChild: true,
+                });
+              });
+            });
+          } else {
+            Comment.findById(query.id).then((val) => {
+              const index = val.like.indexOf(query.userId);
+              if (index !== -1) {
+                val.like.splice(index, 1);
+              } else {
+                val.like.push(query.userId);
+              }
+              val.save().then((res) => {
+                client.emit("likeCountUpdated", {
+                  fullDetails: res,
+                  isChild: false,
+                });
+                client.to(commentRoomId).emit("likeCountUpdated", {
+                  fullDetails: res,
+                  isChild: false,
+                });
+              });
+            });
+          }
         });
 
         // emitting comments
         client.on("giveAllComments", (query) => {
           fetchComments(query.id);
         });
-        
+
         // delete comments
         client.on("deleteComment", (query) => {
-          Comment.deleteOne({_id:query.id}).then(res=>{
-            fetchComments(query.id);
-          })
+          if (query.isChild == true) {
+            SubComment.findByIdAndRemove(query.id, { new: true }).then(
+              (comm) => {
+                Comment.findByIdAndUpdate(
+                  query.parentId,
+                  {
+                    $pull: { subComment: query.id },
+                  },
+                  { new: true }
+                ).then((data) => {
+                  fetchComments(data.tempId);
+                });
+              }
+            );
+          } else {
+            SubComment.deleteMany({ subCommentOf: query.id }).then((comm) => {
+              Comment.findByIdAndRemove(query.id).then((res) => {
+                Code.findOneAndUpdate(
+                  { _id: res.tempId },
+                  { $pull: { comment: query.id } }
+                ).then((val) => {
+                  fetchComments(res.tempId);
+                });
+              });
+            });
+          }
+        });
+
+        // leave from comment room
+        client.on("leaveCommentRoom", (id) => {
+          client.leave(id);
         });
 
         function fetchComments(id) {
@@ -219,6 +303,7 @@ module.exports = {
             })
             .then((val) => {
               client.emit("allComments", val);
+              client.to(commentRoomId).emit("allComments", val);
             });
         }
 

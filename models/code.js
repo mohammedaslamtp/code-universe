@@ -37,6 +37,11 @@ const code = new mongoose.Schema(
       default: false,
     },
 
+    comment: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "comment",
+    },
+
     like: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Users",

@@ -107,4 +107,6 @@ route
     editor_controller.formatOnSave
   )
   .get("/isValidLive", auth_token.authenticate, main_controller.isValidLive)
+  .get("/allComments", auth_token.authenticate, social_controller.allComments)
+  .get("/likedUsers", auth_token.authenticate, social_controller.likedUsers)
 module.exports = route;
