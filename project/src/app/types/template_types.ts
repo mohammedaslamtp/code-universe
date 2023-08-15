@@ -1,3 +1,5 @@
+import { USerData } from './UserData';
+
 // types of templates collection:
 export type Templates = Template[];
 export interface Template {
@@ -10,9 +12,10 @@ export interface Template {
   isGuest: boolean;
   isPrivate: boolean;
   like: [string];
+  comment: [string];
   views: [string];
   __v: number;
-  user: User;
+  user: USerData;
 }
 // type of user collection:
 export interface User {

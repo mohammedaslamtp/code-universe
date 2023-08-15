@@ -5,7 +5,11 @@ import { Observable, map } from 'rxjs';
 
 import { appStateInterface } from 'src/app/types/appState';
 import { LoginData } from '../../../stores/actions/loginAction';
-import { log_dataSelector, log_errorSelector } from 'src/app/stores/selector';
+import {
+  log_dataSelector,
+  log_errorSelector,
+  log_loadingSelector,
+} from 'src/app/stores/selector';
 import { LOGIN } from './userLogin';
 import { popupLog } from 'src/app/services/shared-values.service';
 
@@ -17,6 +21,7 @@ import { popupLog } from 'src/app/services/shared-values.service';
 export class LoginComponent implements OnInit {
   alert_msg?: Observable<string> | string;
   data$?: Observable<LOGIN>;
+  loading$?: Observable<boolean>;
 
   constructor(private store: Store<appStateInterface>) {
     this.data$ = this.store.pipe(
@@ -30,6 +35,12 @@ export class LoginComponent implements OnInit {
       map((doc: any) => (this.alert_msg = doc))
     );
     this.alert_msg?.subscribe((doc) => doc);
+
+    this.loading$ = this.store.pipe(
+      select(log_loadingSelector),
+      map((doc: any) => (this.loading$ = doc))
+    );
+    this.loading$?.subscribe((doc) => doc);
   }
 
   ngOnInit(): void {}
@@ -40,8 +51,14 @@ export class LoginComponent implements OnInit {
   });
 
   onSubmit() {
-    popupLog.next(false);
-    this.store.dispatch(LoginData({ login: this.login.value }));
+    try {
+      console.log('data: ',this.login);
+      popupLog.next(false);
+      this.store.dispatch(LoginData({ login: this.login.value }));
+    } catch (error) {
+      console.log(error);
+      
+    }
   }
 
   close_alert() {

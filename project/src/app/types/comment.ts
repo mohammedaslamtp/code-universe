@@ -9,7 +9,7 @@ export interface comment {
   commentText: string;
   like: USerData[];
   subComment?: comment[];
-  mention?: USerData;
+  subCommentOf?: string | USerData;
   createdAt?: string;
   updatedAt?: string;
   __v?: number;

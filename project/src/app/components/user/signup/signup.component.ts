@@ -4,7 +4,10 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { Registration } from '../../../stores/actions/signupAction';
-import { reg_errorSelector } from 'src/app/stores/selector';
+import {
+  reg_errorSelector,
+  reg_loadingSelector,
+} from 'src/app/stores/selector';
 import { appStateInterface } from 'src/app/types/appState';
 import { User } from './newUser';
 
@@ -15,10 +18,14 @@ import { User } from './newUser';
 })
 export class SignupComponent {
   error_reason$?: Observable<string> | string;
+  loading$?: Observable<boolean>;
   userData!: User;
   constructor(private store: Store<appStateInterface>) {
     this.store.pipe(select(reg_errorSelector)).subscribe((err: any) => {
       this.error_reason$ = err;
+    });
+    this.store.pipe(select(reg_loadingSelector)).subscribe((load: any) => {
+      this.loading$ = load;
     });
   }
 

@@ -17,8 +17,12 @@
       style="background-color: #1f2937"
     >
       <div class="flex ml-2 flex-01">
-        <a href="{{github}}" target="_blank" class="mr-5 cursor-pointer">twitter.com</a>
-        <a href="{{linkedIn}}" target="_blank" class="cursor-pointer">github.com</a>
+        <a href="{{ github }}" target="_blank" class="mr-5 cursor-pointer"
+          >twitter.com</a
+        >
+        <a href="{{ linkedIn }}" target="_blank" class="cursor-pointer"
+          >github.com</a
+        >
       </div>
       <div class="flex-01">
         <h1 class="text-2xl font-bold text-center">{{ displayName }}</h1>
@@ -110,12 +114,22 @@
     <!-- location -->
     <section class="w-full h-auto flex flex-col items-center">
       <div class="w-2/4 h-auto mt-5" *ngIf="location">
-        <p class="text-center text-md">{{ location }}</p>
+        <p
+          class="text-center flex justify-center text-md font-bold"
+          title="location"
+        >
+          <i class="fa-solid fa-location-dot"></i>&nbsp; {{ location }}
+        </p>
       </div>
       <!-- /location -->
       <!-- description -->
-      <div class="w-2/4 h-auto mt-5 font-bold" *ngIf="bio">
-        <p class="text-center text-lg">{{ bio }}</p>
+      <div class="w-2/4 h-auto mt-5" *ngIf="bio">
+        <p
+          class="text-center text-md flex items-center justify-center"
+          title="about me"
+        >
+          <i class="fa-solid fa-user-pen"></i>&nbsp; {{ bio }}
+        </p>
       </div>
     </section>
     <!-- /description -->

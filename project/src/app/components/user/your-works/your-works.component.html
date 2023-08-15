@@ -15,13 +15,14 @@
       class="www"
       scrolling="no"
     ></iframe>
-  
 
     <div
       class="card__info mt-2"
       style="border-top: 0.5px solid rgb(210, 222, 233)"
     >
-      <h3 routerLink="/coding/{{el._id}}" class="card__title">{{ el.title }}</h3>
+      <h3 routerLink="/coding/{{ el._id }}" class="card__title">
+        {{ el.title }}
+      </h3>
       <span class="card__by">
         <a class="card__author" title="{{ el.user.full_name }}">
           {{ el.user.full_name }}</a
@@ -37,7 +38,7 @@
         <div class="action mr-2">
           <small class="flex items-center"
             ><i class="fa-solid fa-comment" style="color: rgb(0, 0, 0)"></i
-            >&nbsp;25</small
+            >&nbsp;{{ el.comment.length }}</small
           >
         </div>
         <div class="action">

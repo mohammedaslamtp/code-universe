@@ -1,7 +1,5 @@
 import { io } from 'socket.io-client';
 import { domain } from './shared-values.service';
-import { USerData } from '../types/UserData';
-import { Observable, of } from 'rxjs';
 
 export class SocketService {
   private readonly _socket = io(domain);
@@ -25,6 +23,4 @@ export class SocketService {
   on(event: string, callback: (data: any) => void) {
     this._socket.on(event, callback);
   }
-
-  
 }

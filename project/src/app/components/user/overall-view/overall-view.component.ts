@@ -16,6 +16,7 @@ import { USerData } from 'src/app/types/UserData';
 import { comment } from 'src/app/types/comment';
 import { Template } from 'src/app/types/template_types';
 import moment from 'moment';
+import { SocialService } from 'src/app/services/soical.service';
 
 @Component({
   selector: 'app-overall-view',
@@ -37,17 +38,23 @@ export class OverallViewComponent implements OnInit, OnDestroy {
   comments!: comment[];
   subs_comments!: Subscription;
   domain: string = domain;
+  commentLoading: boolean = false;
+  likedUsers!: USerData[];
+  LikesLoading:boolean = false
 
   constructor(
     private _activateRoute: ActivatedRoute,
     private _router: Router,
     private _mainService: MainService,
     private _userService: UserService,
-    private _socketService: SocketService
+    private _socketService: SocketService,
+    private _socialService: SocialService
   ) {}
 
   ngOnInit(): void {
     this.pageLoading = true;
+    this.commentLoading = true;
+    this.LikesLoading = true;
     this._socketService.connect();
 
     // collecting current url
@@ -74,18 +81,25 @@ export class OverallViewComponent implements OnInit, OnDestroy {
         this.tempId = param['id'];
         this.subs_tempDetail = this._mainService
           .getTemplateDetail(param['id'])
-          .subscribe((result) => {
-            if (result.data) {
-              this.userData = result.data.user;
-              console.log('template details ', result.data);
-              this.tempDetails = result.data;
-              this.loadTemplate(result.data.template_id);
-              this._socketService.emit('giveAllComments', {
-                id: result.data._id,
-              });
-              this.pageLoading = false;
+          .subscribe(
+            (result) => {
+              if (result.data) {
+                this._socketService.emit('joinCommentRoom', result.data._id);
+                this.userData = result.data.user;
+                console.log('template details ', result.data);
+                this.getLikedUsers(result.data._id);
+                this.tempDetails = result.data;
+                this.loadTemplate(result.data.template_id);
+                this._socketService.emit('giveAllComments', {
+                  id: result.data._id,
+                });
+                this.pageLoading = false;
+              }
+            },
+            (e) => {
+              this._router.navigate(['**']);
             }
-          });
+          );
       },
       (err) => {
         this._router.navigate(['**']);
@@ -95,6 +109,29 @@ export class OverallViewComponent implements OnInit, OnDestroy {
     // fetching all comments
     this._socketService.on('allComments', (data) => {
       this.comments = data;
+      this.commentLoading = false;
+      console.log('comments: ', data);
+    });
+
+    // if like count upadate happens
+    this._socketService.on('likeCountUpdated', (data) => {
+      if (data.isChild) {
+        this.comments.filter((el) => {
+          if (el._id == data.fullDetails.subCommentOf) {
+            el.subComment?.filter((sub) => {
+              if (sub._id == data.fullDetails._id) {
+                sub.like = data.fullDetails.like;
+              }
+            });
+          }
+        });
+      } else {
+        this.comments.filter((el) => {
+          if (el._id == data.fullDetails._id) {
+            el.like = data.fullDetails.like;
+          }
+        });
+      }
     });
   }
 
@@ -116,17 +153,37 @@ export class OverallViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  replayTo: string | null = null;
   textAreaContent = '';
+  @ViewChild('commentField', { static: false }) commentField!: ElementRef;
+  replayTo: string | null = null;
+  parentId: string | null = null;
+  replay(parentId: string, replayTo: string) {
+    this.replayTo = replayTo;
+    this.parentId = parentId;
+    this.commentField.nativeElement.focus();
+  }
+
+  subs_likedUsers!: Subscription;
+  likedUsersCount: number = 0;
+  getLikedUsers(id: string) {
+    this.subs_likedUsers = this._socialService
+      .getLikedUsers(id)
+      .subscribe((users) => {
+        this.LikesLoading = false
+        this.likedUsers = users.data;
+        this.likedUsersCount = users.data.length
+      });
+  }
 
   addComment(form: NgForm) {
     let comment = form.controls['comment'].value;
     comment = comment.trim();
     this.textAreaContent = comment;
     if (String(comment).length > 0) {
-      if (this.replayTo) {
+      if (this.replayTo && this.parentId) {
         this._socketService.emit('addSubComment', {
           comment: comment,
+          parentId: this.parentId,
           userId: this.owner._id,
           tempId: this.tempDetails._id,
         });
@@ -140,10 +197,23 @@ export class OverallViewComponent implements OnInit, OnDestroy {
     }
     this.textAreaContent = '';
     this.scrollToBottom();
+    this.removeMention();
   }
 
-  deleteComment(id:string,tempId:string){
-    this._socketService.emit('deleteComment',{id:id,tempId:tempId})
+  likeAndRemoveLike(id: string, isChild: boolean) {
+    this._socketService.emit('adjustLike', {
+      id: id,
+      userId: this.owner._id,
+      isChild: isChild,
+    });
+  }
+
+  deleteComment(id: string, isChild: boolean, parentId?: string) {
+    this._socketService.emit('deleteComment', {
+      id: id,
+      isChild: isChild,
+      parentId: parentId,
+    });
   }
 
   @ViewChild('commentArea', { static: false }) commentDiv!: ElementRef;
@@ -152,13 +222,10 @@ export class OverallViewComponent implements OnInit, OnDestroy {
     container.scrollTop = container.scrollHeight;
   }
 
-  subComment(comment: string) {
-    this.replayTo = comment;
-  }
-
   removeMention = () => (this.replayTo = null);
 
   ngOnDestroy(): void {
+    this._socketService.emit('leaveCommentRoom', this.tempId);
     this.subs_tempDetail?.unsubscribe();
     this.subs_tempId?.unsubscribe();
     this.subs_owner?.unsubscribe();

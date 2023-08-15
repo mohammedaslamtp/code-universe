@@ -41,4 +41,16 @@ export class SocialService {
     const url = `${this._apiUrl}/disLike?id=${id}`;
     return this._http.patch<apiRes>(url, httpOptions);
   }
+
+  // to get all comments
+  giveComments(id: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/allComments?id=${id}`;
+    return this._http.get<apiRes>(url, httpOptions);
+  }
+
+  // get liked users of a particular template
+  getLikedUsers(id: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/likedUsers?id=${id}`;
+    return this._http.get<apiRes>(url, httpOptions);
+  }
 }
