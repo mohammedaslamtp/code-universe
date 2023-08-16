@@ -15,7 +15,10 @@
       >You haven't login.Please
       <a routerLink="/login" class="underline text-blue-600">login</a>.</span
     >
-    <span class="absolute top-0 bottom-0 right-0 px-4 py-3" (click)="closeAlert()">
+    <span
+      class="absolute top-0 bottom-0 right-0 px-4 py-3"
+      (click)="closeAlert()"
+    >
       <svg
         class="fill-current h-6 w-6 text-red-500"
         role="button"
@@ -76,32 +79,29 @@
           class="card__info mt-2"
           style="border-top: 0.5px solid rgb(210, 222, 233)"
         >
-          <h3 routerLink="/coding/{{ el.template_id }}" class="card__title">
+          <h3 [routerLink]="'/coding/' + el._id" class="card__title">
             {{ el.title }}
           </h3>
           <span class="card__by">
-            <a class="card__author" title="{{ el.userData[0].full_name }}">{{
+            <a class="card__author cursor-pointer" (click)="pleaseLogin()">{{
               el.userData[0].full_name
             }}</a></span
           >
           <div class="flex justify-start mt-3 items-center">
             <div class="action mr-2">
-              <small class="flex"
-              (click)="pleaseLogin()"
+              <small class="flex" (click)="pleaseLogin()"
                 ><i class="fa-solid fa-heart" style="color: rgb(175, 0, 0)"></i
                 >&nbsp;{{ el.like.length }}</small
               >
             </div>
             <div class="action mr-2">
-              <small class="flex"
-              (click)="pleaseLogin()"
+              <small class="flex" (click)="pleaseLogin()"
                 ><i class="fa-solid fa-comment" style="color: rgb(0, 0, 0)"></i
                 >&nbsp;12</small
               >
             </div>
             <div class="action">
-              <small class="flex"
-              (click)="pleaseLogin()"
+              <small class="flex" (click)="pleaseLogin()"
                 ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i
                 >&nbsp;{{ el.views.length }}</small
               >

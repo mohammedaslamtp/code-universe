@@ -5,7 +5,7 @@
       src="http://127.0.0.1:5500/zzzzzz/"
       width="320"
       height="200"
-      style="border-radius: 12px 12px 0 0;"
+      style="border-radius: 12px 12px 0 0"
       frameborder="0"
     ></iframe>
     <div class="card__info-hover"></div>
@@ -48,15 +48,14 @@
 <!-- real data -->
 <section class="cards" *ngIf="trendingTemplates">
   <article
-    
     *ngFor="let el of trendingTemplates"
     class="card border border-zinc-200"
-    style="height: 17.3em; width: 20em; margin-bottom: 1.5em" 
-    [ngClass]="{'card-scale':true}"
+    style="height: 17.3em; width: 20em; margin-bottom: 1.5em"
+    [ngClass]="{ 'card-scale': true }"
   >
     <iframe
       id="{{ el.template_id }}"
-      style="width: 100% ;border-radius: 12px 12px 0 0 !important;"
+      style="width: 100%; border-radius: 12px 12px 0 0 !important"
       class="www"
       scrolling="no"
     ></iframe>
@@ -69,9 +68,12 @@
         <h3 routerLink="/coding/{{ el._id }}" class="card__title">
           {{ el.title }}
         </h3>
-        <h3 (click)="toggleDropdown(el._id)">
-          <i class="fa-solid fa-ellipsis-vertical"></i>
-        </h3>
+        <button
+          (click)="toggleDropdown(el._id)"
+          class="px-2.5 py-1.5 rounded-full hover:bg-gray-200 duration-300"
+        >
+          <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
+        </button>
         <!-- Dropdown menu -->
         <div
           [id]="el._id"
@@ -94,28 +96,18 @@
           >
             <li>
               <a
-                class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                class="flex items-center block px-4 py-2 duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 ><i class="fa-solid fa-thumbtack"></i>&nbsp;&nbsp;&nbsp;Add to
                 Pin</a
               >
             </li>
             <li>
               <a
-                (click)="follow(el.user._id)"
-                class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                ><i class="fa-solid fa-check"></i> &nbsp; follow&nbsp;<span
-                  class="text-sky-400"
-                  >{{ el.user.full_name }}</span
-                ></a
-              >
-            </li>
-            <li>
-              <a
-                class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                class="flex items-center block px-4 py-2 duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 (click)="modalToggle(el._id)"
               >
                 <i class="fa-solid fa-eye"></i>
-                &nbsp;&nbsp;&nbsp;Overall View</a
+                &nbsp;&nbsp;&nbsp;Overall</a
               >
             </li>
           </ul>
@@ -138,17 +130,9 @@
           >
         </div>
         <div class="action mr-2">
-          <small class="flex items-center"
+          <small class="flex items-center" (click)="modalToggle(el._id)"
             ><i class="fa-solid fa-comment" style="color: rgb(0, 0, 0)"></i
             >&nbsp;{{ el.comment.length }}</small
-          >
-          
-        </div>
-        <div class="action">
-          <small class="flex items-center"
-            ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i>&nbsp;{{
-              el.views.length
-            }}</small
           >
         </div>
       </div>
@@ -167,5 +151,3 @@
   <a routerLink="/coding/new" class="text-sky-400 mt-4">Go build One!</a>
 </div>
 <!-- /empty case -->
-
-

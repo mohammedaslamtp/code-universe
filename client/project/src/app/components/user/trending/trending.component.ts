@@ -85,7 +85,6 @@ export class TrendingComponent implements OnDestroy, OnInit {
       this.subs_giveLike = this._socialService
         .returnLike(id)
         .subscribe((val) => {
-          console.log(val);
           if (val) {
             this.modifyObjectById(this.trendingTemplates, id, val.data.like);
             audio.play();

@@ -120,6 +120,11 @@ body {
   border-radius: 3px;
 }
 
+.action:hover{
+  background-color: #9c9c9c;
+  transition: ease-in-out 0.3s all;
+}
+
 .card:hover .card__info {
   background-color: transparent;
   cursor: pointer;

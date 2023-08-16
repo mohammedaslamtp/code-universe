@@ -16,6 +16,8 @@ export interface Template {
   views: [string];
   __v: number;
   user: USerData;
+  createdAt: string;
+  updatedAt: string;
 }
 // type of user collection:
 export interface User {

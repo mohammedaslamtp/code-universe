@@ -20,6 +20,7 @@ import { GuestUserGuard } from './guard/guest-user.guard';
 import { UserHomeGuard } from './guard/user-home.guard';
 import { CodingGuard } from './guard/coding.guard';
 import { BlockUserGuard } from './guard/block-user.guard';
+import { DatePipe } from '@angular/common';
 
 import {
   changeFontSizeReducer,
@@ -122,6 +123,7 @@ import { OverallViewComponent } from './components/user/overall-view/overall-vie
     BlockUserGuard,
     LiveCodingGuard,
     IsValidLiveGuard,
+    DatePipe
   ],
   bootstrap: [AppComponent],
 })

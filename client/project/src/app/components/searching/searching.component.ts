@@ -50,7 +50,6 @@ export class SearchingComponent implements OnInit, OnDestroy {
       .pipe(select(search_loadingSelector))
       .subscribe((result) => {
         if (result) {
-          console.log('loading: ', result);
           this.loading = true;
           this.empty = false;
         } else {
@@ -62,7 +61,6 @@ export class SearchingComponent implements OnInit, OnDestroy {
     this.subs_error = this._store
       .pipe(select(search_errorSelector))
       .subscribe((result) => {
-        console.log('error: ', result);
         this.loading = false;
         this.empty = true;
         this.notFound = false;
@@ -72,7 +70,6 @@ export class SearchingComponent implements OnInit, OnDestroy {
     this.subs_searchResult = this._store
       .pipe(select(search_resultSelector))
       .subscribe((result: any) => {
-        console.log('search result: ', result);
         this.loading = false;
         this.searchResult$ = result;
         setTimeout(() => {

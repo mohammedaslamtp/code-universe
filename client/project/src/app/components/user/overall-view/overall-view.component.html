@@ -72,13 +72,29 @@
           class="flex flex-col md:flex-row md:h-2/6 basis-2/6 border-t-2 duration-300"
         >
           <section class="p-5 basis-full md:basis-2/6">
-            <div class="p-5">
-              <h1 class="font-bold text-2xl">{{ tempDetails.title }}</h1>
-              <h1 class="font-semibold">
-                Created by {{ tempDetails.user.display_name }}
-              </h1>
+            <div class="flex justify-between">
+              <div class="p-5">
+                <h1 class="font-bold text-2xl">{{ tempDetails.title }}</h1>
+                <h1 class="font-semibold">
+                  Created by {{ tempDetails.user.display_name }}
+                </h1>
+              </div>
+              <div class="flex flex-row items-center">
+                <button
+                  type="button"
+                  title="view in editor"
+                  routerLink="/coding/{{ tempDetails._id }}"
+                  class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+                >
+                  <span
+                    class="relative px-3 py-2 flex items-center transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+                  >
+                    <i class="fa-solid fa-eye"></i>&nbsp;View
+                  </span>
+                </button>
+              </div>
             </div>
-            <div class="p-5">
+            <div class="p-5 flex flex-col gap-y-8">
               <div class="flex gap-4 items-center justify-start">
                 <img
                   width="70"
@@ -97,20 +113,32 @@
                     {{ tempDetails.user.display_name }}
                   </h1>
                   <button
+                    *ngIf="owner._id !== userData._id"
                     type="button"
-                    [title]="'Follow ' + tempDetails.user.display_name"
                     class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+                    (click)="followOrUnfollow(userData._id)"
                   >
-                    <!-- <div>
+                    <div *ngIf="followLoading">
                       <i class="animate-spin fa-solid px-2 fa-spinner"></i>
-                    </div> -->
+                    </div>
                     <span
                       class="relative px-4 py-1 flex items-center transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
                     >
-                      <i class="fa-solid fa-plus"></i>&nbsp;Follow
+                      <span class="flex items-center" *ngIf="isFollowed"
+                      [title]="'unfollow ' + tempDetails.user.display_name"
+                        ><i class="fa-solid fa-check"></i>&nbsp;Following</span
+                      ><span *ngIf="!isFollowed"
+                      [title]="'follow ' + tempDetails.user.display_name"
+                      class="flex items-center"
+                        ><i class="fa-solid fa-plus"></i>&nbsp;Follow</span
+                      >
                     </span>
                   </button>
                 </div>
+              </div>
+              <div class="flex flex-col gap-y-2">
+                <p>created at {{ datePipeSetUp(tempDetails.createdAt) }}</p>
+                <p>updated at {{ datePipeSetUp(tempDetails.updatedAt) }}</p>
               </div>
             </div>
           </section>
@@ -171,7 +199,7 @@
                   </h5>
                   <a
                     [routerLink]="'/userProfile/' + el.full_name"
-                    class="cursor-pointer text-sky-500 text-medium "
+                    class="cursor-pointer text-sky-500 text-medium"
                     >@{{ el.full_name }}</a
                   >
                 </div>

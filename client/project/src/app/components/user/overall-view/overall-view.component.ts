@@ -17,6 +17,7 @@ import { comment } from 'src/app/types/comment';
 import { Template } from 'src/app/types/template_types';
 import moment from 'moment';
 import { SocialService } from 'src/app/services/soical.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-overall-view',
@@ -40,7 +41,8 @@ export class OverallViewComponent implements OnInit, OnDestroy {
   domain: string = domain;
   commentLoading: boolean = false;
   likedUsers!: USerData[];
-  LikesLoading:boolean = false
+  LikesLoading: boolean = false;
+  isFollowed!: boolean;
 
   constructor(
     private _activateRoute: ActivatedRoute,
@@ -48,7 +50,8 @@ export class OverallViewComponent implements OnInit, OnDestroy {
     private _mainService: MainService,
     private _userService: UserService,
     private _socketService: SocketService,
-    private _socialService: SocialService
+    private _socialService: SocialService,
+    private _datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
@@ -86,7 +89,15 @@ export class OverallViewComponent implements OnInit, OnDestroy {
               if (result.data) {
                 this._socketService.emit('joinCommentRoom', result.data._id);
                 this.userData = result.data.user;
-                console.log('template details ', result.data);
+                if (result.data.user) {
+                  result.data.user.followers.forEach((el: any) => {
+                    if (el == this.owner._id) {
+                      this.isFollowed = true;
+                    } else {
+                      this.isFollowed = false;
+                    }
+                  });
+                }
                 this.getLikedUsers(result.data._id);
                 this.tempDetails = result.data;
                 this.loadTemplate(result.data.template_id);
@@ -110,7 +121,6 @@ export class OverallViewComponent implements OnInit, OnDestroy {
     this._socketService.on('allComments', (data) => {
       this.comments = data;
       this.commentLoading = false;
-      console.log('comments: ', data);
     });
 
     // if like count upadate happens
@@ -138,6 +148,26 @@ export class OverallViewComponent implements OnInit, OnDestroy {
   // date and time setting up to moment.js
   timeSetUp(date: Date | string): string {
     return moment(date).fromNow();
+  }
+
+  datePipeSetUp(date: Date | string) {
+    return this._datePipe.transform(date, 'dd MMM yyyy, HH:mm:ss');
+  }
+
+  followLoading: boolean = false;
+  followOrUnfollow(id: string) {
+    this.followLoading = true;
+    if (this.isFollowed) {
+      this._socialService.unFollow(id).subscribe((result) => {
+        this.isFollowed = false;
+        this.followLoading = false;
+      });
+    } else {
+      this._socialService.follow(id).subscribe((result) => {
+        this.isFollowed = true;
+        this.followLoading = false;
+      });
+    }
   }
 
   @ViewChild('url', { static: false }) iframe!: ElementRef;
@@ -169,9 +199,9 @@ export class OverallViewComponent implements OnInit, OnDestroy {
     this.subs_likedUsers = this._socialService
       .getLikedUsers(id)
       .subscribe((users) => {
-        this.LikesLoading = false
+        this.LikesLoading = false;
         this.likedUsers = users.data;
-        this.likedUsersCount = users.data.length
+        this.likedUsersCount = users.data.length;
       });
   }
 
@@ -223,7 +253,7 @@ export class OverallViewComponent implements OnInit, OnDestroy {
   }
 
   removeMention = () => (this.replayTo = null);
-
+  
   ngOnDestroy(): void {
     this._socketService.emit('leaveCommentRoom', this.tempId);
     this.subs_tempDetail?.unsubscribe();

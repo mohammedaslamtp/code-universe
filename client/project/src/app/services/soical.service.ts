@@ -53,4 +53,16 @@ export class SocialService {
     const url = `${this._apiUrl}/likedUsers?id=${id}`;
     return this._http.get<apiRes>(url, httpOptions);
   }
+
+  // add to pin
+  addToPin(id: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/addToPin`;
+    return this._http.post<apiRes>(url, { id: id }, httpOptions);
+  }
+
+  // remove from pin list
+  removeFromPin(id: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/removeFromPin?id=${id}`;
+    return this._http.patch<apiRes>(url, httpOptions);
+  }
 }
