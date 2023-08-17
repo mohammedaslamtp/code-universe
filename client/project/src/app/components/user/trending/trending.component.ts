@@ -114,7 +114,7 @@ export class TrendingComponent implements OnDestroy, OnInit {
   }
 
   // go to the overall view section
-  modalToggle(id: string) {
+  overView(id: string) {
     const url = this._location.path();
     currentUrl.next(url);
     this._router.navigate([`/overallView/${id}`]);

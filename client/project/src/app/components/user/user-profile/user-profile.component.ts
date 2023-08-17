@@ -73,6 +73,7 @@ export class UserProfileComponent implements OnDestroy {
                   this.followersCount = data.followers.length;
                   this.followingCount = data.following.length;
                   this.userData = data;
+                  this.displayName = data.display_name
                   this.userId = data._id;
                   if (data.location !== null || data.location !== '') {
                     this.location = data.location;
@@ -103,7 +104,6 @@ export class UserProfileComponent implements OnDestroy {
             Name.subscribe((val: any) => (this.userName = val));
             if (username == this.accountOwnerData.full_name) {
               this.userName = this.accountOwnerData.full_name;
-              this.displayName = this.accountOwnerData.display_name;
               this._titleService.setTitle(this.accountOwnerData.display_name);
               this.isAccountOwner = true;
               userProfile.next(true);

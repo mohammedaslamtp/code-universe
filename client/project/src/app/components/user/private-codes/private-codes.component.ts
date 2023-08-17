@@ -7,7 +7,9 @@ import { USerData } from 'src/app/types/UserData';
 import { Templates } from 'src/app/types/template_types';
 import Swal from 'sweetalert2';
 import { privatePage } from '../user-profile/user-profile.component';
-import { CoreModule } from 'src/app/modules/core/core.module';
+import { SocialService } from 'src/app/services/soical.service';
+import { Location } from '@angular/common';
+import { currentUrl } from 'src/app/services/shared-values.service';
 
 @Component({
   templateUrl: './private-codes.component.html',
@@ -28,7 +30,9 @@ export class PrivateCodesComponent implements OnDestroy {
     private _routerActicated: ActivatedRoute,
     private _mainService: MainService,
     private _userService: UserService,
-    private _router: Router
+    private _socialService: SocialService,
+    private _router: Router,
+    private _location: Location
   ) {
     privatePage.next(true);
     this.subs_params = this._routerActicated.params.subscribe((param) => {
@@ -116,6 +120,48 @@ export class PrivateCodesComponent implements OnDestroy {
         console.log(err);
       }
     );
+  }
+
+  // give like and return like
+  subs_giveLike!: Subscription;
+  Dolike(id: string) {
+    const audio = new Audio('assets/sounds/click-like.mp3');
+    let doc: any = this.privateCodes.filter((t) => t._id === id);
+    doc = doc[0];
+    doc = doc.like.filter((el: any) => el._id == this.userData._id);
+    if (doc.length == 0) {
+      this.subs_giveLike = this._socialService.giveLike(id).subscribe((val) => {
+        if (val) {
+          this.modifyObjectById(this.privateCodes, id, val.data.like);
+          audio.play();
+        }
+      });
+    } else {
+      this.subs_giveLike = this._socialService
+        .returnLike(id)
+        .subscribe((val) => {
+          if (val) {
+            this.modifyObjectById(this.privateCodes, id, val.data.like);
+            audio.play();
+          }
+        });
+    }
+  }
+
+  // Function to find and modify object by ID
+  modifyObjectById(array: Templates, id: string, newValue: [string]) {
+    const index = array.findIndex((obj) => obj._id === id);
+    if (index !== -1) {
+      // Modify the desired field
+      array[index].like = newValue;
+    }
+  }
+
+  // go to the overall view section
+  overView(id: string) {
+    const url = this._location.path();
+    currentUrl.next(url);
+    this._router.navigate([`/overallView/${id}`]);
   }
 
   // to make public the code

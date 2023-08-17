@@ -6,22 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./following.component.css'],
 })
 export class FollowingComponent {
-  data: string = '';
-
-  options = {
-    lineNumbers: true,
-    autofocus: true,
-    theme: 'material',
-    mode: 'css',
-    extraKeys: { 'Ctrl-Space': 'autocomplete' },
-    showCursorWhenSelecting: true,
-    lineWiseCopyCut: true,
-    linerWrapping: true,
-    autoCloseBrackets: true,
-  };
-
-  handleChange(code: Event): void {
-    this.data = code + '';
-    console.log(code);
-  }
+  
 }

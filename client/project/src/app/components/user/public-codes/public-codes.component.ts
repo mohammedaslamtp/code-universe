@@ -7,6 +7,9 @@ import { USerData } from 'src/app/types/UserData';
 import { Templates } from 'src/app/types/template_types';
 import Swal from 'sweetalert2';
 import { publicPage } from '../user-profile/user-profile.component';
+import { currentUrl } from 'src/app/services/shared-values.service';
+import { Location } from '@angular/common';
+import { SocialService } from 'src/app/services/soical.service';
 
 @Component({
   selector: 'app-public-codes',
@@ -30,6 +33,8 @@ export class PublicCodesComponent implements OnDestroy {
     private _routerActicated: ActivatedRoute,
     private _mainService: MainService,
     private _userService: UserService,
+    private _socialService: SocialService,
+    private _location:Location,
     private _router: Router
   ) {
     publicPage.next(true);
@@ -247,10 +252,54 @@ export class PublicCodesComponent implements OnDestroy {
     );
   }
 
+
+   // give like and return like
+   subs_giveLike!: Subscription;
+   Dolike(id: string) {
+     const audio = new Audio('assets/sounds/click-like.mp3');
+     let doc: any = this.publicCodes.filter((t) => t._id === id);
+     doc = doc[0];
+     doc = doc.like.filter((el: any) => el._id == this.userData._id);
+     if (doc.length == 0) {
+       this.subs_giveLike = this._socialService.giveLike(id).subscribe((val) => {
+         if (val) {
+           this.modifyObjectById(this.publicCodes, id, val.data.like);
+           audio.play();
+         }
+       });
+     } else {
+       this.subs_giveLike = this._socialService
+         .returnLike(id)
+         .subscribe((val) => {
+           if (val) {
+             this.modifyObjectById(this.publicCodes, id, val.data.like);
+             audio.play();
+           }
+         });
+     }
+   }
+ 
+   // Function to find and modify object by ID
+   modifyObjectById(array: Templates, id: string, newValue: [string]) {
+     const index = array.findIndex((obj) => obj._id === id);
+     if (index !== -1) {
+       // Modify the desired field
+       array[index].like = newValue;
+     }
+   }
+ 
+   // go to the overall view section
+   overView(id: string) {
+     const url = this._location.path();
+     currentUrl.next(url);
+     this._router.navigate([`/overallView/${id}`]);
+   }
+
   ngOnDestroy(): void {
     publicPage.next(false);
     this.subs_OwnerData.unsubscribe();
     this.subs_userData?.unsubscribe();
+    this.subs_giveLike?.unsubscribe();
     this.subs_publicCodes?.unsubscribe();
     this.subs_params?.unsubscribe();
     this.subs_codePreview?.unsubscribe();

@@ -101,7 +101,7 @@
           id="{{ 'dropdownLeftButton-' + el._id }}"
           (click)="toggleDropdown(el._id)"
           data-dropdown-placement="top"
-          class="p-2"
+          class="mt-1 p-1.5 px-3 hover:bg-gray-200 rounded-full duration-300"
           type="button"
           role="button"
         >
@@ -166,20 +166,18 @@
       <div class="flex mt-3 items-center">
         <div class="action mr-1">
           <small class="flex items-center"
-            ><i class="fa-solid fa-heart" style="color: rgb(175, 0, 0)"></i
+          (click)="Dolike(el._id)"
+          ><i class="fa-solid fa-heart" style="color: rgb(175, 0, 0)"></i
             >&nbsp;{{ el.like.length }}</small
+            >
+          </div>
+          <div class="action mr-1">
+            <small class="flex items-center"
+            (click)="overView(el._id)"
+            ><i class="fa-solid fa-comment"></i>&nbsp;{{el.comment.length}}</small
           >
         </div>
-        <div class="action mr-1">
-          <small class="flex items-center"
-            ><i class="fa-solid fa-comment"></i>&nbsp;32</small
-          >
-        </div>
-        <div class="action">
-          <small class="flex items-center"
-            ><i class="fa-solid fa-eye"></i>&nbsp;{{ el.views.length }}</small
-          >
-        </div>
+       
       </div>
     </div>
   </article>
