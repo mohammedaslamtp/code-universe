@@ -113,13 +113,86 @@ module.exports = {
     Template.findById(req.query.id)
       .populate("like")
       .then((data) => {
-        console.log('all liked users: ',data.like);
+        console.log("all liked users: ", data.like);
         apiRes.status = 200;
         apiRes.data = data.like;
         res.status(200).json(apiRes);
       })
       .catch((e) => {
         console.log("something went wrong!");
+      });
+  },
+
+  // add a item to the pin list
+  addToPin: (req, res) => {
+    const userId = req.user._id;
+    const tempId = req.body.id;
+    User.findByIdAndUpdate(userId, {
+      $addToSet: { pinned_items: tempId },
+    })
+      .then((data) => {
+        apiRes.status = 200;
+        apiRes.data = data;
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.status = 404;
+        apiRes.data = null;
+        res.status(404).json(apiRes);
+      });
+  },
+
+  // remove an item from the list
+  removeFromPin: (req, res) => {
+    const userId = req.user._id;
+    const tempId = req.query.id;
+    User.findByIdAndUpdate(userId, {
+      $pull: { pinned_items: tempId },
+    })
+      .then((data) => {
+        apiRes.status = 200;
+        apiRes.data = data;
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.status = 404;
+        apiRes.data = null;
+        res.status(404).json(apiRes);
+      });
+  },
+
+  // to get all following users
+  getAllFollowingUsers: (req, res) => {
+    let allData = [];
+    User.findById(req.query.id)
+      .populate("following")
+      .then((data) => {
+        allData = data.following;
+        apiRes.status = 200;
+        apiRes.data = allData;
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.status = 404;
+        apiRes.data = null;
+        res.status(404).json(apiRes);
+      });
+  },
+  // to get all followers
+  getAllFollowers: (req, res) => {
+    let allData = [];
+    User.findById(req.query.id)
+      .populate("followers")
+      .then((data) => {
+        allData = data.followers;
+        apiRes.status = 200;
+        apiRes.data = allData;
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        apiRes.status = 404;
+        apiRes.data = null;
+        res.status(404).json(apiRes);
       });
   },
 };

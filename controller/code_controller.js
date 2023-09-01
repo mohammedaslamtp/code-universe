@@ -1,5 +1,6 @@
 const Code = require("../models/code");
 const crypto = require("crypto");
+const LiveCode = require("../models/live_code");
 
 module.exports = {
   // to render code page:
@@ -204,5 +205,32 @@ module.exports = {
     } catch (error) {
       console.log(error);
     }
+  },
+
+  storeLiveCode: (req, res) => {
+    const data = req.body;
+    LiveCode.findOneAndUpdate(
+      { room_id: data.room },
+      { $set: { html: data.html, css: data.css, js: data.js } },
+      { new: true }
+    ).then((result) => {
+      if (result) {
+        res.status(200).json(result);
+      }
+    });
+  },
+
+  runLiveCode: (req, res) => {
+    console.log('roomId: ',req.query.room);
+    LiveCode.findOne({ room_id: req.query.room }).then((result) => {
+      console.log(result);
+      if (result) {
+        res.render("live", {
+          html: result.html,
+          css: result.css,
+          js: result.js,
+        });
+      }
+    });
   },
 };

@@ -109,4 +109,26 @@ route
   .get("/isValidLive", auth_token.authenticate, main_controller.isValidLive)
   .get("/allComments", auth_token.authenticate, social_controller.allComments)
   .get("/likedUsers", auth_token.authenticate, social_controller.likedUsers)
+  .post("/addToPin", auth_token.authenticate, social_controller.addToPin)
+  .patch(
+    "/removeFromPin",
+    auth_token.authenticate,
+    social_controller.removeFromPin
+  )
+  .get(
+    "/getAllFollowingUsers",
+    auth_token.authenticate,
+    social_controller.getAllFollowingUsers
+  )
+  .get(
+    "/getAllFollowers",
+    auth_token.authenticate,
+    social_controller.getAllFollowers
+  )
+  .post(
+    "/storeLiveCode",
+    auth_token.authenticate,
+    code_controller.storeLiveCode
+  )
+  .get("/runLiveCode", auth_token.authenticate, code_controller.runLiveCode);
 module.exports = route;

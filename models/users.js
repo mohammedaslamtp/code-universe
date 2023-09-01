@@ -27,7 +27,7 @@ const user = new mongoose.Schema(
 
     pinned_items: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "templates",
+      ref: "code",
     },
 
     followers: {

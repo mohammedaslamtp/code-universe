@@ -110,21 +110,40 @@ module.exports = {
         client.on("html", (data) => {
           client.to(roomId).emit("htmlCode", data);
         });
+        client.on("css", (data) => {
+          client.to(roomId).emit("cssCode", data);
+        });
+        client.on("js", (data) => {
+          ``;
+          client.to(roomId).emit("jsCode", data);
+        });
+
+        client.on("runCode", (data) => {
+          LiveCode.findOneAndUpdate(
+            { room_id: data.room_id },
+            { html: data.html, css: data.css, js: data.js },
+            { new: true }
+          ).then((result) => {
+            if(result){
+              
+            }
+          });
+        });
 
         // if pressing backspace
-        client.on("Backspace", (data) => {
-          client.to(roomId).emit("backspacePress", data);
-        });
+        // client.on("Backspace", (data) => {
+        //   client.to(roomId).emit("backspacePress", data);
+        // });
 
         // if pressing control + backspace
-        client.on("ctrlAndBackspace", (data) => {
-          client.to(roomId).emit("ctrlBackspacePress", data);
-        });
+        // client.on("ctrlAndBackspace", (data) => {
+        //   client.to(roomId).emit("ctrlBackspacePress", data);
+        // });
 
-        // if pressing Enter (add new line)
-        client.on("addNewLine", (data) => {
-          client.to(roomId).emit("newLine", data.line);
-        });
+        // // if pressing Enter (add new line)
+        // client.on("addNewLine", (data) => {
+        //   client.to(roomId).emit("newLine", data.line);
+        // });
 
         // Leave the specified room
         client.on("leaveRoom", (leave) => {
