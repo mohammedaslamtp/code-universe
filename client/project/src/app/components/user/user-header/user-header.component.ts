@@ -39,9 +39,6 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('searchQ', { static: false }) query!: ElementRef<HTMLInputElement>;
   constructor(private _userService: UserService, private _router: Router) {
     this.is_guest();
-    this.subs_userProfile = userProfile.subscribe((val) => {
-      this.isProfile = val;
-    });
 
     this.searchQ = searchQuery.subscribe((q: any) => {
       this.searchQuery = q;
@@ -63,6 +60,9 @@ export class UserHeaderComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.is_guest();
+    this.subs_userProfile = userProfile.subscribe((val) => {
+      this.isProfile = val;
+    });
   }
 
   is_guest = () => (this.authenticated = this._userService.loggedIn());

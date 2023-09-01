@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { coding, domain, popupLog } from './shared-values.service';
 import { Templates } from '../types/template_types';
 import { USerData } from '../types/UserData';
+import { apiRes } from '../types/defulatApiRes';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -245,5 +246,26 @@ export class UserService {
   isValidLive(query: string): Observable<boolean> {
     const url = `${this.api_url}/isValidLive?roomId=${query}`;
     return this._http.get<boolean>(url, httpOptions);
+  }
+
+  // store live code
+  storeLiveCode(
+    roomId: string,
+    html: string,
+    css: string,
+    js: string
+  ): Observable<any> {
+    const url = `${this.api_url}/storeLiveCode`;
+    return this._http.post(
+      url,
+      { room: roomId, html: html, css: css, js: js },
+      httpOptions
+    );
+  }
+
+  // run live code
+  runLiveCode(roomId: string): Observable<apiRes> {
+    const url = `${this.api_url}/runLiveCode?room=${roomId}`;
+    return this._http.get<apiRes>(url, httpOptions);
   }
 }

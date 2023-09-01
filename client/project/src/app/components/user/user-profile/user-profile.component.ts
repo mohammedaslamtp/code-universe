@@ -73,7 +73,7 @@ export class UserProfileComponent implements OnDestroy {
                   this.followersCount = data.followers.length;
                   this.followingCount = data.following.length;
                   this.userData = data;
-                  this.displayName = data.display_name
+                  this.displayName = data.display_name;
                   this.userId = data._id;
                   if (data.location !== null || data.location !== '') {
                     this.location = data.location;
@@ -108,6 +108,7 @@ export class UserProfileComponent implements OnDestroy {
               this.isAccountOwner = true;
               userProfile.next(true);
             } else {
+              userProfile.next(false);
               this.isAccountOwner = false;
             }
           }
@@ -189,6 +190,7 @@ export class UserProfileComponent implements OnDestroy {
             showConfirmButton: false,
             timer: 2500,
             timerProgressBar: true,
+            showCloseButton: true,
             didOpen: (toast) => {
               toast.addEventListener('mouseenter', Swal.stopTimer);
               toast.addEventListener('mouseleave', Swal.resumeTimer);
@@ -196,14 +198,16 @@ export class UserProfileComponent implements OnDestroy {
           });
           Toast.fire({
             icon: 'error',
-            title: 'Please check your network!',
+            title: 'Something went wrong!',
           });
         }
       );
   }
 
   ngOnDestroy(): void {
-    userProfile.next(false);
+    setTimeout(() => {
+      userProfile.next(false);
+    }, 0);
     this.isAccountOwner = false;
     this.subs_owner?.unsubscribe();
     this._titleService.setTitle('CODEBOX');

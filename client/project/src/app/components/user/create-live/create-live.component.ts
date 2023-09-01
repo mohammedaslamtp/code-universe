@@ -7,6 +7,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { UserService } from 'src/app/services/user.service';
 import { USerData } from 'src/app/types/UserData';
 import { Title } from '@angular/platform-browser';
+import { domain } from 'src/app/services/shared-values.service';
 
 @Component({
   selector: 'app-create-live',
@@ -19,7 +20,10 @@ export class CreateLiveComponent implements OnInit, OnDestroy {
   createLoad: boolean = false;
   joinLoad: boolean = false;
   connected: boolean = false;
+  domain = domain;
   error: string | null = null;
+  ownerData!: USerData;
+  subs_ownerData!: Subscription;
 
   constructor(
     private _userService: UserService,
@@ -31,6 +35,15 @@ export class CreateLiveComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this._titleService.setTitle('Create live');
 
+    this.subs_ownerData = this._userService.getUserData().subscribe(
+      (data) => {
+        this.ownerData = data;
+      },
+      (err) => {
+        this._router.navigate(['**']);
+      }
+    );
+
     this._socketService.connect();
     // invalid room id
     this._socketService.on('room-not-found', (err) => {
@@ -40,14 +53,7 @@ export class CreateLiveComponent implements OnInit, OnDestroy {
     });
   }
 
-  // toggle dropdown
-  toggleDropdownUsers() {
-    if (this.isToggledUsers == false) {
-      this.isToggledUsers = true;
-    } else {
-      this.isToggledUsers = false;
-    }
-  }
+  
 
   // close dropdown
   closeDropDown() {
@@ -57,27 +63,14 @@ export class CreateLiveComponent implements OnInit, OnDestroy {
   }
 
   // creation of live
-  ownerData!: USerData;
-  subs_ownerData!: Subscription;
   createLive() {
     this.createLoad = true;
-    this.subs_ownerData = this._userService.getUserData().subscribe(
-      (data) => {
-        this.ownerData = data;
-        if (data) {
-          this._socketService.emit('connectionData', data._id);
-          this._socketService.on('roomId', (roomId) => {
-            socketConnected.next('creator');
-            this._router.navigate([`/liveCoding/${roomId}`]);
-            this.createLoad = false;
-          });
-        }
-      },
-      (err) => {
-        this.createLoad = false;
-        this.warnings = 'somthing went wrong! please try again.';
-      }
-    );
+    this._socketService.emit('connectionData', this.ownerData._id);
+    this._socketService.on('roomId', (roomId) => {
+      socketConnected.next('creator');
+      this._router.navigate([`/liveCoding/${roomId}`]);
+      this.createLoad = false;
+    });
   }
 
   clearWarnings = () => (this.warnings = null);
@@ -92,22 +85,13 @@ export class CreateLiveComponent implements OnInit, OnDestroy {
       console.log('isvalid ', valid);
 
       if (valid == true) {
-        this.subs_ownerData = this._userService.getUserData().subscribe(
-          (data) => {
-            this.ownerData = data;
-            if (data) {
-              socketConnected.next('member');
-              if (form.value.joinUrl) {
-                this._router.navigate([form.value.joinUrl]);
-              }
-              this.joinLoad = false;
-            }
-          },
-          (err) => {
-            this.joinLoad = false;
-            this.warnings = 'somthing went wrong! please try again.';
+        if (this.ownerData) {
+          socketConnected.next('member');
+          if (form.value.joinUrl) {
+            this._router.navigate([form.value.joinUrl]);
           }
-        );
+          this.joinLoad = false;
+        }
       } else {
         this.error = "Live dosen't exist!";
         this.joinLoad = false;

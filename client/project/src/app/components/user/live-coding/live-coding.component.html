@@ -3,17 +3,14 @@
   href="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/theme/ayu-mirage.css"
 />
 
-<div
-  *ngIf="liveLoading"
-  class="relative inset-0 bg-black h-screen"
->
+<div *ngIf="liveLoading" class="relative inset-0 bg-black h-screen">
   <div
     class="absolute inset-0 bg-opacity-50 w-full h-full relative bg-neutral-400 flex justify-center align items-center"
   >
-    <div class="flex flex-col gap-1  text-white">
+    <div class="flex flex-col gap-1 text-white">
       <i
         class="animate-spin fa-solid px-2 fa-spinner"
-        style="font-size: 2em;"
+        style="font-size: 2em"
         title="Please wait"
       ></i>
       <p style="letter-spacing: 2px">Joining</p>
@@ -31,7 +28,7 @@
       <div class="relative flex h-16 items-center justify-between">
         <div
           class="flex flex-1 items-center items-stretch justify-start"
-          (click)="closeDropDown()"
+          (click)="closeUrlDropDown(); closeUsersDropDown()"
         >
           <div class="flex flex-shrink-0 items-center gap-x-3">
             <span class="relative flex h-3 w-3">
@@ -48,15 +45,87 @@
           </div>
         </div>
         <div
-          class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
+          class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto gap-8 sm:pr-0"
         >
-          <!-- Profile dropdown -->
-          <div class="relative ml-10">
+          <!-- url dropdown -->
+          <div class="relative">
+            <div>
+              <button
+                (click)="toggleDropdownUrl(); closeUsersDropDown()"
+                type="button"
+                title="invite users with url"
+                class="rounded-full ml-3 bg-gray-800 p-2 text-gray-400 hover:text-white"
+              >
+                <i class="fa-solid fa-link"></i>
+                
+              </button>
+            </div>
+
+            <div
+              [ngClass]="isToggledUrl ? 'visible' : 'invisible'"
+              class="absolute right-0 z-10 ml-5 mt-2 w-96 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+            >
+              <div
+                class="p-1 px-2 py-5 flex items-center gap-2 flex-col justify-center w-full"
+              >
+                <h4 class="flex justify-start w-full">
+                  <i class="fa-solid fa-link"></i>&nbsp;url:
+                </h4>
+                <div class="flex justify-center w-full">
+                  <div
+                    class="border rounded-l-md p-1 h-8 flex items-center w-5/6 overflow-hidden no-scroll-style"
+                  >
+                    <p class="h-full" #urlRef>
+                      {{ url }}
+                    </p>
+                  </div>
+                  <div
+                    class="p-1 border rounded-r-md w-1/6 hover:bg-gray-200 cursor-pointer"
+                    *ngIf="!copied"
+                  >
+                    <button
+                      (click)="copyContent(); closeUsersDropDown()"
+                      type="button"
+                      title="copy url"
+                      class="w-full h-full flex items-center justify-center"
+                    >
+                      <i class="fa-solid fa-copy"></i>
+                    </button>
+                  </div>
+                  <div
+                    class="p-1 border rounded-r-md w-1/6 bg-green-200 cursor-pointer"
+                    *ngIf="copied"
+                  >
+                    <button
+                      (click)="copyContent(); closeUsersDropDown()"
+                      type="button"
+                      title="url copied"
+                      class="w-full h-full flex items-center justify-center text-green-800"
+                    >
+                      <i class="fa-solid fa-check"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            (click)="runLiveCode()"
+            class="text-gray-400 text-lg hover:text-white py-2 px-4 rounded cursor-pointer"
+            title="Run Live Code"
+            style="border: 1px dashed; background: none"
+          >
+            Run
+          </button>
+          <div class="relative">
             <div>
               <button
                 type="button"
-                (click)="toggleDropdownUsers()"
-                class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                class="flex rounded-full duration-200 bg-gray-800 text-sm hover:outline-none hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-gray-800"
+                (click)="toggleDropdownUsers(); closeUrlDropDown()"
               >
                 <img
                   class="h-8 w-8 rounded-full"
@@ -67,57 +136,46 @@
             </div>
 
             <div
-              [ngClass]="
-                isToggledUsers == true
-                  ? [
-                      'visible',
-                      'transition-all',
-                      'ease-in-out',
-                      'duration-100',
-                      'transform'
-                    ]
-                  : [
-                      'invisible',
-                      'transition-all',
-                      'ease-in-out',
-                      'duration-100',
-                      'transform'
-                    ]
-              "
-              (click)="closeDropDown()"
-              class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              [ngClass]="isToggledUsers ? 'visible' : 'invisible'"
+              class="absolute right-0 z-10 mt-2 w-96 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
               role="menu"
               aria-orientation="vertical"
             >
-              <a
-                class="block px-4 py-2 text-sm text-gray-700"
-                role="menuitem"
-                tabindex="-1"
-                id="user-menu-item-0"
-                >Your Profile</a
+              <div
+                class="p-1 px-4 py-5 flex items-start gap-2 flex-col justify-center w-full"
               >
-              <a
-                class="block px-4 py-2 text-sm text-gray-700"
-                role="menuitem"
-                tabindex="-1"
-                id="user-menu-item-1"
-                >Settings</a
-              >
-              <a
-                class="block px-4 py-2 text-sm text-gray-700"
-                role="menuitem"
-                tabindex="-1"
-                id="user-menu-item-2"
-                >Sign out</a
-              >
+                <h1 class="text-lg font-bold">Members</h1>
+                <div class="w-full flex justify-start flex-col p-1 gap-2">
+                  <div
+                    class="flex items-center justify-between p-1 border w-full rounded-md"
+                    *ngFor="let el of connectedUsers"
+                  >
+                    <div class="flex items-center gap-2 p-1">
+                      <img
+                        class="h-8 w-8 rounded-full"
+                        [src]="
+                          el.avatar
+                            ? domain + '/' + el.avatar
+                            : '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png'
+                        "
+                        [alt]="el.full_name ? el.full_name : 'empty'"
+                      />
+                      <div class="flex flex-col justify-between">
+                        <h3 class="font-bold">{{ el.display_name }}</h3>
+                        <h3 class="text-sm" *ngIf="isCreator">Admin</h3>
+                        <h3 class="text-sm" *ngIf="!isCreator">Member</h3>
+                      </div>
+                    </div>
+                    <div class="p-1 flex">
+                      <p class="flex items-center text-sm text-green-600">
+                        Online
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <button
-            type="button"
-            class="rounded-full ml-3 bg-gray-800 p-2 text-gray-400 hover:text-white"
-          >
-            <i class="fa-solid px-2 fa-question text-xl"></i>
-          </button>
         </div>
       </div>
     </div>
@@ -125,7 +183,6 @@
 
   <div class="flex">
     <section class="flex flex-col" style="width: 50%" id="data">
-      <!-- <div class="w-full" style="height: 4.6em;"></div> -->
       <div
         style="
           height: 2em;
@@ -147,11 +204,12 @@
         [(ngModel)]="htmlCode"
         [options]="htmlOptions"
         [autoFocus]="true"
-        (keydown)="htmlChange($event)"
-        (click)="getCursor($event,'html')"
-        (contextmenu)="getCursor($event,'html')"
-        (select)="selectionRange($event)"
-        (paste)="pasteCode($event, 'html')"
+        (keydown)="getCursor($event, 'html')"
+        (ngModelChange)="htmlChange($event)"
+        (click)="getCursor($event, 'html')"
+        (contextmenu)="getCursor($event, 'html')"
+        (select)="getCursor($event, 'html')"
+        (paste)="getCursor($event, 'html')"
       ></ngx-codemirror>
       <div
         style="flex: 1; background-color: gray; border-bottom: 5px solid"
@@ -185,16 +243,11 @@
       ></ngx-codemirror>
     </section>
     <div class="w-3 bg-gray-900" style="cursor: col-resize" id="resizer"></div>
-    <div
-      class="relative h-100"
-      id="result-wrapper"
-      style="margin-top: 4.3rem; flex-grow: 1"
-    >
+    <div class="relative h-100" id="result-wrapper" style="flex-grow: 1">
       <iframe
         #result
         class="h-full"
         style="width: 100%; height: 100%; margin: 0; padding: 0"
-        src=""
       ></iframe>
     </div>
   </div>

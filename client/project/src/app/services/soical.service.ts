@@ -65,4 +65,16 @@ export class SocialService {
     const url = `${this._apiUrl}/removeFromPin?id=${id}`;
     return this._http.patch<apiRes>(url, httpOptions);
   }
+
+  // get all following users
+  getAllFollowingUsers(id: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/getAllFollowingUsers?id=${id}`;
+    return this._http.get<apiRes>(url, httpOptions);
+  }
+
+  // get all followed users
+  getAllFollowers(id: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/getAllFollowers?id=${id}`;
+    return this._http.get<apiRes>(url, httpOptions);
+  }
 }
