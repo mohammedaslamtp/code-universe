@@ -113,7 +113,6 @@ module.exports = {
     Template.findById(req.query.id)
       .populate("like")
       .then((data) => {
-        console.log("all liked users: ", data.like);
         apiRes.status = 200;
         apiRes.data = data.like;
         res.status(200).json(apiRes);
@@ -194,5 +193,36 @@ module.exports = {
         apiRes.data = null;
         res.status(404).json(apiRes);
       });
+  },
+
+  // add rating to users
+  upVote: (req, res) => {
+    const userId = req.user._id;
+    const tempId = req.query.id;
+    Template.findOneAndUpdate(
+      { _id: tempId },
+      { $addToSet: { upVote: userId }, $pull: { downVote: userId } },
+      { new: true }
+    ).then((val) => {
+      const rating = val.upVote.length - val.downVote.length;
+      apiRes.status = 200;
+      apiRes.data = { rating: rating };
+      res.status(200).json(apiRes);
+    });
+  },
+
+  downVote: (req, res) => {
+    const userId = req.user._id;
+    const tempId = req.query.id;
+    Template.findOneAndUpdate(
+      { _id: tempId },
+      { $addToSet: { downVote: userId }, $pull: { upVote: userId } },
+      { new: true }
+    ).then((val) => {
+      const rating = val.upVote.length - val.downVote.length;
+      apiRes.status = 200;
+      apiRes.data = { rating: rating };
+      res.status(200).json(apiRes);
+    });
   },
 };

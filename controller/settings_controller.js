@@ -161,8 +161,7 @@ module.exports = {
               const hashPass = await bcrypt.hashSync(newPassword, salt);
 
               user.password = hashPass;
-              user
-                .save()
+              user.save()
                 .then((data) => {
                   apiRes.message = "Password changed";
                   res.status(200).json(apiRes);

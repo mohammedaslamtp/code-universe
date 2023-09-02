@@ -221,9 +221,7 @@ module.exports = {
   },
 
   runLiveCode: (req, res) => {
-    console.log('roomId: ',req.query.room);
     LiveCode.findOne({ room_id: req.query.room }).then((result) => {
-      console.log(result);
       if (result) {
         res.render("live", {
           html: result.html,
@@ -232,5 +230,55 @@ module.exports = {
         });
       }
     });
+  },
+
+  removeUnNeccessaryCode: (req, res) => {
+    LiveCode.findOneAndDelete({ room_id: req.query.id }).then((result) => {
+      console.log("deleted un-neccessary code");
+    });
+  },
+
+  saveLiveCode: (req, res) => {
+    const data = req.body;
+    // if(data)
+    const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+    const randomId = crypto
+      .randomBytes(Math.ceil(30 / 2))
+      .toString("hex")
+      .slice(0, 30);
+    Code.create({
+      template_id: randomId,
+      user: req.user._id,
+      html: data.html,
+      css: data.css,
+      js: data.js,
+      title: randomNumber + "-live",
+    })
+      .then((val) => {
+        res.status(200).json(val);
+      })
+      .catch((err) => {
+        res.status(404).json(err.message);
+      });
+  },
+
+  updateLiveCode: (req, res) => {
+    const data = req.body;
+    Code.findOneAndUpdate(
+      { _id: data.id },
+      {
+        user: req.user._id,
+        html: data.html,
+        css: data.css,
+        js: data.js,
+      },
+      { new: true }
+    )
+      .then((val) => {
+        res.status(200).json(val);
+      })
+      .catch((err) => {
+        res.status(404).json(err.message);
+      });
   },
 };

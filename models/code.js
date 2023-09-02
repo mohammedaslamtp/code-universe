@@ -51,6 +51,20 @@ const code = new mongoose.Schema(
       ref: "Users",
     },
 
+    upVote: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users",
+      },
+    ],
+
+    downVote: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Users",
+      },
+    ],
+
     isPrivate: {
       type: Boolean,
       default: false,

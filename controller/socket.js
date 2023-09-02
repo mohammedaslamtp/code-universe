@@ -14,6 +14,8 @@ module.exports = {
         console.log("socket connected");
         let roomId = "";
         let htmlCodePart = "<!-- write your html code here -->";
+        let cssCodePart = "/* write your css code here */";
+        let jsCodePart = "//write your jsl code here ";
         let connectedClients = [];
         let liveCreator;
 
@@ -68,8 +70,10 @@ module.exports = {
                   connectedClients: connectedClients,
                   liveCreator: liveCreator,
                 });
-                // initial html emit
+                // initial code emit
                 client.emit("initialHtmlEmit", htmlCodePart);
+                client.emit("initialCssEmit", cssCodePart);
+                client.emit("initialJsEmit", jsCodePart);
               }
             });
         });
@@ -97,7 +101,9 @@ module.exports = {
                   liveCreator: liveCreator,
                 });
                 // initial html emit
-                client.emit("initialHtmlEmit", htmlCodePart);
+                client.emit("initialHtmlEmit ", htmlCodePart);
+                client.emit("initialCssEmit ", cssCodePart);
+                client.emit("initialJsEmit ", jsCodePart);
               } else {
                 client.emit("validRoom", false);
                 client.emit("room-not-found", "Live dosen't exist!");
@@ -108,26 +114,21 @@ module.exports = {
         // need to modify...working on it..
         // passing data
         client.on("html", (data) => {
+          htmlCodePart = data;
           client.to(roomId).emit("htmlCode", data);
         });
         client.on("css", (data) => {
+          cssCodePart = data;
           client.to(roomId).emit("cssCode", data);
         });
         client.on("js", (data) => {
           ``;
+          jsCodePart = data;
           client.to(roomId).emit("jsCode", data);
         });
 
-        client.on("runCode", (data) => {
-          LiveCode.findOneAndUpdate(
-            { room_id: data.room_id },
-            { html: data.html, css: data.css, js: data.js },
-            { new: true }
-          ).then((result) => {
-            if(result){
-              
-            }
-          });
+        client.on("runLiveCode", (data) => {
+          client.to(roomId).emit("runCode", data);
         });
 
         // if pressing backspace

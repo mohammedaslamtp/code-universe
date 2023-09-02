@@ -130,5 +130,18 @@ route
     auth_token.authenticate,
     code_controller.storeLiveCode
   )
-  .get("/runLiveCode", auth_token.authenticate, code_controller.runLiveCode);
+  .get("/runLiveCode", auth_token.authenticate, code_controller.runLiveCode)
+  .delete(
+    "/removeLive",
+    auth_token.authenticate,
+    code_controller.removeUnNeccessaryCode
+  )
+  .post("/saveLiveCode", auth_token.authenticate, code_controller.saveLiveCode)
+  .patch(
+    "/updateLiveCode",
+    auth_token.authenticate,
+    code_controller.updateLiveCode
+  )
+  .patch("/upVote", auth_token.authenticate, social_controller.upVote)
+  .patch("/downVote", auth_token.authenticate, social_controller.downVote);
 module.exports = route;

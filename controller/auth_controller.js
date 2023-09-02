@@ -1,4 +1,3 @@
-const { request } = require("express");
 const User = require("../models/users");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -21,7 +20,7 @@ module.exports = {
           User.create({
             full_name: data.fullName,
             display_name: data.fullName,
-            email: data.email,
+            email: String(data.email).toLowerCase(),
             password: hash_password,
             otp_verified: false,
           })

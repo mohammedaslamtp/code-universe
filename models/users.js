@@ -17,6 +17,7 @@ const user = new mongoose.Schema(
       type: String,
       required: [true, "User email is required"],
       unique: true,
+      lowercase: [true, "Email should be lowercased"],
     },
 
     password: {
@@ -65,12 +66,12 @@ const user = new mongoose.Schema(
 
     linkedin_link: {
       type: String,
-      defulat:'https://in.linkedin.com/'
+      defulat: "https://in.linkedin.com/",
     },
-    
+
     github_link: {
       type: String,
-      defulat:'https://github.com/'
+      defulat: "https://github.com/",
     },
 
     otp_verified: {
