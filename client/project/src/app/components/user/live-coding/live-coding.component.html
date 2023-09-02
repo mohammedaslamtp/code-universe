@@ -57,7 +57,6 @@
                 class="rounded-full ml-3 bg-gray-800 p-2 text-gray-400 hover:text-white"
               >
                 <i class="fa-solid fa-link"></i>
-                
               </button>
             </div>
 
@@ -113,24 +112,41 @@
           </div>
           <button
             type="button"
-            (click)="runLiveCode()"
+            (click)="goToLive()"
             class="text-gray-400 text-lg hover:text-white py-2 px-4 rounded cursor-pointer"
-            title="Run Live Code"
+            title="run code"
             style="border: 1px dashed; background: none"
           >
             Run
           </button>
+          <button
+            type="button"
+            (click)="saveCode()"
+            class="text-gray-400 text-xl hover:text-white py-2 px-4 rounded cursor-pointer"
+            title="save code"
+          >
+            <i class="fa-solid fa-floppy-disk"></i>
+          </button>
+          <button
+            type="button"
+            (click)="endLive()"
+            class="text-red-800 text-xl hover:text-red-900 py-2 px-4 rounded cursor-pointer"
+            title="end live"
+          >
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
           <div class="relative">
             <div>
               <button
+                title="connected users"
                 type="button"
                 class="flex rounded-full duration-200 bg-gray-800 text-sm hover:outline-none hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-gray-800"
                 (click)="toggleDropdownUsers(); closeUrlDropDown()"
               >
                 <img
                   class="h-8 w-8 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt=""
+                  src="../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png"
+                  alt="connected users"
                 />
               </button>
             </div>
@@ -162,8 +178,12 @@
                       />
                       <div class="flex flex-col justify-between">
                         <h3 class="font-bold">{{ el.display_name }}</h3>
-                        <h3 class="text-sm" *ngIf="isCreator">Admin</h3>
-                        <h3 class="text-sm" *ngIf="!isCreator">Member</h3>
+                        <h3 class="text-sm" *ngIf="el._id === creatorId">
+                          Admin
+                        </h3>
+                        <h3 class="text-sm" *ngIf="el._id !== creatorId">
+                          Member
+                        </h3>
                       </div>
                     </div>
                     <div class="p-1 flex">
@@ -220,11 +240,17 @@
         </p>
       </div>
       <ngx-codemirror
+        #cssEditor
         id="css"
         class="overflow-hidden"
         [(ngModel)]="cssCode"
         [options]="cssOptions"
         (ngModelChange)="cssChange($event)"
+        (keydown)="getCursor($event, 'css')"
+        (click)="getCursor($event, 'css')"
+        (contextmenu)="getCursor($event, 'css')"
+        (select)="getCursor($event, 'css')"
+        (paste)="getCursor($event, 'css')"
       ></ngx-codemirror>
       <div
         style="flex: 1; height: 2em; background-color: darkolivegreen"
@@ -235,17 +261,23 @@
         </p>
       </div>
       <ngx-codemirror
+        #jsEditor
         id="js"
         class="overflow-hidden"
         [(ngModel)]="jsCode"
         [options]="jsOptions"
         (ngModelChange)="jsChange($event)"
+        (keydown)="getCursor($event, 'js')"
+        (click)="getCursor($event, 'js')"
+        (contextmenu)="getCursor($event, 'js')"
+        (select)="getCursor($event, 'js')"
+        (paste)="getCursor($event, 'js')"
       ></ngx-codemirror>
     </section>
     <div class="w-3 bg-gray-900" style="cursor: col-resize" id="resizer"></div>
     <div class="relative h-100" id="result-wrapper" style="flex-grow: 1">
       <iframe
-        #result
+        #resultPage
         class="h-full"
         style="width: 100%; height: 100%; margin: 0; padding: 0"
       ></iframe>

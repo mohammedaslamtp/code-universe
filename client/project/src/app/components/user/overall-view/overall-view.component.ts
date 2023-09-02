@@ -18,6 +18,7 @@ import { Template } from 'src/app/types/template_types';
 import moment from 'moment';
 import { SocialService } from 'src/app/services/soical.service';
 import { DatePipe } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-overall-view',
@@ -43,6 +44,7 @@ export class OverallViewComponent implements OnInit, OnDestroy {
   likedUsers!: USerData[];
   LikesLoading: boolean = false;
   isFollowed!: boolean;
+  rating: number = 0;
 
   constructor(
     private _activateRoute: ActivatedRoute,
@@ -100,6 +102,7 @@ export class OverallViewComponent implements OnInit, OnDestroy {
                 }
                 this.getLikedUsers(result.data._id);
                 this.tempDetails = result.data;
+                this.rating = result.data.upVote.length - result.data.downVote.length;
                 this.loadTemplate(result.data.template_id);
                 this._socketService.emit('giveAllComments', {
                   id: result.data._id,
@@ -205,6 +208,38 @@ export class OverallViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  // rating section
+  subs_upvote!: Subscription;
+  addRating() {
+    this.subs_upvote = this._socialService.upVote(this.tempId).subscribe(
+      (res) => {
+        if (res) {
+          console.log('up voted ', res);
+          this.rating = res.data.rating;
+        }
+      },
+      (err) => {
+        this.swalAlert(404, 'Something went wrong!');
+      }
+    );
+  }
+
+  subs_downvote!: Subscription;
+  decRating() {
+    this.subs_downvote = this._socialService.downVote(this.tempId).subscribe(
+      (res) => {
+        if (res) {
+          console.log('down voted ', res);
+          this.rating = res.data.rating;
+        }
+      },
+      (err) => {
+        this.swalAlert(404, 'Something went wrong!');
+      }
+    );
+  }
+
+  // comment section
   addComment(form: NgForm) {
     let comment = form.controls['comment'].value;
     comment = comment.trim();
@@ -253,7 +288,28 @@ export class OverallViewComponent implements OnInit, OnDestroy {
   }
 
   removeMention = () => (this.replayTo = null);
-  
+
+  // sweet_alert
+  swalAlert(status: number, message: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
+    });
+
+    Toast.fire({
+      icon: status > 400 ? 'error' : 'success',
+      title: `${message}`,
+    });
+  }
+
   ngOnDestroy(): void {
     this._socketService.emit('leaveCommentRoom', this.tempId);
     this.subs_tempDetail?.unsubscribe();

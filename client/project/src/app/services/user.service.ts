@@ -5,9 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LOGIN } from '../components/user/login/userLogin';
 import { Router } from '@angular/router';
 import { coding, domain, popupLog } from './shared-values.service';
-import { Templates } from '../types/template_types';
+import { Template, Templates } from '../types/template_types';
 import { USerData } from '../types/UserData';
-import { apiRes } from '../types/defulatApiRes';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -264,8 +263,39 @@ export class UserService {
   }
 
   // run live code
-  runLiveCode(roomId: string): Observable<apiRes> {
+  runLiveCode(roomId: string): Observable<any> {
     const url = `${this.api_url}/runLiveCode?room=${roomId}`;
-    return this._http.get<apiRes>(url, httpOptions);
+    return this._http.get(url, {
+      responseType: 'text',
+    });
+  }
+
+  saveLiveCode(html: string, css: string, js: string): Observable<Template> {
+    const url = `${this.api_url}/saveLiveCode`;
+    return this._http.post<Template>(
+      url,
+      { html: html, css: css, js: js },
+      httpOptions
+    );
+  }
+  
+  // to remove un-neccessary codes from database
+  removeLive(id: string) {
+    const url = `${this.api_url}/removeLive?id=${id}`;
+    return this._http.delete(url, httpOptions);
+  }
+
+  updateLiveCode(
+    id: string,
+    html: string,
+    css: string,
+    js: string
+  ): Observable<Template> {
+    const url = `${this.api_url}/updateLiveCode`;
+    return this._http.patch<Template>(
+      url,
+      { html: html, css: css, js: js, id: id },
+      httpOptions
+    );
   }
 }

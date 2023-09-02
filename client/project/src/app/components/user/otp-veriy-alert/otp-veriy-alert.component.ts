@@ -19,23 +19,20 @@ export class OtpVeriyAlertComponent implements OnInit {
     setTimeout(() => {
       if (this.userService.loggedIn()) {
         this.userService.getUserData().subscribe((res) => {
-          if (this.userService.loggedIn()) {
-            if (res.otp_verified == false) {
-              this.otpInterval = setInterval(() => {
-                coding.subscribe((value) => {
-                  if (value) {
-                    let alert: any = document.getElementById('otp_alert');
-                    if (alert) alert.style.display = 'none';
-                  } else {
-                    let alert: any = document.getElementById('otp_alert');
-                    if (alert) alert.style.display = 'block';
-                  }
-                });
-              }, 5000);
-            } else {
-              this.userService.otpAlertClose();
-              clearInterval(this.otpInterval);
-            }
+          if (res.otp_verified == false) {
+            this.otpInterval = setInterval(() => {
+              coding.subscribe((value) => {
+                if (value) {
+                  const alert = document.getElementById('otp_alert');
+                  if (alert) alert.style.visibility = 'hidden';
+                  if (alert) alert.style.opacity = '0';
+                } else {
+                  const alert = document.getElementById('otp_alert');
+                  if (alert) alert.style.visibility = 'visible';
+                  if (alert) alert.style.opacity = '1';
+                }
+              });
+            }, 6000);
           } else {
             this.userService.otpAlertClose();
             clearInterval(this.otpInterval);
@@ -53,7 +50,8 @@ export class OtpVeriyAlertComponent implements OnInit {
   }
 
   closeAlert() {
-    let alert: any = document.getElementById('otp_alert');
-    if (alert) alert.style.display = 'none';
+    const alert = document.getElementById('otp_alert');
+    if (alert) alert.style.visibility = 'hidden';
+    if (alert) alert.style.opacity = '0';
   }
 }

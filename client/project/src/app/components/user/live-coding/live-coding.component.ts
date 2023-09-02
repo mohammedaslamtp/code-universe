@@ -24,6 +24,7 @@ import { Position } from 'codemirror';
 import { Location } from '@angular/common';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { domain } from 'src/app/services/shared-values.service';
+import { Template } from 'src/app/types/template_types';
 
 @Component({
   selector: 'app-live-coding',
@@ -34,11 +35,14 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
   isToggledUsers: boolean = false;
   isToggledUrl: boolean = false;
   connectedUsers!: USerData[];
+  creatorId!: string;
   owner!: USerData;
   isCreator: boolean = false;
   room!: string;
   liveLoading: boolean = false;
   domain = domain;
+  code!: Template;
+  subs_code!: Subscription;
   subs_owner!: Subscription;
   subs_isConnected!: Subscription;
   subs_connectedUsers!: Subscription;
@@ -48,6 +52,10 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
 
   @ViewChild('htmlEditor', { static: false })
   htmlEditor!: CodemirrorComponent;
+  @ViewChild('cssEditor', { static: false })
+  cssEditor!: CodemirrorComponent;
+  @ViewChild('jsEditor', { static: false })
+  jsEditor!: CodemirrorComponent;
 
   // blocking reaload
   @HostListener('window:beforeunload', ['$event'])
@@ -79,6 +87,8 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     }, 2000);
   }
   htmlCursor!: Position;
+  cssCursor!: Position;
+  jsCursor!: Position;
   ngOnInit() {
     this.url = this._location.path();
 
@@ -94,6 +104,12 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
         }
       });
     }, 0);
+
+    this._socketService.on('runCode', (data) => {
+      if (data.run) {
+        this.runLiveCode();
+      }
+    });
 
     // changing title of web component
     this._titleService.setTitle('CODEBOX LIVE');
@@ -133,9 +149,9 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     // update html code
     this._socketService.on('htmlCode', (code) => {
       this.htmlCode = code;
-      const cmInstance = this.htmlEditor.codeMirror;
-      const cursor = this.htmlCursor;
-      cmInstance?.setCursor(cursor);
+      // const cmInstance = this.htmlEditor?.codeMirror;
+      // const cursor = this.htmlCursor;
+      // cmInstance?.setCursor(cursor);
     });
 
     // update css code
@@ -150,7 +166,12 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
 
     // fetching connected users
     this._socketService.on('connectedClients', (data) => {
+      this._socketService.emit('html', this.htmlCode);
+      this._socketService.emit('css', this.cssCode);
+      this._socketService.emit('js', this.jsCode);
+      console.log('connected clients: ', data);
       this.connectedUsers = data.connectedClients;
+      this.creatorId = data.liveCreator;
     });
 
     // if live end
@@ -159,9 +180,19 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
       this.endSwal(alert);
     });
 
-    // initial code fetch
+    // initial html code fetch
     this._socketService.on('initialHtmlEmit', (data) => {
       this.htmlCode = data;
+    });
+
+    // initial css code fetch
+    this._socketService.on('initialCssEmit', (data) => {
+      this.cssCode = data;
+    });
+
+    // initial js code fetch
+    this._socketService.on('initialJsEmit', (data) => {
+      this.jsCode = data;
     });
 
     // // adding new line
@@ -221,7 +252,7 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     Swal.fire({
       title: alert,
       html: 'The live already end. Going to redirect <b></b>',
-      timer: 3000,
+      timer: 2500,
       timerProgressBar: true,
       didOpen: () => {
         Swal.showLoading();
@@ -303,7 +334,6 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
   };
 
   // set cursor position
-
   setCursor(position: Position | number | undefined, lang: string) {
     if (position && lang === 'html') {
       this.htmlEditor.codeMirror?.setCursor(position);
@@ -316,7 +346,14 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
       if (this.htmlEditor.codeMirror?.getCursor()) {
         this.htmlCursor = this.htmlEditor.codeMirror?.getCursor();
       }
-      // console.log('position: ', this.htmlEditor.codeMirror?.getCursor());
+    } else if (event && lang === 'css') {
+      if (this.cssEditor.codeMirror?.getCursor()) {
+        this.cssCursor = this.cssEditor.codeMirror?.getCursor();
+      }
+    } else if (event && lang === 'js') {
+      if (this.jsEditor.codeMirror?.getCursor()) {
+        this.jsCursor = this.jsEditor.codeMirror?.getCursor();
+      }
     }
   }
 
@@ -399,21 +436,32 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     this._socketService.emit('js', code);
   }
 
-  @ViewChild('result', { static: true }) result!: ElementRef<HTMLIFrameElement>;
+  @ViewChild('resultPage', { static: false })
+  Iframe!: ElementRef<HTMLIFrameElement>;
+
+  goToLive() {
+    this.runLiveCode();
+    this._socketService.emit('runLiveCode', { run: true });
+  }
 
   // to run live code
+  subs_storeLive!: Subscription;
+  subs_runLive!: Subscription;
   runLiveCode() {
-    this._userService
+    this.subs_storeLive = this._userService
       .storeLiveCode(this.room, this.htmlCode, this.cssCode, this.jsCode)
       .subscribe(
         (res) => {
           if (res) {
-            console.log(res);
-            this._userService.runLiveCode(res.room_id).subscribe((data) => {
-              const blob = new Blob([res as Blob], { type: 'text/html' });
-              const url = URL.createObjectURL(blob);
-              this.result.nativeElement.src = url;
-            });
+            this.subs_runLive = this._userService
+              .runLiveCode(res.room_id)
+              ?.subscribe((data) => {
+                if (data) {
+                  const blob = new Blob([data], { type: 'text/html' });
+                  const url = URL.createObjectURL(blob);
+                  if (this.Iframe) this.Iframe.nativeElement.src = url;
+                }
+              });
           }
         },
         (e) => {
@@ -445,11 +493,68 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
       this.isToggledUrl = false;
     }
   }
+
+  endLive = () => this._router.navigate(['/createLive']);
+
+  // save code
+  saveCode() {
+    if (this.code) {
+      this.subs_code = this._userService
+        .updateLiveCode(this.code._id, this.htmlCode, this.cssCode, this.jsCode)
+        .subscribe(
+          (data) => {
+            if (data) {
+              this.code = data;
+              this.swalAlert(200, 'Saved successfully');
+            }
+          },
+          (err) => {
+            this.swalAlert(404, 'Something went wrong!');
+          }
+        );
+    } else {
+      this.subs_code = this._userService
+        .saveLiveCode(this.htmlCode, this.cssCode, this.jsCode)
+        .subscribe(
+          (data) => {
+            if (data) {
+              this.code = data;
+              this.swalAlert(200, 'Saved successfully');
+            }
+          },
+          (err) => {
+            this.swalAlert(404, 'Something went wrong!');
+          }
+        );
+    }
+  }
+
   // close dropdown
   closeUsersDropDown() {
     if (this.isToggledUsers == true) {
       this.isToggledUsers = false;
     }
+  }
+
+  // sweet_alert
+  swalAlert(status: number, message: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
+    });
+
+    Toast.fire({
+      icon: status > 400 ? 'error' : 'success',
+      title: `${message}`,
+    });
   }
 
   ngOnDestroy(): void {
@@ -460,9 +565,13 @@ export class LiveCodingComponent implements OnInit, OnDestroy {
     this.closeUrlDropDown();
     this.closeUsersDropDown();
     this._socketService.disconnect();
+    this._userService.removeLive(this.room);
     this.subs_owner?.unsubscribe();
     this.subs_param?.unsubscribe();
     this.subs_roomid?.unsubscribe();
     this.subs_isConnected?.unsubscribe();
+    this.subs_code?.unsubscribe();
+    this.subs_storeLive?.unsubscribe();
+    this.subs_runLive?.unsubscribe();
   }
 }

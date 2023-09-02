@@ -35,7 +35,6 @@ export class GuestHomeComponent implements OnInit, OnDestroy {
       .getTemplates()
       .subscribe((data: any) => {
         if (data) {
-          console.log('got result: ', data);
           this.allTemplates = data.all_templates;
           this.isLoading = false;
         }
@@ -72,7 +71,6 @@ export class GuestHomeComponent implements OnInit, OnDestroy {
   }
 
   pleaseLogin() {
-    console.log('login');
     this.alert = true;
   }
   closeAlert() {

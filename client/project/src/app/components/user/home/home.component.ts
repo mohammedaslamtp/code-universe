@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { generateOtpToggle } from '../generate-otp/generate-otp.component';
 import { UserService } from 'src/app/services/user.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -14,16 +14,18 @@ export const YourWorks = new BehaviorSubject<boolean>(false);
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
 })
-export class HomeComponent implements OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy {
   otpToggle: boolean = false;
   templates!: Templates;
   UserData!: USerData;
-  UserData_collector: Subscription;
+  UserData_collector!: Subscription;
   yourWorks?: Templates;
   isTrendingTab: boolean = false;
   isFollowingTab: boolean = false;
   isYourWorkTab: boolean = false;
-  constructor(private _userService: UserService) {
+  constructor(private _userService: UserService) {}
+
+  ngOnInit(): void {
     Trending.subscribe((val) => {
       this.isTrendingTab = val;
     });
@@ -36,6 +38,7 @@ export class HomeComponent implements OnDestroy {
     generateOtpToggle.subscribe((val) => {
       this.otpToggle = val;
     });
+
     this.UserData_collector = this._userService
       .getUserData()
       .subscribe((data) => {

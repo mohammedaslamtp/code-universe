@@ -14,7 +14,7 @@
       <div class="flex justify-between w-full h-16 items-center">
         <div style="flex: 1" class="flex space-x-4 items-center text-white">
           <h1 class="m-0 text-2xl font-bold cursor-pointer" routerLink="/">
-            CODE UNIVERSE
+            CODEUNIVERSE
           </h1>
         </div>
         <div style="flex: 1" class="flex items-center justify-end">
@@ -71,7 +71,7 @@
         <div
           class="flex flex-col md:flex-row md:h-2/6 basis-2/6 border-t-2 duration-300"
         >
-          <section class="p-5 basis-full md:basis-2/6">
+          <section class="p-3 basis-full md:basis-3/6">
             <div class="flex justify-between">
               <div class="p-5">
                 <h1 class="font-bold text-2xl">{{ tempDetails.title }}</h1>
@@ -94,45 +94,70 @@
                 </button>
               </div>
             </div>
-            <div class="p-5 flex flex-col gap-y-8">
-              <div class="flex gap-4 items-center justify-start">
-                <img
-                  width="70"
-                  height="70"
-                  [routerLink]="'/userProfile/' + tempDetails.user.full_name"
-                  class="cursor-pointer outline outline-offset-2 outline-1 rounded-lg"
-                  [src]="
-                    tempDetails.user.avatar
-                      ? domain + '/' + tempDetails.user.avatar
-                      : '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png'
-                  "
-                  [alt]="tempDetails.user.display_name"
-                />
-                <div class="flex flex-col">
-                  <h1 class="font-bold text-2xl cursor-pointer">
-                    {{ tempDetails.user.display_name }}
-                  </h1>
-                  <button
-                    *ngIf="owner._id !== userData._id"
-                    type="button"
-                    class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
-                    (click)="followOrUnfollow(userData._id)"
-                  >
-                    <div *ngIf="followLoading">
-                      <i class="animate-spin fa-solid px-2 fa-spinner"></i>
-                    </div>
-                    <span
-                      class="relative px-4 py-1 flex items-center transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+            <div class="p-3 flex flex-col gap-y-4">
+              <div class="flex justify-between">
+                <div class="flex gap-4 items-center justify-start">
+                  <img
+                    width="70"
+                    height="70"
+                    [routerLink]="'/userProfile/' + tempDetails.user.full_name"
+                    class="cursor-pointer outline outline-offset-2 outline-1 rounded-lg"
+                    [src]="
+                      tempDetails.user.avatar
+                        ? domain + '/' + tempDetails.user.avatar
+                        : '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png'
+                    "
+                    [alt]="tempDetails.user.display_name"
+                  />
+                  <div class="flex flex-col">
+                    <h1 class="font-bold text-2xl cursor-pointer">
+                      {{ tempDetails.user.display_name }}
+                    </h1>
+                    <button
+                      *ngIf="owner._id !== userData._id"
+                      type="button"
+                      class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+                      (click)="followOrUnfollow(userData._id)"
                     >
-                      <span class="flex items-center" *ngIf="isFollowed"
-                      [title]="'unfollow ' + tempDetails.user.display_name"
-                        ><i class="fa-solid fa-check"></i>&nbsp;Following</span
-                      ><span *ngIf="!isFollowed"
-                      [title]="'follow ' + tempDetails.user.display_name"
-                      class="flex items-center"
-                        ><i class="fa-solid fa-plus"></i>&nbsp;Follow</span
+                      <div *ngIf="followLoading">
+                        <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+                      </div>
+                      <span
+                        class="relative px-4 py-1 flex items-center transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
                       >
-                    </span>
+                        <span
+                          class="flex items-center"
+                          *ngIf="isFollowed"
+                          [title]="'unfollow ' + tempDetails.user.display_name"
+                          ><i class="fa-solid fa-check"></i
+                          >&nbsp;Following</span
+                        ><span
+                          *ngIf="!isFollowed"
+                          [title]="'follow ' + tempDetails.user.display_name"
+                          class="flex items-center"
+                          ><i class="fa-solid fa-plus"></i>&nbsp;Follow</span
+                        >
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex flex-col gap-2 items-center justify-center">
+                  <button
+                    (click)="addRating()"
+                    title="add rating"
+                    class="rounded-full outline-1 p-2 bg-gray-200 hover:bg-gray-300 duration-200 outline-gray-800"
+                  >
+                    <i class="fa-solid fa-chevron-up"></i>
+                  </button>
+                  <div>
+                    <span>{{ rating }}</span>
+                  </div>
+                  <button
+                    (click)="decRating()"
+                    title="decrease rating"
+                    class="rounded-full outline-1 p-2 bg-gray-200 hover:bg-gray-300 duration-200 outline-gray-800"
+                  >
+                    <i class="fa-solid fa-angle-down"></i>
                   </button>
                 </div>
               </div>
@@ -142,7 +167,7 @@
               </div>
             </div>
           </section>
-          <section class="flex flex-col basis-full md:basis-4/6 p-5 gap-y-2">
+          <section class="flex flex-col basis-full md:basis-3/6 p-3 gap-y-2">
             <div class="h-8 bg-gray-200 p-2 w-full flex rounded items-center">
               <h3 class="font-semibold">{{ likedUsersCount }}&nbsp;Likes</h3>
             </div>

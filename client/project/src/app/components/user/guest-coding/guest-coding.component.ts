@@ -247,7 +247,7 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
               this.templateId = res.data.template_id;
               this.titleHead.nativeElement.textContent = this.title;
               console.log(res.data.user);
-              
+
               if (res.data.user._id == this.userData?._id) {
                 this.isOwner = true;
                 templateListing.next(false);
@@ -336,10 +336,8 @@ export class GuestCodingComponent implements OnInit, OnDestroy {
           this._userService.reloadIframe(data.template_id).subscribe(
             (response: any) => {
               if (response) this.isLoading = false;
-
               const blob = new Blob([response], { type: 'text/html' });
               const url = URL.createObjectURL(blob);
-
               this.iFrame.nativeElement.src = url;
             },
             (err) => {

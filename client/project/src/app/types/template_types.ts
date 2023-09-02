@@ -16,6 +16,8 @@ export interface Template {
   views: [string];
   __v: number;
   user: USerData;
+  upVote: [USerData | string];
+  downVote: [USerData | string];
   createdAt: string;
   updatedAt: string;
 }
@@ -56,5 +58,7 @@ export interface Code {
   isPrivate: boolean;
   __v: number;
   user: string;
+  upVote: [USerData | string];
+  downVote: [USerData | string];
   userData: User[];
 }
