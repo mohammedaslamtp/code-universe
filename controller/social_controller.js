@@ -225,4 +225,68 @@ module.exports = {
       res.status(200).json(apiRes);
     });
   },
+
+  // to fetch all pinned items
+  allPinnedItems: (req, res) => {
+    User.findById(req.user._id)
+      .populate({
+        path: "pinned_items",
+        model: "code", // Specify the model for "pinned_items"
+        populate: {
+          path: "user", // Populate the "user" field within "pinned_items"
+          model: "Users", // Specify the model for "user"
+        },
+      })
+      .then((user) => {
+        apiRes.status = 200;
+        apiRes.data = user.pinned_items;
+        res.status(200).json(apiRes);
+      })
+      .catch((e) => {
+        console.log(e);
+        apiRes.status = 404;
+        apiRes.data = null;
+        res.status(404).json(apiRes);
+      });
+  },
+
+  // pin a code template
+  pinItem: () => {
+    const tempId = req.query.id;
+    User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $addToSet: { pinned_items: tempId } },
+      { new: true }
+    )
+      .then((data) => {
+        apiRes.status = 200;
+        apiRes.data = data.pinned_items;
+        res.status(200).json(apiRes);
+      })
+      .catch((error) => {
+        apiRes.status = 404;
+        apiRes.data = null;
+        res.status(404).json(apiRes);
+      });
+  },
+
+  // un-pin a code template
+  unPinItem: () => {
+    const tempId = req.query.id;
+    User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $pull: { pinned_items: tempId } },
+      { new: true }
+    )
+      .then((data) => {
+        apiRes.status = 200;
+        apiRes.data = data.pinned_items;
+        res.status(200).json(apiRes);
+      })
+      .catch((error) => {
+        apiRes.status = 404;
+        apiRes.data = null;
+        res.status(404).json(apiRes);
+      });
+  },
 };

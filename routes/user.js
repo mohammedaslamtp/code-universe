@@ -143,5 +143,13 @@ route
     code_controller.updateLiveCode
   )
   .patch("/upVote", auth_token.authenticate, social_controller.upVote)
-  .patch("/downVote", auth_token.authenticate, social_controller.downVote);
+  .patch("/downVote", auth_token.authenticate, social_controller.downVote)
+  .get(
+    "/allPinnedItems",
+    auth_token.authenticate,
+    social_controller.allPinnedItems
+  )
+
+  .patch("/pinItem", auth_token.authenticate, social_controller.pinItem)
+  .patch("/unPinItem", auth_token.authenticate, social_controller.unPinItem);
 module.exports = route;
