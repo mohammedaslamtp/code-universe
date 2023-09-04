@@ -1,0 +1,325 @@
+<!-- User Navbar -->
+<nav
+  class="bg-gray-800 w-full"
+  style="position: fixed; z-index: 80"
+  *ngIf="authenticated == true"
+>
+  <div class="mx-auto px-4">
+    <div class="flex justify-between h-16 items-center">
+      <div class="flex space-x-4">
+        <a class="py-2 text-gray-400 text-sm">Main Menu</a>
+      </div>
+      <div
+        class="flex relative text-gray-600 focus-within:text-gray-400"
+        style="width: 50%"
+      >
+        <form [formGroup]="search" class="w-full">
+          <label
+            for="search"
+            class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+            >Search</label
+          >
+          <div class="relative w-full">
+            <div
+              class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+            >
+              <svg
+                aria-hidden="true"
+                placeholder="search codes..."
+                class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </div>
+            <input
+              #searchQ
+              type="search"
+              formControlName="q"
+              class="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-300"
+              placeholder="Search codes"
+            />
+          </div>
+          <button type="submit" class="hidden" (click)="searching()"></button>
+        </form>
+      </div>
+
+      <button
+        *ngIf="isProfile == false"
+        (click)="profile()"
+        title="Your profile"
+        class="items-center px-3 py-2 text-sm mr-0 font-medium text-center text-gray-600 rounded-lg md:mb-0 dark:hover:text-gray-300"
+        type="button"
+      >
+        <i class="fa-solid fa-user cursor-pointer"></i>
+      </button>
+      <button
+        *ngIf="isProfile"
+        (click)="dropDown()"
+        title="menu"
+        class="items-center px-3 py-2 text-sm mr-0 font-medium text-center text-gray-600 rounded-lg md:mb-0 dark:hover:text-gray-300"
+        type="button"
+      >
+        <i class="fa-solid fa-user cursor-pointer"></i>
+      </button>
+
+      <div
+        class="w-full absolute h-fit bg-red-200 flex justify-end"
+        *ngIf="dropDownOpened"
+      >
+        <div
+          style="top: 1.2em"
+          class="z-10 absolute bg-white mr-8 divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+        >
+          <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+            <div class="font-bold" title="{{ userData.full_name }}">
+              {{ userData.full_name }}
+            </div>
+            <div class="font-bold truncate" title="{{ userData.email }}">
+              {{ userData.email }}
+            </div>
+          </div>
+          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
+            <li>
+              <a
+                routerLink="/coding/new"
+                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >Coding</a
+              >
+            </li>
+            <li>
+              <a
+                routerLink="/pinnedItems"
+                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >Pinned Items</a
+              >
+            </li>
+            <li>
+              <a
+                [routerLink]="'settings/' + userData._id"
+                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >Settings</a
+              >
+            </li>
+          </ul>
+          <div class="py-2">
+            <a
+              (click)="logout()"
+              class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-red-600"
+              >Sign out</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Guest Navbar -->
+<nav
+  class="bg-gray-800 w-full fixed"
+  *ngIf="authenticated == false"
+  style="z-index: 50"
+>
+  <div class="mx-auto px-4">
+    <div class="flex justify-between h-16 items-center">
+      <div class="flex space-x-4">
+        <a class="py-2 text-gray-400 text-sm">Main Menu</a>
+      </div>
+      <div>
+        <a
+          routerLink="/login"
+          class="py-2 text-gray-400 text-lg hover:text-white"
+          >Login</a
+        >
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- User Sidebar -->
+<div
+  class="flex h-screen bg-gray-200 fixed"
+  *ngIf="authenticated == true"
+  style="z-index: 80"
+>
+  <div class="flex-shrink-0 w-64 bg-gray-800">
+    <div class="flex flex-col h-full">
+      <div class="flex items-center justify-center h-16 bg-gray-900">
+        <span
+          routerLink="/"
+          class="text-white font-semibold text-xl cursor-pointer"
+          >CODEUNIVERSE</span
+        >
+      </div>
+      <div class="overflow-y-auto">
+        <ul class="mt-4">
+          <li>
+            <a
+              routerLink="/coding/new"
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Start Coding</span>
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/createLive"
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Live coding</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="'/home/yourWorks'"
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Your work</span>
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/pinnedItems"
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Pinned Items</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="'/home/followingCodes'"
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Following</span>
+            </a>
+          </li>
+          <li>
+            <a
+              [routerLink]="'/home/trending'"
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Trending</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Guest Sidebar -->
+<div class="flex h-screen bg-gray-200 fixed" *ngIf="authenticated == false">
+  <div class="flex-shrink-0 w-64 bg-gray-800">
+    <div class="flex flex-col h-full">
+      <div class="flex items-center justify-center h-16 bg-gray-900">
+        <span class="text-white font-semibold text-xl">CODEUNIVERSE</span>
+      </div>
+      <div class="overflow-y-auto">
+        <ul class="mt-4">
+          <li>
+            <a
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+              routerLink="/"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Home</span>
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/coding/new"
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Start Coding</span>
+            </a>
+          </li>
+
+          <li>
+            <a
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+              routerLink="guest/search"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Search</span>
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/login"
+              class="flex items-center py-2 px-6 text-gray-500 hover:text-gray-200"
+            >
+              <svg
+                class="h-5 w-5 fill-current text-gray-500"
+                viewBox="0 0 24 24"
+              >
+                <path d="M19 13H5v-2h14v2z"></path>
+              </svg>
+              <span class="mx-3">Login</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

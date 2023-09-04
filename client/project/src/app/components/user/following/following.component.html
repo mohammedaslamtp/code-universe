@@ -1,0 +1,82 @@
+<div class="flex gap-y-4 flex-col">
+  <h1 class="text-xl font-bold">
+    <span *ngIf="followingData && followingData.length">{{
+      followingData.length
+    }}</span>
+    Following:
+  </h1>
+  <!-- empty case -->
+  <div
+    *ngIf="followingData && followingData.length == 0"
+    class="border-2 rounded-md h-16 w-full flex justify-center items-center"
+  >
+    <p>Following is Empty.</p>
+  </div>
+  <!-- /empty case -->
+  <div
+    class="grid gap-4 auto_grid duration-300"
+    *ngIf="followingData && followingData.length > 0"
+  >
+    <div
+      class="py-3 p-2 border-2 flex items-center rounded-md"
+      *ngFor="let el of followingData; let count = index"
+    >
+      <div class="flex items-center gap-x-4 rounded-md w-full">
+        <img
+          [src]="
+            el.avatar
+              ? domain + '/' + el.avatar
+              : '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png'
+          "
+          [routerLink]="'/userProfile/' + el.full_name"
+          alt=""
+          class="w-10 h-8 outline-offset-2 cursor-pointer outline ring-1 outline-gray-300 rounded"
+        />
+        <div class="w-full flex items-center justify-between">
+          <h3
+            class="font-bold cursor-pointer"
+            [routerLink]="'/userProfile/' + el.full_name"
+          >
+            {{ el.display_name }}
+          </h3>
+
+          <button
+            type="button"
+            class="relative inline-flex items-center justify-center p-0.5 mr-0 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+            (click)="onUnFollow(el._id, count)"
+            *ngIf="isArrInclude(el.followers) && el._id !== ownerData._id"
+          >
+            <!-- <div class="hidden">
+            <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+          </div> -->
+            <span
+              class="relative px-4 py-1 flex items-center transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+            >
+              <span class="flex items-center" title="unfollow"
+                ><i class="fa-solid fa-xmark"></i>&nbsp;Unfollow</span
+              >
+            </span>
+          </button>
+          <button
+            type="button"
+            class="relative inline-flex items-center justify-center p-0.5 mr-0 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+            *ngIf="!isArrInclude(el.followers) && el._id !== ownerData._id"
+            (click)="onFollow(el, count)"
+          >
+            <!-- <div  class="hidden">
+            <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+          </div> -->
+            <span
+              class="relative px-4 py-1 flex items-center transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+            >
+              <span class="flex items-center" title="follow"
+                ><i class="fa-solid fa-check"></i>&nbsp;Follow</span
+              >
+            </span>
+          </button>
+          <p class="flex items-center" *ngIf="el._id == ownerData._id">your account&nbsp;<i class="fa-solid fa-check"></i></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

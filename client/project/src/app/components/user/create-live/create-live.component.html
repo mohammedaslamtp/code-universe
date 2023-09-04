@@ -1,0 +1,156 @@
+<main class="flex justify-start items-center flex-col h-screen">
+  <nav class="bg-gray-800 w-full" style="height: 7%">
+    <div class="px-3 sm:px-6 lg:px-8">
+      <div class="relative flex h-16 items-center justify-between">
+        <div
+          class="flex flex-1 items-center items-stretch justify-start"
+          (click)="closeDropDown()"
+        >
+          <div class="flex flex-shrink-0 items-center">
+            <h1
+              class="w-auto text-white text-2xl cursor-pointer"
+              routerLink="/"
+            >
+              CODEUNIVERSE
+            </h1>
+          </div>
+        </div>
+        <div
+          class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
+        >
+          <!-- Profile dropdown -->
+          <div class="relative ml-10">
+            <div *ngIf="ownerData">
+              <button
+                type="button"
+                [routerLink]="'/userProfile/' + ownerData.full_name"
+                class="flex rounded-full bg-gray-800 text-sm"
+              >
+                <img
+                  class="h-8 w-8 rounded-full"
+                  [src]="
+                    ownerData.avatar
+                      ? domain + '/' + ownerData.avatar
+                      : '../../../../assets/images/defulat_profile_avatar_of_codebox_2023.png'
+                  "
+                  alt="{{ ownerData.display_name }}"
+                  title="Profile of {{ ownerData.display_name }}"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div
+    [ngClass]="warnings ? 'visible' : 'invisible'"
+    (click)="closeDropDown()"
+    class="flex absolute mt-16 w-11/12 items-center p-4 text-red-800 rounded-lg bg-red-100"
+    role="alert"
+  >
+    <i class="fa-solid fa-circle-info" title="warning"></i>
+    <div class="ml-3 text-sm font-medium"><b> Warning!</b> {{ warnings }}</div>
+    <button
+      type="button"
+      title="close alert"
+      (click)="clearWarnings()"
+      class="ml-auto -mx-1.5 -my-1.5 text-red-500 rounded-full p-1.5 bg-red-100 hover:bg-red-50 inline-flex items-center justify-center h-8 w-8"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <section
+    (click)="closeDropDown()"
+    class="w-full flex justify-center items-center"
+    style="height: 93%"
+  >
+    <div
+      class="w-1/4 h-fit max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
+    >
+      <form
+        class="space-y-6"
+        #liveCode="ngForm"
+        (ngSubmit)="onSubmit(liveCode)"
+      >
+        <h5
+          class="text-xl font-medium text-center text-gray-900 dark:text-white"
+        >
+          Enter To Live Code
+        </h5>
+        <div class="flex justify-center">
+          <button
+            type="button"
+            title="Create new live coding.."
+            (click)="createLive()"
+            [disabled]="connected"
+            [ngClass]="connected ? 'cursor-not-allowed' : 'cursor-pointer'"
+            class="relative w-full inline-flex fle items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+          >
+            <div *ngIf="createLoad">
+              <i
+                class="animate-spin fa-solid px-2 fa-spinner"
+                title="creating.."
+              ></i>
+            </div>
+            <span
+              class="relative flex justify-center w-full px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+            >
+              <div>
+                <i class="fa-solid fa-plus mr-1" style="margin-top: 2px"></i>
+              </div>
+              Create Live
+            </span>
+          </button>
+        </div>
+        <p class="text-center text-white">OR</p>
+        <p class="text-red-800" *ngIf="error">{{ error }}</p>
+        <div>
+          <input
+            type="url"
+            name="joinUrl"
+            ngModel
+            id="liveUrl"
+            autocomplete="off"
+            placeholder="Enter URL"
+            title="please enter valid URL"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            (keypress)="clearError()"
+            required
+          />
+        </div>
+
+        <div class="flex justify-center">
+          <button
+            [ngClass]="
+              liveCode.invalid ? 'cursor-not-allowed' : 'cursor-pointer'
+            "
+            [disabled]="liveCode.invalid"
+            type="submit"
+            title="join to live coding.."
+            class="relative w-full inline-flex fle items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white disabled:opacity-75"
+          >
+            <div *ngIf="joinLoad">
+              <i
+                class="animate-spin fa-solid px-2 fa-spinner"
+                title="loading.."
+              ></i>
+            </div>
+            <span
+              class="relative w-full flex justify-center px-5 py-2.5 transition-all ease-in disabled:opacity-75 duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+            >
+              <div>
+                <i
+                  class="fa-solid fa-right-to-bracket mr-1"
+                  style="margin-top: 2px"
+                ></i>
+              </div>
+              Join
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>

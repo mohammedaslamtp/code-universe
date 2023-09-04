@@ -1,0 +1,154 @@
+<!-- for loading -->
+<section class="cards" *ngIf="!trendingTemplates && !empty">
+  <article class="card animate-pulse" style="height: 21em; width: 20em">
+    <iframe
+      src="http://127.0.0.1:5500/zzzzzz/"
+      width="320"
+      height="200"
+      style="border-radius: 12px 12px 0 0"
+      frameborder="0"
+    ></iframe>
+    <div class="card__info-hover"></div>
+
+    <div class="card__info mt-5">
+      <h3
+        class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+        style="background-color: rgb(212, 211, 211)"
+      ></h3>
+      <h3
+        class="card__title flex-1 space-y-6 py-1 p-3 rounded-full"
+        style="background-color: rgb(212, 211, 211)"
+      ></h3>
+
+      <div class="flex justify-around mt-3 items-center">
+        <div class="action">
+          <small
+            ><i class="fa-solid fa-heart" style="color: rgb(0, 0, 0)"></i
+            >&nbsp;...</small
+          >
+        </div>
+        <div class="action">
+          <small
+            ><i class="fa-solid fa-comment" style="color: rgb(0, 0, 0)"></i
+            >&nbsp;...</small
+          >
+        </div>
+        <div class="action">
+          <small
+            ><i class="fa-solid fa-eye" style="color: rgb(0, 0, 0)"></i
+            >&nbsp;...</small
+          >
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+<!-- /for loading -->
+
+<!-- real data -->
+<section class="cards" *ngIf="trendingTemplates">
+  <article
+    *ngFor="let el of trendingTemplates"
+    class="card border border-zinc-200"
+    style="height: 17.3em; width: 20em; margin-bottom: 1.5em"
+    [ngClass]="{ 'card-scale': true }"
+  >
+    <iframe
+      id="{{ el.template_id }}"
+      style="width: 100%; border-radius: 12px 12px 0 0 !important"
+      class="www"
+      scrolling="no"
+    ></iframe>
+
+    <div
+      class="card__info mt-2"
+      style="border-top: 0.5px solid rgb(210, 222, 233)"
+    >
+      <div class="flex justify-between items-center">
+        <h3 routerLink="/coding/{{ el._id }}" class="card__title">
+          {{ el.title }}
+        </h3>
+        <button
+          (click)="toggleDropdown(el._id)"
+          class="px-2.5 py-1.5 rounded-full hover:bg-gray-200 duration-300"
+        >
+          <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
+        </button>
+        <!-- Dropdown menu -->
+        <div
+          [id]="el._id"
+          [ngClass]="{
+            hidden: !cardDropDown[el._id],
+            'bg-white': true,
+            'divide-y': true,
+            'divide-gray-100': true,
+            'rounded-lg': true,
+            shadow: true,
+            'w-44': true,
+            'dark:bg-gray-700': true,
+            absolute: true
+          }"
+          style="right: 3.4em"
+        >
+          <ul
+            class="py-2 text-sm text-gray-700 dark:text-gray-200"
+            aria-labelledby="dropdownLeftButton"
+          >
+            <li>
+              <a
+                (click)="addToPin(el._id)"
+                class="flex items-center block px-4 py-2 duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                ><i class="fa-solid fa-thumbtack"></i>&nbsp;&nbsp;&nbsp;Add to
+                Pin</a
+              >
+            </li>
+            <li>
+              <a
+                class="flex items-center block px-4 py-2 duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                (click)="overView(el._id)"
+              >
+                <i class="fa-solid fa-eye"></i>
+                &nbsp;&nbsp;&nbsp;Overall</a
+              >
+            </li>
+          </ul>
+        </div>
+        <!-- /dropdown -->
+      </div>
+      <span class="card__by">
+        <a
+          class="card__author"
+          [routerLink]="'/userProfile/' + el.user.full_name"
+          title="{{ el.user.full_name }}"
+          >{{ el.user.full_name }}</a
+        ></span
+      >
+      <div class="flex justify-start mt-3 items-center">
+        <div class="action mr-2">
+          <small class="flex items-center" (click)="Dolike(el._id)"
+            ><i class="fa-solid fa-heart" style="color: rgb(175, 0, 0)"></i
+            >&nbsp;{{ el.like.length }}</small
+          >
+        </div>
+        <div class="action mr-2">
+          <small class="flex items-center" (click)="overView(el._id)"
+            ><i class="fa-solid fa-comment" style="color: rgb(0, 0, 0)"></i
+            >&nbsp;{{ el.comment.length }}</small
+          >
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+<!-- /Trending card -->
+
+<!-- empty case -->
+<div
+  class="w-full h-32 rounded-lg flex flex-col items-center justify-center"
+  style="background-color: #1f2937"
+  *ngIf="empty"
+>
+  <h2 class="text-2xl text-white">No codes yet.</h2>
+  <a routerLink="/coding/new" class="text-sky-400 mt-4">Go build One!</a>
+</div>
+<!-- /empty case -->

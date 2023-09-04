@@ -1,0 +1,219 @@
+<main class="w-full h-full text-gray-400 flex justify-center container mx-auto">
+  <div class="flex flex-col w-full items-center" style="width: 95%">
+    <!-- Account Details -->
+
+    <!-- username form -->
+    <form
+      #usernameForm="ngForm"
+      class="flex flex-col mb-5 flex-wrap w-5/6 p-5 bg-zinc-800 rounded-md"
+    >
+      <!-- loading -->
+      <div class="flex w-full justify-center" *ngIf="!userData">
+        <div class="flex md:w-full items-center justify-center">
+          <i class="animate-spin fa-solid fa-spinner"></i>
+        </div>
+      </div>
+      <div
+        class="block sm:flex w-full justify-between flex-wrap"
+        *ngIf="userData"
+      >
+        <div class="flex md:w-1/2 items-center justify-start">
+          <div class="w-full sm:pb-5 md:pb-0 lg:pb-0">
+            <label
+              class="flex w-full pb-5 sm:pb-0 text-gray-500 font-bold text-start md:text-right md:mb-0"
+            >
+              <i class="fa-solid fa-id-card"></i>&nbsp; username:
+            </label>
+          </div>
+        </div>
+        <div class="flex md:w-1/2 justify-start">
+          <div class="w-full flex items-center flex-wrap justify-center">
+            <div class="w-full">
+              <input
+                #usernameField
+                type="text"
+                name="username"
+                [(ngModel)]="userData.full_name"
+                class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 focus:ring-2 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                minlength="5"
+                required
+                autocomplete="off"
+                pattern="^[^\s]+$"
+                title="Username should be unique"
+                (change)="validateUsername(usernameForm)"
+                (keydown)="clearUsernameError()"
+              />
+              <div class="mt-1" *ngIf="usernameError != null">
+                <small class="text-red-800">{{ usernameError }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="block sm:flex w-full mt-4">
+          <div style="flex: 1" class="h-0 w-0 hidden sm:flex"></div>
+          <div style="flex: 1">
+            <button
+              *ngIf="usernameForm.invalid"
+              (click)="validateUsername(usernameForm)"
+              type="submit"
+              title="Change username"
+              class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+            >
+              <div *ngIf="changeUsernameLoading">
+                <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+              </div>
+              <span
+                class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+              >
+                Update
+              </span>
+            </button>
+            <button
+              *ngIf="usernameForm.valid"
+              (click)="changeUsername(usernameForm)"
+              type="submit"
+              title="Change username"
+              class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+            >
+              <div *ngIf="changeUsernameLoading">
+                <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+              </div>
+              <span
+                class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+              >
+                Update
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- /username form -->
+
+    <!-- email details -->
+    <div class="flex flex-col mb-5 flex-wrap w-5/6 p-5 bg-zinc-800 rounded-md">
+      <!-- loading -->
+      <div class="flex w-full justify-center" *ngIf="!userData">
+        <div class="flex md:w-full items-center justify-center">
+          <i class="animate-spin fa-solid fa-spinner"></i>
+        </div>
+      </div>
+      <div
+        class="block sm:flex w-full justify-between flex-wrap"
+        *ngIf="userData"
+      >
+        <div class="flex md:w-1/2 items-center justify-start">
+          <div class="w-full sm:pb-5 md:pb-0 lg:pb-0">
+            <label
+              class="flex w-full pb-5 sm:pb-0 text-gray-500 font-bold text-start md:text-right md:mb-0"
+            >
+              <i class="fa-solid fa-envelope"></i>&nbsp; Email:
+            </label>
+          </div>
+        </div>
+        <div class="flex md:w-1/2 justify-start">
+          <div class="w-full flex items-center flex-wrap justify-center">
+            <div class="w-full">
+              <input
+                type="email"
+                [value]="userData.email"
+                class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 outline-0 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                title="Email can't change"
+                readonly="true"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /email details -->
+
+    <!-- change password form -->
+    <form
+      #passwordForm="ngForm"
+      (ngSubmit)="changePassword(passwordForm)"
+      class="flex flex-col mb-5 flex-wrap w-5/6 p-5 bg-zinc-800 rounded-md"
+    >
+      <!-- loading -->
+      <div class="flex w-full justify-center" *ngIf="!userData">
+        <div class="flex md:w-full items-center justify-center">
+          <i class="animate-spin fa-solid fa-spinner"></i>
+        </div>
+      </div>
+      <div
+        class="block sm:flex w-full justify-between flex-wrap"
+        *ngIf="userData"
+      >
+        <div class="flex md:w-1/2 items-center justify-start">
+          <div class="w-full sm:pb-5 md:pb-0 lg:pb-0">
+            <label
+              class="flex w-full pb-5 sm:pb-0 text-gray-500 font-bold text-start md:text-right md:mb-0"
+            >
+              <i class="fa-solid fa-key"></i>&nbsp; Change Password:
+            </label>
+          </div>
+        </div>
+        <div class="flex md:w-1/2 justify-start">
+          <div class="w-full flex items-center flex-wrap justify-center">
+            <div class="w-full">
+              <input
+                type="password"
+                name="currentPassword"
+                placeholder="Current password"
+                ngModel
+                class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 focus:ring-2 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                autocomplete="off"
+                required
+                title="Enter your current password"
+                (change)="clearCurrPasswordError()"
+              />
+              <div class="mt-1" *ngIf="currentPasswordError">
+                <small class="text-red-800">{{ currentPasswordError }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="block sm:flex w-full mt-4">
+          <div style="flex: 1" class="h-0 w-0 hidden sm:flex"></div>
+          <div style="flex: 1">
+            <input
+              type="password"
+              name="newPassword"
+              placeholder="New password"
+              ngModel
+              class="flex w-full p-3 text-sm text-gray-900 border border-gray-300 focus:ring-2 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              autocomplete="off"
+              minlength="8"
+              required
+              title="Enter your new password"
+              (change)="clearNewPasswordError()"
+            />
+            <div class="mt-1" *ngIf="newPasswordError">
+              <small class="text-red-800">{{ newPasswordError }}</small>
+            </div>
+          </div>
+        </div>
+        <div class="block sm:flex w-full mt-4">
+          <div style="flex: 1" class="h-0 w-0 hidden sm:flex"></div>
+          <div style="flex: 1">
+            <button
+              type="submit"
+              title="Change password"
+              class="relative inline-flex items-center justify-center p-0.5 mr-0 sm:mr-2 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+            >
+              <div *ngIf="changePaswordLoading">
+                <i class="animate-spin fa-solid px-2 fa-spinner"></i>
+              </div>
+              <span
+                class="relative px-5 py-2.5 transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+              >
+                Change Password
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- /change passwordform -->
+  </div>
+</main>
