@@ -87,4 +87,22 @@ export class SocialService {
     const url = `${this._apiUrl}/downVote?id=${id}`;
     return this._http.patch<apiRes>(url, httpOptions);
   }
+
+  // fetch all pinned items
+  allPinnedItems(): Observable<apiRes> {
+    const url = `${this._apiUrl}/allPinnedItems`;
+    return this._http.get<apiRes>(url, httpOptions);
+  }
+
+  // pin an item
+  pinItem(id: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/pinItem?id=${id}`;
+    return this._http.patch<apiRes>(url, httpOptions);
+  }
+
+  // un-pin an item
+  unPinItem(id: string): Observable<apiRes> {
+    const url = `${this._apiUrl}/unPinItem?id=${id}`;
+    return this._http.patch<apiRes>(url, httpOptions);
+  }
 }

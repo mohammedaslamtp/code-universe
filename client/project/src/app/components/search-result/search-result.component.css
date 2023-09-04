@@ -102,13 +102,16 @@ body {
   box-shadow: 0px 30px 18px -8px rgba(0, 0, 0, 0.1);
   transform: scale(1.1, 1.1);
 }
+.action:hover{
+  background-color: #9c9c9c;
+  transition: ease-in-out 0.2s all;
+}
 
 .card__info {
   z-index: 2;
   background-color: #fff;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
-  padding: 0 24px 24px 24px;
 }
 
 .card__category {

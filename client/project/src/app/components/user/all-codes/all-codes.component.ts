@@ -70,6 +70,38 @@ export class AllCodesComponent implements OnDestroy {
     }, 500);
   }
 
+  subs_pin!: Subscription;
+  addToPin(id: string): void {
+    this.subs_pin = this._socialService.addToPin(id).subscribe(
+      (result) => {
+        this.swalAlert(200, 'Item added successfully');
+      },
+      (e) => {
+        this.swalAlert(404, 'Something went wrong!');
+      }
+    );
+  }
+
+  // sweet_alert
+  swalAlert(status: number, message: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
+    });
+    Toast.fire({
+      icon: status > 400 ? 'error' : 'success',
+      title: `${message}`,
+    });
+  }
+
   updateData(str: string, through: string) {
     if (through == 'id') {
       this.subs_userData = this._mainService.getUserData(str).subscribe(

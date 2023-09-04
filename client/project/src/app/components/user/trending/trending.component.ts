@@ -8,6 +8,7 @@ import { USerData } from 'src/app/types/UserData';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { currentUrl } from 'src/app/services/shared-values.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-trending',
@@ -95,6 +96,8 @@ export class TrendingComponent implements OnDestroy, OnInit {
 
   // Function to find and modify object by ID
   modifyObjectById(array: Templates, id: string, newValue: [string]) {
+    console.log(newValue);
+
     const index = array.findIndex((obj) => obj._id === id);
     if (index !== -1) {
       // Modify the desired field
@@ -120,11 +123,35 @@ export class TrendingComponent implements OnDestroy, OnInit {
     this._router.navigate([`/overallView/${id}`]);
   }
 
-  // follow specified user
-  subs_followUser!: Subscription;
-  follow(id: string) {
-    this.subs_followUser = this._socialService.follow(id).subscribe((data) => {
-      console.log(data);
+  subs_pin!: Subscription;
+  addToPin(id: string): void {
+    this.subs_pin = this._socialService.addToPin(id).subscribe(
+      (result) => {
+        this.swalAlert(200, 'Item added successfully');
+      },
+      (e) => {
+        this.swalAlert(404, 'Something went wrong!');
+      }
+    );
+  }
+
+  // sweet_alert
+  swalAlert(status: number, message: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
+    });
+    Toast.fire({
+      icon: status > 400 ? 'error' : 'success',
+      title: `${message}`,
     });
   }
 
@@ -149,8 +176,10 @@ export class TrendingComponent implements OnDestroy, OnInit {
       }
     );
   }
+
   ngOnDestroy(): void {
     Trending.next(false);
+    this.subs_pin?.unsubscribe();
     this.subs_templates_array?.unsubscribe();
     this.subs_codePreview?.unsubscribe();
     this.subs_giveLike?.unsubscribe();

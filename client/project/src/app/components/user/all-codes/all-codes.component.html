@@ -144,6 +144,7 @@
           >
             <li>
               <a
+                (click)="addToPin(el._id)"
                 class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 ><i class="fa-solid fa-thumbtack"></i>&nbsp;&nbsp;&nbsp;Add to
                 Pin</a
@@ -174,7 +175,6 @@
                 ><i class="fa-solid fa-delete-left"></i>&nbsp; Delete</a
               >
             </li>
-           
           </ul>
         </div>
       </div>
@@ -191,8 +191,7 @@
           >
         </div>
         <div class="action mr-1">
-          <small class="flex items-center"
-          (click)="overView(el._id)"
+          <small class="flex items-center" (click)="overView(el._id)"
             ><i class="fa-solid fa-comment"></i>&nbsp;{{
               el.comment.length
             }}</small

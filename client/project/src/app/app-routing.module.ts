@@ -19,6 +19,7 @@ import { LiveCodingGuard } from './guard/live-coding.guard';
 import { IsValidLiveGuard } from './guard/is-valid-live.guard';
 import { SearchingComponent } from './components/searching/searching.component';
 import { OverallViewComponent } from './components/user/overall-view/overall-view.component';
+import { PinnedItemsComponent } from './components/pinned-items/pinned-items.component';
 // import { CanDeactivateGuard } from './guard/live-coding.guard';
 
 const routes: Routes = [
@@ -50,6 +51,11 @@ const routes: Routes = [
   {
     path: 'overallView/:id',
     component: OverallViewComponent,
+    canActivate: [UserHomeGuard, BlockUserGuard],
+  },
+  {
+    path: 'pinnedItems',
+    component: PinnedItemsComponent,
     canActivate: [UserHomeGuard, BlockUserGuard],
   },
 

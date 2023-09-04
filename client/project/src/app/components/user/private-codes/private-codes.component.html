@@ -106,7 +106,7 @@
         <button
           id="{{ 'dropdownLeftButton-' + el._id }}"
           data-dropdown-placement="top"
-          class="mt-1 p-1.5 px-3 hover:bg-gray-200 rounded-full duration-300 "
+          class="mt-1 p-1.5 px-3 hover:bg-gray-200 rounded-full duration-300"
           type="button"
           (click)="toggleDropdown(el._id)"
         >
@@ -135,6 +135,7 @@
           >
             <li>
               <a
+                (click)="addToPin(el._id)"
                 class="flex items-center block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 ><i class="fa-solid fa-thumbtack"></i>&nbsp;&nbsp;&nbsp;Add to
                 Pin</a

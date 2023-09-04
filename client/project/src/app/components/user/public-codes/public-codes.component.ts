@@ -295,6 +295,38 @@ export class PublicCodesComponent implements OnDestroy {
      this._router.navigate([`/overallView/${id}`]);
    }
 
+   subs_pin!: Subscription;
+  addToPin(id: string): void {
+    this.subs_pin = this._socialService.addToPin(id).subscribe(
+      (result) => {
+        this.swalAlert(200, 'Item added successfully');
+      },
+      (e) => {
+        this.swalAlert(404, 'Something went wrong!');
+      }
+    );
+  }
+
+  // sweet_alert
+  swalAlert(status: number, message: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
+    });
+    Toast.fire({
+      icon: status > 400 ? 'error' : 'success',
+      title: `${message}`,
+    });
+  }
+
   ngOnDestroy(): void {
     publicPage.next(false);
     this.subs_OwnerData.unsubscribe();

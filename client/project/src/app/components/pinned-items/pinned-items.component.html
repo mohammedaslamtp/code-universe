@@ -1,0 +1,75 @@
+<main class="absolute w-full h-screen">
+  <app-user-header></app-user-header>
+  <div
+    class="ml-64 tab-container sm:w-7/12 md:w-10/12 lg:w-10/12 xs:w-6/12 absolute p-3"
+    style="margin-top: 5em"
+  >
+    <h1 class="text-xl font-bold mb-2">
+      <span *ngIf="pinnedItems">{{ pinnedItems.length }}</span>
+      Pinned Item:
+    </h1>
+    <!-- empty case -->
+    <div
+      *ngIf="pinnedItems && pinnedItems.length == 0"
+      class="border-2 rounded-md h-16 w-full flex justify-center items-center"
+    >
+      <p>Empty.</p>
+    </div>
+    <!-- /empty case -->
+    <div class="grid gap-4 auto_grid duration-300">
+      <div
+        class="py-3 p-2 border-2 flex items-center rounded-md"
+        *ngFor="let el of pinnedItems"
+      >
+        <div class="flex items-center gap-x-4 rounded-md w-full">
+          <div class="w-full flex items-center justify-between">
+            <div class="flex flex-col" *ngIf="el.user">
+              <h3
+                class="font-bold cursor-pointer"
+                [routerLink]="'/userProfile/'"
+              >
+                {{ el.title }}
+              </h3>
+              <p
+                class="text-sm"
+                [routerLink]="'/userProfile/' + el.user.full_name"
+              >
+                {{ el.user.full_name }}
+              </p>
+            </div>
+            <div class="flex gap-2">
+              <button
+                type="button"
+                title="overall view"
+                class="relative inline-flex items-center justify-center p-0.5 mr-0 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+                (click)="overView(el._id)"
+              >
+                <span
+                  class="relative px-2 py-1 flex items-center transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+                >
+                  <span class="flex items-center"
+                    ><i class="fa-solid fa-eye"></i
+                  ></span>
+                </span>
+              </button>
+              <button
+                type="button"
+                title="remove from pinned list"
+                class="relative inline-flex items-center justify-center p-0.5 mr-0 overflow-hidden text-sm font-medium text-gray-900 sm:mt-0 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white"
+                (click)="remove(el._id)"
+              >
+                <span
+                  class="relative px-2 py-1 flex items-center transition-all ease-in duration-75 text-gray-300 dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+                >
+                  <span class="flex items-center"
+                    ><i class="fa-solid fa-xmark"></i
+                  ></span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

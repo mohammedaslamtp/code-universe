@@ -61,6 +61,7 @@ import { SettingsService } from './services/settings.service';
 import { IsValidLiveGuard } from './guard/is-valid-live.guard';
 import { SearchingComponent } from './components/searching/searching.component';
 import { OverallViewComponent } from './components/user/overall-view/overall-view.component';
+import { PinnedItemsComponent } from './components/pinned-items/pinned-items.component';
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { OverallViewComponent } from './components/user/overall-view/overall-vie
     CreateLiveComponent,
     SearchingComponent,
     OverallViewComponent,
+    PinnedItemsComponent,
   ],
   imports: [
     BrowserModule,

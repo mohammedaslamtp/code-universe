@@ -8,6 +8,7 @@ import { Location } from '@angular/common';
 import { currentUrl } from 'src/app/services/shared-values.service';
 import { Router } from '@angular/router';
 import { SocialService } from 'src/app/services/soical.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-your-works',
@@ -135,6 +136,38 @@ export class YourWorksComponent implements OnDestroy, AfterViewInit {
       // Modify the desired field
       array[index].like = newValue;
     }
+  }
+
+  subs_pin!: Subscription;
+  addToPin(id: string): void {
+    this.subs_pin = this._socialService.addToPin(id).subscribe(
+      (result) => {
+        this.swalAlert(200, 'Item added successfully');
+      },
+      (e) => {
+        this.swalAlert(404, 'Something went wrong!');
+      }
+    );
+  }
+
+  // sweet_alert
+  swalAlert(status: number, message: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2500,
+      showCloseButton: true,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      },
+    });
+    Toast.fire({
+      icon: status > 400 ? 'error' : 'success',
+      title: `${message}`,
+    });
   }
 
   ngOnDestroy(): void {

@@ -16,6 +16,8 @@ export interface Template {
   views: [string];
   __v: number;
   user: USerData;
+  userData?: [USerData];
+  likedUsers?: [USerData];
   upVote: [USerData | string];
   downVote: [USerData | string];
   createdAt: string;
